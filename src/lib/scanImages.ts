@@ -9,7 +9,7 @@ interface bbox {
 }
 
 const TOP_RATIO = 0.29;
-const HEIGHT_RATIO = 0.44;
+const HEIGHT_RATIO = 0.48;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
