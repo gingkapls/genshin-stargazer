@@ -1,4 +1,4 @@
-import Tesseract, { createWorker, PSM } from "tesseract.js";
+import Tesseract, { createScheduler, createWorker, PSM } from "tesseract.js";
 
 // Bounding Box
 interface bbox {
@@ -9,7 +9,7 @@ interface bbox {
 }
 
 const TOP_RATIO = 0.29;
-const HEIGHT_RATIO = 0.48;
+const HEIGHT_RATIO = 0.49;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
@@ -55,17 +55,46 @@ function getRectangle(
 }
 
 export async function scanImage(image: HTMLCanvasElement) {
-  const worker = await createWorker("eng");
-  worker.setParameters({
+  const scheduler = createScheduler();
+  const worker1 = await createWorker("eng");
+  const worker2 = await createWorker("eng");
+
+  worker1.setParameters({
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     preserve_interword_spaces: "1",
   });
-  const ret = await worker.recognize(
-    image,
-    { rectangle: getRectangle(WISH_TYPE_BBOX, image) },
-    { blocks: true, text: false }
+
+  worker2.setParameters({
+    tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
+    preserve_interword_spaces: "1",
+  });
+
+  const rectangles = [
+    ITEM_TYPE_BBOX,
+    ITEM_NAME_BBOX,
+    WISH_TYPE_BBOX,
+    TIME_RECEIVED_BBOX,
+  ].map((bbox) => getRectangle(bbox, image));
+
+  scheduler.addWorker(worker1);
+  scheduler.addWorker(worker2);
+
+  const results = await Promise.all(
+    rectangles.map((rectangle) =>
+      scheduler.addJob(
+        "recognize",
+        image,
+        { rectangle },
+        { blocks: true, text: false }
+      )
+    )
   );
-  await worker.terminate();
-  console.log(ret.data);
-  return ret.data;
+
+  const [itemType, itemName, wishType, timeReceived] = results.map((r) =>
+    r.data.blocks?.map((block) => block.text)
+  );
+
+  console.log({ itemType, itemName, wishType, timeReceived });
+  await scheduler.terminate();
+  return results.map((r) => r.data);
 }
