@@ -1,4 +1,3 @@
-import { CV_32F, type Mat } from "@techstark/opencv-js";
 import { getOpenCv, translateException } from "./opencv.ts";
 
 export async function processImage(
