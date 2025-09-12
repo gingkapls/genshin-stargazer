@@ -8,34 +8,34 @@ interface bbox {
   HEIGHT_RATIO: number;
 }
 
-const TOP_RATIO = 0.29;
-const HEIGHT_RATIO = 0.49;
+const TOP_RATIO = 0.255;
+const HEIGHT_RATIO = 0.54;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.19,
-  WIDTH_RATIO: 0.10,
+  LEFT_RATIO: 0.195,
+  WIDTH_RATIO: 0.08,
   HEIGHT_RATIO,
 };
 
 const ITEM_NAME_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.28,
-  WIDTH_RATIO: 0.16,
+  LEFT_RATIO: 0.288,
+  WIDTH_RATIO: 0.151,
   HEIGHT_RATIO,
 };
 
 const WISH_TYPE_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.43,
-  WIDTH_RATIO: 0.17,
+  LEFT_RATIO: 0.444,
+  WIDTH_RATIO: 0.14,
   HEIGHT_RATIO,
 };
 
 const TIME_RECEIVED_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.58,
-  WIDTH_RATIO: 0.20,
+  LEFT_RATIO: 0.595,
+  WIDTH_RATIO: 0.18,
   HEIGHT_RATIO,
 };
 
