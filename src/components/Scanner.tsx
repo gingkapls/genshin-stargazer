@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { processImage } from "../lib/processImage.ts";
 import { scanImage } from "../lib/scanImages.ts";
-
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -15,8 +14,8 @@ const colors = [
   "#5733FF", // Bright Indigo
   "#BD33FF", // Bright Violet
   "#FF33DB", // Bright Pink-Magenta
-  "#FF3375"  // Bright Hot Pink
-]; 
+  "#FF3375", // Bright Hot Pink
+];
 function genRandomColor() {
   const color = colors[Math.round(Math.random() * (colors.length - 1))];
   return color;
@@ -27,7 +26,7 @@ function Scanner({ src }: { src: string }) {
   const outputRef = useRef<HTMLCanvasElement | null>(null);
   const inputRef = useRef<HTMLImageElement | null>(null);
 
-  function handleLoad(e) {
+  function handleLoad() {
     async function doStuff() {
       if (outputRef.current === null || inputRef.current === null) return;
 
@@ -35,12 +34,14 @@ function Scanner({ src }: { src: string }) {
 
       const rectangles = await scanImage(outputRef.current);
       const ctx = outputRef.current.getContext("2d");
+      if (!ctx) return;
+
       rectangles.forEach(({ top, left, height, width }) => {
         const newCol = genRandomColor();
         ctx.strokeStyle = newCol;
         console.log(newCol);
-        ctx?.rect(left, top, width, height);
-        ctx?.stroke();
+        ctx.rect(left, top, width, height);
+        ctx.stroke();
       });
     }
 
