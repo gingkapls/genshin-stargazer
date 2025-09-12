@@ -13,8 +13,8 @@ const HEIGHT_RATIO = 0.49;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.18,
-  WIDTH_RATIO: 0.09,
+  LEFT_RATIO: 0.19,
+  WIDTH_RATIO: 0.10,
   HEIGHT_RATIO,
 };
 
@@ -54,7 +54,7 @@ function getRectangle(
   };
 }
 
-export async function scanImage(image: HTMLCanvasElement) {
+export async function scanImage(image: HTMLCanvasElement | HTMLImageElement) {
   const scheduler = createScheduler();
   const worker1 = await createWorker("eng");
   const worker2 = await createWorker("eng");
@@ -96,5 +96,6 @@ export async function scanImage(image: HTMLCanvasElement) {
 
   console.log({ itemType, itemName, wishType, timeReceived });
   await scheduler.terminate();
-  return results.map((r) => r.data);
+  return rectangles;
+  // return [results.map((r) => r.data);
 }
