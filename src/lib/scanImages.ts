@@ -34,8 +34,8 @@ const WISH_TYPE_BBOX: bbox = {
 
 const TIME_RECEIVED_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.59,
-  WIDTH_RATIO: 0.19,
+  LEFT_RATIO: 0.58,
+  WIDTH_RATIO: 0.20,
   HEIGHT_RATIO,
 };
 
