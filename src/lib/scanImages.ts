@@ -39,18 +39,22 @@ const TIME_RECEIVED_BBOX: bbox = {
   HEIGHT_RATIO,
 };
 
+const PAGE_COUNT_BBOX: bbox = {
+  TOP_RATIO: 0.788,
+  LEFT_RATIO: 0,
+  WIDTH_RATIO: 1,
+  HEIGHT_RATIO: 0.07,
+};
+
 function getRectangle(
   bbox: bbox,
   image: { width: number; height: number }
 ): Tesseract.Rectangle {
-  const top = TOP_RATIO * image.height;
-  const height = HEIGHT_RATIO * image.height;
-
   return {
-    top,
+    top: bbox.TOP_RATIO * image.height,
     left: bbox.LEFT_RATIO * image.width,
     width: bbox.WIDTH_RATIO * image.width,
-    height,
+    height: bbox.HEIGHT_RATIO * image.height,
   };
 }
 
@@ -58,16 +62,29 @@ export async function scanImage(image: HTMLCanvasElement | HTMLImageElement) {
   const scheduler = createScheduler();
   const worker1 = await createWorker("eng");
   const worker2 = await createWorker("eng");
+  const pageWorker = await createWorker("eng");
 
-  worker1.setParameters({
+  const COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     preserve_interword_spaces: "1",
-  });
+  };
 
-  worker2.setParameters({
-    tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
+  const PAGE_PARAMS = {
+    tessedit_pageseg_mode: PSM.SINGLE_LINE,
     preserve_interword_spaces: "1",
-  });
+  };
+
+  worker1.setParameters(COLUM_PARAMS);
+  worker2.setParameters(COLUM_PARAMS);
+  pageWorker.setParameters(PAGE_PARAMS);
+
+  const pageRectangle = getRectangle(PAGE_COUNT_BBOX, image);
+
+  const page = await pageWorker.recognize(
+    image,
+    { rectangle: pageRectangle },
+    { text: true, blocks: true, hocr: true}
+  );
 
   const rectangles = [
     ITEM_TYPE_BBOX,
@@ -90,12 +107,15 @@ export async function scanImage(image: HTMLCanvasElement | HTMLImageElement) {
     )
   );
 
-  const [itemType, itemName, wishType, timeReceived] = results.map((r) =>
-    r.data.blocks?.map((block) => block.text)
+  results.push(page);
+  console.log(page);
+
+  const [itemType, itemName, wishType, timeReceived, pageCount] = results.map(
+    (r) => r.data.blocks?.map((block) => block.text)
   );
 
-  console.log({ itemType, itemName, wishType, timeReceived });
+  console.log({ itemType, itemName, wishType, timeReceived, pageCount });
   await scheduler.terminate();
-  return rectangles;
+  return rectangles.concat(pageRectangle);
   // return [results.map((r) => r.data);
 }
