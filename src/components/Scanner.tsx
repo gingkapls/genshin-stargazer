@@ -39,7 +39,6 @@ function Scanner({ src }: { src: string }) {
       rectangles.forEach(({ top, left, height, width }) => {
         const newCol = genRandomColor();
         ctx.strokeStyle = newCol;
-        console.log(newCol);
         ctx.rect(left, top, width, height);
         ctx.stroke();
       });
