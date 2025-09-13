@@ -30,9 +30,11 @@ function Scanner({ src }: { src: string }) {
     async function doStuff() {
       if (outputRef.current === null || inputRef.current === null) return;
 
-      await processImage(inputRef.current, outputRef.current);
+      const offset = await processImage(inputRef.current, outputRef.current);
 
-      const rectangles = await scanImage(outputRef.current);
+      if (!offset) return;
+
+      const rectangles = await scanImage(outputRef.current, offset);
       const ctx = outputRef.current.getContext("2d");
       if (!ctx) return;
 

@@ -8,57 +8,60 @@ interface bbox {
   HEIGHT_RATIO: number;
 }
 
-const TOP_RATIO = 0.255;
-const HEIGHT_RATIO = 0.54;
+const TOP_RATIO = 0.199;
+const HEIGHT_RATIO = 0.65;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.195,
-  WIDTH_RATIO: 0.08,
+  LEFT_RATIO: 0.06,
+  WIDTH_RATIO: 0.125,
   HEIGHT_RATIO,
 };
 
 const ITEM_NAME_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.288,
-  WIDTH_RATIO: 0.151,
+  LEFT_RATIO: 0.19,
+  WIDTH_RATIO: 0.25,
   HEIGHT_RATIO,
 };
 
 const WISH_TYPE_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.444,
-  WIDTH_RATIO: 0.14,
+  LEFT_RATIO: 0.443,
+  WIDTH_RATIO: 0.223,
   HEIGHT_RATIO,
 };
 
 const TIME_RECEIVED_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.595,
-  WIDTH_RATIO: 0.18,
+  LEFT_RATIO: 0.68,
+  WIDTH_RATIO: 0.25,
   HEIGHT_RATIO,
 };
 
 const PAGE_COUNT_BBOX: bbox = {
-  TOP_RATIO: 0.788,
-  LEFT_RATIO: 0,
-  WIDTH_RATIO: 1,
+  TOP_RATIO: 0.87,
+  LEFT_RATIO: 0.47,
+  WIDTH_RATIO: 0.08,
   HEIGHT_RATIO: 0.07,
 };
 
 function getRectangle(
   bbox: bbox,
-  image: { width: number; height: number }
+  offset: { top: number; left: number; height: number; width: number }
 ): Tesseract.Rectangle {
   return {
-    top: bbox.TOP_RATIO * image.height,
-    left: bbox.LEFT_RATIO * image.width,
-    width: bbox.WIDTH_RATIO * image.width,
-    height: bbox.HEIGHT_RATIO * image.height,
+    top: offset.top + bbox.TOP_RATIO * offset.height,
+    left: offset.left + bbox.LEFT_RATIO * offset.width,
+    width: bbox.WIDTH_RATIO * offset.width,
+    height: bbox.HEIGHT_RATIO * offset.height,
   };
 }
 
-export async function scanImage(image: HTMLCanvasElement | HTMLImageElement) {
+export async function scanImage(
+  image: HTMLCanvasElement | HTMLImageElement,
+  offset: { top: number; left: number; height: number; width: number }
+) {
   const scheduler = createScheduler();
   const worker1 = await createWorker("eng");
   const worker2 = await createWorker("eng");
@@ -78,37 +81,36 @@ export async function scanImage(image: HTMLCanvasElement | HTMLImageElement) {
   worker2.setParameters(COLUM_PARAMS);
   pageWorker.setParameters(PAGE_PARAMS);
 
-  const pageRectangle = getRectangle(PAGE_COUNT_BBOX, image);
-
-  const page = await pageWorker.recognize(
-    image,
-    { rectangle: pageRectangle },
-    { text: true, blocks: true, hocr: true}
-  );
+  const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
   const rectangles = [
     ITEM_TYPE_BBOX,
     ITEM_NAME_BBOX,
     WISH_TYPE_BBOX,
     TIME_RECEIVED_BBOX,
-  ].map((bbox) => getRectangle(bbox, image));
+  ].map((bbox) => getRectangle(bbox, offset));
 
   scheduler.addWorker(worker1);
   scheduler.addWorker(worker2);
 
   const results = await Promise.all(
-    rectangles.map((rectangle) =>
-      scheduler.addJob(
-        "recognize",
-        image,
-        { rectangle },
-        { blocks: true, text: false }
+    rectangles
+      .map((rectangle) =>
+        scheduler.addJob(
+          "recognize",
+          image,
+          { rectangle },
+          { blocks: true, text: false }
+        )
       )
-    )
+      .concat(
+        pageWorker.recognize(
+          image,
+          { rectangle: pageRectangle },
+          { text: true, blocks: true, hocr: true }
+        )
+      )
   );
-
-  results.push(page);
-  console.log(page);
 
   const [itemType, itemName, wishType, timeReceived, pageCount] = results.map(
     (r) => r.data.blocks?.map((block) => block.text)
