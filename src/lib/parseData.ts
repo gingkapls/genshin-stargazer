@@ -90,7 +90,7 @@ function parseDates(dateStr: string) {
 }
 
 function parseData(data: ScanResult) {
-  const pageNumber = data.pageNumber[0].trim();
+  const pageNumber = data.pageNumber[0]?.trim();
 
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
   const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
