@@ -1,6 +1,7 @@
 import weapons from "../../data/weapon_rarity.json";
 import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
+import type { ScanResult } from "./scanImages.ts";
 
 const dictionary = new BKTree(
   Object.keys(weapons).concat(Object.keys(characters))
@@ -19,7 +20,6 @@ function correctName(name: string, tree: BKTree): [string, number] {
   return [result, distance];
 }
 
-
 function sanitizeItem(name: string): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
   if (!cleaned) return [cleaned, Infinity];
@@ -27,15 +27,18 @@ function sanitizeItem(name: string): [string, number] {
   return correctName(cleaned, dictionary);
 }
 
-function sanitizeItemNames(data: string[]) {
+function prepareColumn(data: string[], header: string): [string, string[]] {
   const str = data.join("");
-  const index = str.indexOf("Item Name");
+  const index = str.indexOf(header);
   const [head, ...items] = str
     .substring(index)
     .split("\n")
     .filter((s) => s.trim() !== "");
+  return [head, items];
+}
 
-//   console.log({ head, items });
+function sanitizeItemNames(items: string[]) {
+  //   console.log({ head, items });
   const res = [];
 
   for (let i = 0; i < items.length; ++i) {
@@ -45,7 +48,6 @@ function sanitizeItemNames(data: string[]) {
       res.push(cleaned);
       continue;
     }
-    
 
     // Our item name is partial
     // so we try joining it with the next item
@@ -59,8 +61,13 @@ function sanitizeItemNames(data: string[]) {
       i += 1;
     }
   }
-
-  console.log(res);
+  return res;
 }
 
-export { sanitizeItemNames };
+function parseData(data: ScanResult) {
+  const [, itemNamesCol] = prepareColumn(data.itemName, "Item Name");
+  const itemNames = sanitizeItemNames(itemNamesCol);
+  return { itemNames };
+}
+
+export { parseData };
