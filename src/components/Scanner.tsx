@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { processImage } from "../lib/processImage.ts";
-import { scanImage } from "../lib/scanImages.ts";
+import { scanImage, type ScanResult } from "../lib/scanImages.ts";
+import { sanitizeItemNames } from "../lib/parseData.ts";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -22,7 +23,7 @@ function genRandomColor() {
 }
 
 function Scanner({ src }: { src: string }) {
-  const [data, setData] = useState<Tesseract.Block[]>([]);
+  const [data, setData] = useState<ScanResult | null>(null);
   const outputRef = useRef<HTMLCanvasElement | null>(null);
   const inputRef = useRef<HTMLImageElement | null>(null);
 
@@ -34,7 +35,7 @@ function Scanner({ src }: { src: string }) {
 
       if (!offset) return;
 
-      const rectangles = await scanImage(outputRef.current, offset);
+      const { rectangles, blocks } = await scanImage(outputRef.current, offset);
       const ctx = outputRef.current.getContext("2d");
       if (!ctx) return;
 
@@ -44,9 +45,16 @@ function Scanner({ src }: { src: string }) {
         ctx.rect(left, top, width, height);
         ctx.stroke();
       });
+
+      setData(blocks);
     }
 
     doStuff();
+  }
+
+  if (data) {
+    console.log(data);
+    console.log(sanitizeItemNames(data.itemName));
   }
 
   return (
@@ -54,7 +62,6 @@ function Scanner({ src }: { src: string }) {
       <h1>Small Wish test</h1>
       <img ref={inputRef} src={src} alt="sample" onLoad={handleLoad}></img>
       <canvas ref={outputRef} />
-      <pre>{data.map((block) => block.text).join("")}</pre>
     </>
   );
 }
