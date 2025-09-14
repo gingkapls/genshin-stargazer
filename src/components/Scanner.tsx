@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { processImage } from "../lib/processImage.ts";
 import { scanImage, type ScanResult } from "../lib/scanImages.ts";
-import { parseData, prepareColumn, sanitizeItemNames } from "../lib/parseData.ts";
+import { parseData } from "../lib/parseData.ts";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -55,7 +55,7 @@ function Scanner({ src }: { src: string }) {
   if (data) {
     // console.log(data);
     const res = parseData(data);
-    console.log(res);
+    // console.log(res);
   }
 
   return (

@@ -3,8 +3,27 @@ import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
 
-const dictionary = new BKTree(
+interface Wish {
+  itemName: string;
+  wishType: string;
+  itemType: string;
+  rarity: string;
+  timeReceived: number;
+}
+
+const itemNamesDict = new BKTree(
   Object.keys(weapons).concat(Object.keys(characters))
+);
+
+const wishTypesDict = new BKTree([
+  "Character Event Wish",
+  "Permanent Wish",
+  "Chroincled Wish",
+  "Weapon Event Wish",
+]);
+
+const rarityMap = new Map(
+  Object.entries(characters).concat(Object.entries(weapons))
 );
 
 // all whitespace + a digit + all whitespace + dash + all whitespace + wildcard
@@ -20,13 +39,6 @@ function correctName(name: string, tree: BKTree): [string, number] {
   return [result, distance];
 }
 
-function sanitizeItem(name: string): [string, number] {
-  const cleaned = name?.trim().replace(rarityRegex, "").trim();
-  if (!cleaned) return [cleaned, Infinity];
-
-  return correctName(cleaned, dictionary);
-}
-
 function prepareColumn(data: string[], header: string): [string, string[]] {
   const str = data.join("");
   const index = str.indexOf(header);
@@ -37,12 +49,18 @@ function prepareColumn(data: string[], header: string): [string, string[]] {
   return [head, items];
 }
 
-function sanitizeItemNames(items: string[]) {
-  //   console.log({ head, items });
+function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
+  const cleaned = name?.trim().replace(rarityRegex, "").trim();
+  if (!cleaned) return [cleaned, Infinity];
+
+  return correctName(cleaned, dict);
+}
+
+function sanitizeItems(items: string[], dict: BKTree) {
   const res = [];
 
   for (let i = 0; i < items.length; ++i) {
-    const [cleaned, distance] = sanitizeItem(items[i]);
+    const [cleaned, distance] = sanitizeSingleItem(items[i], dict);
 
     if (distance <= 2) {
       res.push(cleaned);
@@ -52,8 +70,9 @@ function sanitizeItemNames(items: string[]) {
     // Our item name is partial
     // so we try joining it with the next item
     // Genshin only has item names upto 2 rows AFAIK
-    const [joined, joinedDistance] = sanitizeItem(
-      cleaned + " " + items[i + 1]?.trim()
+    const [joined, joinedDistance] = sanitizeSingleItem(
+      cleaned + " " + items[i + 1]?.trim(),
+      dict
     );
 
     if (joinedDistance <= 2) {
@@ -64,10 +83,41 @@ function sanitizeItemNames(items: string[]) {
   return res;
 }
 
+function parseDates(dateStr: string) {
+  // We know our date is always going to be in the format
+  // yyyy-mm-dd[\W]hh:mm:ss
+//   dateStr.replace(/\W/);
+}
+
 function parseData(data: ScanResult) {
-  const [, itemNamesCol] = prepareColumn(data.itemName, "Item Name");
-  const itemNames = sanitizeItemNames(itemNamesCol);
-  return { itemNames };
+  const pageNumber = data.pageNumber[0].trim();
+
+  const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
+  const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
+
+  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
+
+  const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
+  const wishType = sanitizeItems(wishTypesCol, wishTypesDict)[0];
+
+  const timeReceived = prepareColumn(data.timeReceived, "Time Received")[1].map(
+    (time) =>
+      new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
+  );
+
+  const wishes = itemNames.map<Wish>((itemName, i) => {
+    return {
+      itemName,
+      itemType: itemTypesCol[i],
+      wishType: wishType,
+      rarity: rarityMap.get(itemName) || "3-star",
+      timeReceived: timeReceived[i],
+    };
+  });
+
+  console.log({ wishes, pageNumber });
+
+  return { wishes };
 }
 
 export { parseData };
