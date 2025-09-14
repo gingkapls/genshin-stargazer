@@ -9,11 +9,11 @@ interface bbox {
 }
 
 export interface ScanResult {
-  itemType: string[],
-  itemName: string[],
-  wishType: string[],
-  timeReceived: string[],
-  pageNumber: string[]
+  itemType: string[];
+  itemName: string[];
+  wishType: string[];
+  timeReceived: string[];
+  pageNumber: string[];
 }
 
 const TOP_RATIO = 0.199;
@@ -77,11 +77,14 @@ export async function scanImage(
 
   const COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
+    tessedit_char_whitelist:
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
     preserve_interword_spaces: "1",
   };
 
   const PAGE_PARAMS = {
-    tessedit_pageseg_mode: PSM.SINGLE_LINE,
+    tessedit_pageseg_mode: PSM.SINGLE_WORD,
+    tessedit_char_whitelist: "0123456789 ",
     preserve_interword_spaces: "1",
   };
 
@@ -123,7 +126,13 @@ export async function scanImage(
   const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)
   );
-  const blocks = { itemType, itemName, wishType, timeReceived, pageNumber } satisfies ScanResult;
+  const blocks = {
+    itemType,
+    itemName,
+    wishType,
+    timeReceived,
+    pageNumber,
+  } satisfies ScanResult;
 
   await scheduler.terminate();
   return { rectangles: rectangles.concat(pageRectangle), blocks };
