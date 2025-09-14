@@ -8,8 +8,16 @@ interface bbox {
   HEIGHT_RATIO: number;
 }
 
+export interface ScanResult {
+  itemType: string[],
+  itemName: string[],
+  wishType: string[],
+  timeReceived: string[],
+  pageNumber: string[]
+}
+
 const TOP_RATIO = 0.199;
-const HEIGHT_RATIO = 0.65;
+const HEIGHT_RATIO = 0.654;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
@@ -112,12 +120,12 @@ export async function scanImage(
       )
   );
 
-  const [itemType, itemName, wishType, timeReceived, pageCount] = results.map(
-    (r) => r.data.blocks?.map((block) => block.text)
+  const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
+    (r) => r.data.blocks!.map((block) => block.text)
   );
+  const blocks = { itemType, itemName, wishType, timeReceived, pageNumber } satisfies ScanResult;
 
-  console.log({ itemType, itemName, wishType, timeReceived, pageCount });
   await scheduler.terminate();
-  return rectangles.concat(pageRectangle);
+  return { rectangles: rectangles.concat(pageRectangle), blocks };
   // return [results.map((r) => r.data);
 }
