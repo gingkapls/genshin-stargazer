@@ -131,12 +131,8 @@ function Scanner({
     );
     
     console.log("end time", new Date());
-    console.log(res);
     const result = res.map(processResult);
     console.log({result});
-
-    console.log(data);
-    
   }
 
   return (
