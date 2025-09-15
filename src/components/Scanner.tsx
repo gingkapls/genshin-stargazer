@@ -20,7 +20,6 @@ import {
 } from "../lib/scanImages.ts";
 import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
 import type { WishHistory } from "./wishHistory.ts";
-import type { Rectangle } from "tesseract.js";
 import type { WishImage } from "./wishImage";
 
 const colors = [
@@ -51,6 +50,18 @@ interface ScannerProps {
   dispatch: ActionDispatch<[{ page: parsedHistoryPage }]>;
 }
 
+function drawBoxes(canvasEl: HTMLCanvasElement,rectangles: Tesseract.Rectangle[]) {
+      const ctx = canvasEl.getContext("2d");
+      if (!ctx) return;
+
+      rectangles.forEach(({ top, left, height, width }) => {
+        const newCol = genRandomColor();
+        ctx.strokeStyle = newCol;
+        ctx.rect(left, top, width, height);
+        ctx.stroke();
+      });
+}
+
 function Scanner({
   images,
   processedHashes,
@@ -59,16 +70,20 @@ function Scanner({
   dispatch,
 }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
-  const pCount = rects.length / 4;
+  const pCount = rects.length;
 
   console.log({ rects });
+  console.log({pCount});
 
   useEffect(() => {
     if (images.length !== 0 && pCount === images.length) {
       console.log({ c: pCount, l: images.length });
+      for (const rect of rects) {
+        drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle))
+      }
       console.log("Loaded all images");
     }
-  }, [pCount, images.length]);
+  }, [pCount, images.length, rects]);
 
   function handleLoad(hash: string, i: number) {
     async function doStuff() {

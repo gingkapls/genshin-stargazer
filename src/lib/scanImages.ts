@@ -99,7 +99,7 @@ export class Scheduler {
     Scheduler.#instance = this;
   }
 
-  async initialize(callback: () => void) {
+  async initialize(callback?: () => void) {
     const workers = await Promise.all(
       Array(10)
         .fill(0)
@@ -131,13 +131,13 @@ export class Scheduler {
 }
 
 export interface ScanRegions {
-  image: HTMLImageElement | HTMLCanvasElement;
+  image: HTMLCanvasElement;
   rectangles: Tesseract.Rectangle[];
   pageRectangle: Tesseract.Rectangle;
 }
 
 export function getRegions(
-  image: HTMLCanvasElement | HTMLImageElement,
+  image: HTMLCanvasElement,
   offset: {
     top: number;
     left: number;
