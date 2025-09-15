@@ -14,8 +14,10 @@ const itemNamesDict = new BKTree(
   Object.keys(weapons).concat(Object.keys(characters))
 );
 
+// TODO: Add Character Event Wish-2
 const wishTypesDict = new BKTree([
   "Character Event Wish",
+  "Character Event Wish-2",
   "Permanent Wish",
   "Chronicled Wish",
   "Weapon Event Wish",
@@ -31,9 +33,7 @@ const rarityRegex = /\W+\d\W*-\W*.*/;
 function correctName(name: string, tree: BKTree): [string, number] {
   const [result, distance] = tree
     .search(name)
-    .find(([, distance]) => distance <= 2) || [name, Infinity];
-
-  if (distance === Infinity) console.error("Invalid name", result);
+    .sort(([, d1], [, d2]) => d1 - d2)[0] || [name, Infinity];
 
   return [result, distance];
 }
@@ -52,7 +52,11 @@ function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
   if (!cleaned) return [cleaned, Infinity];
 
-  return correctName(cleaned, dict);
+  const [correctname, distance] = correctName(cleaned, dict);
+
+  console.log({ cleaned, correctname, distance });
+
+  return [correctname, distance];
 }
 
 function sanitizeItems(items: string[], dict: BKTree) {
@@ -82,16 +86,17 @@ function sanitizeItems(items: string[], dict: BKTree) {
   return res;
 }
 
+// TODO: Implement Date Parser
 // function parseDates(dateStr: string) {
-  // We know our date is always going to be in the format
-  // yyyy-mm-dd[\W]hh:mm:ss
+// We know our date is always going to be in the format
+// yyyy-mm-dd[\W]hh:mm:ss
 //   dateStr.replace(/\W/);
 // }
 
 export interface parsedHistoryPage {
-  wishes: Wish[],
-  pageNumber: string,
-  wishType: string,
+  wishes: Wish[];
+  pageNumber: string;
+  wishType: string;
 }
 
 function parseData(data: ScanResult): parsedHistoryPage {
@@ -119,8 +124,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
     };
   });
 
-  return({ wishes, pageNumber, wishType });
-
+  return { wishes, pageNumber, wishType };
 }
 
 export { parseData };
