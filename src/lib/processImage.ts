@@ -9,21 +9,14 @@ export async function processImage(
     const src = cv.imread(input);
     const dst = new cv.Mat();
 
-    // Resizing for clearer OCR
-    // cv.resize(src, src, new cv.Size(1920, 1080), 0, 0, cv.INTER_AREA);
+    // Resizing while maintaining aspect ratio for faster OCR
+    if (input.width > 1920) cv.resize(src, src, new cv.Size(1920, 1920 * (input.height / input.width)), 0, 0, cv.INTER_AREA);
 
     // Grayscaling
     cv.cvtColor(src, dst, cv.COLOR_BGR2GRAY);
 
-    // Blurring
-    const ksize = new cv.Size(1, 1);
-    const anchor = new cv.Point(-1, -1);
-    // You can try more different parameters
-    cv.blur(dst, dst, ksize, anchor, cv.BORDER_DEFAULT);
-    // cv.boxFilter(src, dst, -1, ksize, anchor, true, cv.BORDER_DEFAULT)
-
     // Thresholding
-    cv.threshold(dst, dst, 180, 255, cv.THRESH_BINARY);
+    cv.threshold(dst, dst, 170, 255, cv.THRESH_BINARY);
     cv.bitwise_not(dst, dst);
 
     // Hough Line Transform
