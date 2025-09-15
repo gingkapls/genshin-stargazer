@@ -10,7 +10,7 @@ export async function processImage(
     const dst = new cv.Mat();
 
     // Resizing for clearer OCR
-    cv.resize(src, src, new cv.Size(1920, 1080), 0, 0, cv.INTER_AREA);
+    // cv.resize(src, src, new cv.Size(1920, 1080), 0, 0, cv.INTER_AREA);
 
     // Grayscaling
     cv.cvtColor(src, dst, cv.COLOR_BGR2GRAY);
