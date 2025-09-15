@@ -53,7 +53,6 @@ const TIME_RECEIVED_BBOX: bbox = {
   HEIGHT_RATIO,
 };
 
-// FIXME: Not recognizing page numbers on my screenshots
 const PAGE_COUNT_BBOX: bbox = {
   TOP_RATIO: 0.87,
   LEFT_RATIO: 0.47,
@@ -209,41 +208,3 @@ export async function scanImages(
 
   return results;
 }
-
-// TODO: Remove this
-/*
-  const results = await Promise.all(
-    rectangles
-      .map((rectangle) =>
-        scheduler.addJob(
-          "recognize",
-          image,
-          { rectangle },
-          { blocks: true, text: false }
-        )
-      )
-      .concat(
-        pageWorker.recognize(
-          image,
-          { rectangle: pageRectangle },
-          { text: true, blocks: true, hocr: true }
-        )
-      )
-  );
-
-  const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
-    (r) => r.data.blocks!.map((block) => block.text)
-  );
-  const blocks = {
-    itemType,
-    itemName,
-    wishType,
-    timeReceived,
-    pageNumber,
-  } satisfies ScanResult;
-
-  await scheduler.terminate();
-  return { rectangles: rectangles.concat(pageRectangle), blocks };
-  // return [results.map((r) => r.data);
-}
-  */

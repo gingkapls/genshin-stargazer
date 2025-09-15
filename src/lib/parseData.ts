@@ -14,7 +14,6 @@ const itemNamesDict = new BKTree(
   Object.keys(weapons).concat(Object.keys(characters))
 );
 
-// TODO: Add Character Event Wish-2
 const wishTypesDict = new BKTree([
   "Character Event Wish",
   "Character Event Wish-2",
