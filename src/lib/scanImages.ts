@@ -53,6 +53,7 @@ const TIME_RECEIVED_BBOX: bbox = {
   HEIGHT_RATIO,
 };
 
+// FIXME: Not recognizing page numbers on my screenshots
 const PAGE_COUNT_BBOX: bbox = {
   TOP_RATIO: 0.87,
   LEFT_RATIO: 0.47,
@@ -72,20 +73,20 @@ function getRectangle(
   };
 }
 
-const COLUM_PARAMS = {
-  tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
-  tessedit_char_whitelist:
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
-  preserve_interword_spaces: "1",
-};
-
-const PAGE_PARAMS = {
-  tessedit_pageseg_mode: PSM.SINGLE_WORD,
-  tessedit_char_whitelist: "0123456789 ",
-  preserve_interword_spaces: "1",
-};
-
 export class Scheduler {
+  static COLUM_PARAMS = {
+    tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
+    tessedit_char_whitelist:
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
+    preserve_interword_spaces: "1",
+  };
+
+  static PAGE_PARAMS = {
+    tessedit_pageseg_mode: PSM.SINGLE_WORD,
+    tessedit_char_whitelist: "0123456789 \n",
+    preserve_interword_spaces: "1",
+  };
+
   static #instance: Scheduler;
   scheduler: Tesseract.Scheduler = createScheduler();
   pageWorker!: Tesseract.Worker;
@@ -98,7 +99,7 @@ export class Scheduler {
     Scheduler.#instance = this;
   }
 
-  async initialize(callback?: Function) {
+  async initialize(callback: () => void) {
     const workers = await Promise.all(
       Array(10)
         .fill(0)
@@ -106,11 +107,11 @@ export class Scheduler {
     );
 
     for await (const worker of workers) {
-      worker.setParameters(COLUM_PARAMS);
+      worker.setParameters(Scheduler.COLUM_PARAMS);
     }
 
     const pageWorker = await createWorker("eng");
-    await pageWorker.setParameters(PAGE_PARAMS);
+    await pageWorker.setParameters(Scheduler.PAGE_PARAMS);
 
     if (typeof callback === "function") callback();
 
@@ -167,9 +168,7 @@ export function processResult(results: RecognizeResult[]) {
     timeReceived,
     pageNumber,
   } satisfies ScanResult;
-  
 
-  
   return parseData(blocks);
 }
 
@@ -179,6 +178,7 @@ export async function scanImages(
   pageWorker: Tesseract.Worker,
   callback: (data: Tesseract.RecognizeResult) => void
 ): Promise<RecognizeResult[][]> {
+  // TODO: Clean this mess
   const results = await Promise.all(
     regions.map(
       async (region) =>
@@ -208,6 +208,7 @@ export async function scanImages(
   return results;
 }
 
+// TODO: Remove this
 /*
   const results = await Promise.all(
     rectangles
