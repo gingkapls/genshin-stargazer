@@ -162,7 +162,6 @@ export function getRegions(
 // TODO: Generate page hash
 // TODO: Remove ITEM_TYPE since it's computable from ITEM_NAME
 export function processResult(results: RecognizeResult[]) {
-
   const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)
   );
@@ -177,36 +176,44 @@ export function processResult(results: RecognizeResult[]) {
   return parseData(blocks);
 }
 
+async function scanSingleRegion(
+  region: ScanRegions,
+  scheduler: Tesseract.Scheduler,
+  pageWorker: Tesseract.Worker
+) {
+  return await Promise.all(
+    region.rectangles
+      .map((rectangle) =>
+        scheduler.addJob(
+          "recognize",
+          region.image,
+          { rectangle },
+          { blocks: true, text: false }
+        )
+      )
+      .concat(
+        pageWorker.recognize(
+          region.image,
+          { rectangle: region.pageRectangle },
+          { blocks: true, text: false }
+        )
+      )
+  );
+}
+
+// TODO: Better names...
 export async function scanImages(
   regions: ScanRegions[],
   scheduler: Tesseract.Scheduler,
   pageWorker: Tesseract.Worker,
-  callback: (data: Tesseract.RecognizeResult) => void
+  callback: (region: ScanRegions) => void
 ): Promise<RecognizeResult[][]> {
-  // TODO: Clean this mess
   const results = await Promise.all(
-    regions.map(
-      async (region) =>
-        await Promise.all(
-          region.rectangles
-            .map((rectangle) =>
-              scheduler
-                .addJob(
-                  "recognize",
-                  region.image,
-                  { rectangle },
-                  { blocks: true, text: false }
-                )
-                .then((data) => (callback(data), data))
-            )
-            .concat(
-              pageWorker.recognize(
-                region.image,
-                { rectangle: region.pageRectangle },
-                { blocks: true, text: false }
-              )
-            )
-        )
+    regions.map((region) =>
+      scanSingleRegion(region, scheduler, pageWorker).then((data) => {
+        callback(region);
+        return data;
+      })
     )
   );
 
