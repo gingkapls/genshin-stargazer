@@ -15,8 +15,15 @@ export async function processImage(
     // Grayscaling
     cv.cvtColor(src, dst, cv.COLOR_BGR2GRAY);
 
+    // Blurring
+    const ksize = new cv.Size(2, 2);
+    const anchor = new cv.Point(-1, -1);
+    // You can try more different parameters
+    cv.blur(dst, dst, ksize, anchor, cv.BORDER_DEFAULT);
+    // cv.boxFilter(src, dst, -1, ksize, anchor, true, cv.BORDER_DEFAULT)
+
     // Thresholding
-    cv.threshold(dst, dst, 181, 255, cv.THRESH_BINARY);
+    cv.threshold(dst, dst, 180, 255, cv.THRESH_BINARY);
     cv.bitwise_not(dst, dst);
 
     // Hough Line Transform
