@@ -81,7 +81,7 @@ export class Scheduler {
   };
 
   static PAGE_PARAMS = {
-    tessedit_pageseg_mode: PSM.SINGLE_WORD,
+    tessedit_pageseg_mode: PSM.RAW_LINE,
     tessedit_char_whitelist: "0123456789 \n",
     preserve_interword_spaces: "1",
   };
