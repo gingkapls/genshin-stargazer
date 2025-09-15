@@ -1,7 +1,8 @@
-import { useState, useRef } from "react";
+import { useRef, type ActionDispatch } from "react";
 import { processImage } from "../lib/processImage.ts";
-import { scanImage, type ScanResult } from "../lib/scanImages.ts";
-import { parseData } from "../lib/parseData.ts";
+import { scanImage } from "../lib/scanImages.ts";
+import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
+import type { WishHistory } from "./wishHistory.ts";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -17,13 +18,19 @@ const colors = [
   "#FF33DB", // Bright Pink-Magenta
   "#FF3375", // Bright Hot Pink
 ];
+
 function genRandomColor() {
   const color = colors[Math.round(Math.random() * (colors.length - 1))];
   return color;
 }
 
-function Scanner({ src }: { src: string }) {
-  const [data, setData] = useState<ScanResult | null>(null);
+interface ScannerProps {
+  src: string;
+  data: WishHistory;
+  dispatch: ActionDispatch<[{ page: parsedHistoryPage }]>;
+}
+
+function Scanner({ src, data, dispatch }: ScannerProps) {
   const outputRef = useRef<HTMLCanvasElement | null>(null);
   const inputRef = useRef<HTMLImageElement | null>(null);
 
@@ -46,7 +53,8 @@ function Scanner({ src }: { src: string }) {
         ctx.stroke();
       });
 
-      setData(blocks);
+      const res = parseData(blocks);
+      dispatch({ page: res });
     }
 
     doStuff();
@@ -54,7 +62,7 @@ function Scanner({ src }: { src: string }) {
 
   if (data) {
     // console.log(data);
-    const res = parseData(data);
+    // const res = parseData(data);
     // console.log(res);
   }
 

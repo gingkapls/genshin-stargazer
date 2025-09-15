@@ -3,9 +3,8 @@ import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
 
-interface Wish {
+export interface Wish {
   itemName: string;
-  wishType: string;
   itemType: string;
   rarity: string;
   timeReceived: number;
@@ -83,19 +82,25 @@ function sanitizeItems(items: string[], dict: BKTree) {
   return res;
 }
 
-function parseDates(dateStr: string) {
+// function parseDates(dateStr: string) {
   // We know our date is always going to be in the format
   // yyyy-mm-dd[\W]hh:mm:ss
 //   dateStr.replace(/\W/);
+// }
+
+export interface parsedHistoryPage {
+  wishes: Wish[],
+  pageNumber: string,
+  wishType: string,
 }
 
-function parseData(data: ScanResult) {
+function parseData(data: ScanResult): parsedHistoryPage {
   const pageNumber = data.pageNumber[0]?.trim();
 
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
   const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
 
-  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
+  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[0];
 
   const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
   const wishType = sanitizeItems(wishTypesCol, wishTypesDict)[0];
@@ -109,15 +114,13 @@ function parseData(data: ScanResult) {
     return {
       itemName,
       itemType: itemTypesCol[i],
-      wishType: wishType,
       rarity: rarityMap.get(itemName) || "3-star",
       timeReceived: timeReceived[i],
     };
   });
 
-  console.log({ wishes, pageNumber });
+  return({ wishes, pageNumber, wishType });
 
-  return { wishes };
 }
 
 export { parseData };
