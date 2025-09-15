@@ -49,11 +49,10 @@ function prepareColumn(data: string[], header: string): [string, string[]] {
 
 function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
+
   if (!cleaned) return [cleaned, Infinity];
 
-  const [correctname, distance] = correctName(cleaned, dict);
-
-  return [correctname, distance];
+  return correctName(cleaned, dict);
 }
 
 function sanitizeItems(items: string[], dict: BKTree) {
