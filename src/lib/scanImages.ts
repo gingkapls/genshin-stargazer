@@ -58,7 +58,7 @@ const PAGE_COUNT_BBOX: bbox = {
   TOP_RATIO: 0.87,
   LEFT_RATIO: 0.47,
   WIDTH_RATIO: 0.08,
-  HEIGHT_RATIO: 0.07,
+  HEIGHT_RATIO: 0.08,
 };
 
 function getRectangle(
@@ -204,6 +204,8 @@ export async function scanImages(
         )
     )
   );
+
+  console.log("processImage", { results });
 
   return results;
 }
