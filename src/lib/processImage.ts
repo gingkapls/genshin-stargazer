@@ -16,7 +16,7 @@ export async function processImage(
     cv.cvtColor(src, dst, cv.COLOR_BGR2GRAY);
 
     // Blurring
-    const ksize = new cv.Size(2, 2);
+    const ksize = new cv.Size(1, 1);
     const anchor = new cv.Point(-1, -1);
     // You can try more different parameters
     cv.blur(dst, dst, ksize, anchor, cv.BORDER_DEFAULT);
