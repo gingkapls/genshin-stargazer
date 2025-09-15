@@ -14,6 +14,7 @@ export interface bbox {
   HEIGHT_RATIO: number;
 }
 
+// TODO: Implement hashing
 export interface ScanResult {
   itemType: string[];
   itemName: string[];
@@ -25,6 +26,7 @@ export interface ScanResult {
 const TOP_RATIO = 0.199;
 const HEIGHT_RATIO = 0.655;
 
+// TODO: Remove ITEM_TYPE_BBOX since it's computable from ITEM_NAME
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
   LEFT_RATIO: 0.06,
@@ -146,6 +148,7 @@ export function getRegions(
 ): ScanRegions {
   const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
+  // TODO: Remove ITEM_TYPE_BBOX since it's computable from ITEM_NAME
   const rectangles = [
     ITEM_TYPE_BBOX,
     ITEM_NAME_BBOX,
@@ -156,7 +159,10 @@ export function getRegions(
   return { image, rectangles, pageRectangle } satisfies ScanRegions;
 }
 
+// TODO: Generate page hash
+// TODO: Remove ITEM_TYPE since it's computable from ITEM_NAME
 export function processResult(results: RecognizeResult[]) {
+
   const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)
   );

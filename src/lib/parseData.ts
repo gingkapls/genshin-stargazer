@@ -95,6 +95,7 @@ export interface parsedHistoryPage {
   wishType: string;
 }
 
+// TODO: Remove itemType since it's computable from itemName
 function parseData(data: ScanResult): parsedHistoryPage {
   const pageNumber = data.pageNumber[0]?.trim();
 
@@ -111,6 +112,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
 
+  // TODO: Remove rarity and item type since it's computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
       itemName,

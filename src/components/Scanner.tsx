@@ -106,16 +106,7 @@ function Scanner({
       setRects((rects) => rects.concat(rectangle));
       setProcessedHashes(new Set(processedHashes.add(hash)));
 
-      /*       const ctx = outputRef.current.getContext("2d");
-      if (!ctx) return;
-
-      rectangles.forEach(({ top, left, height, width }) => {
-        const newCol = genRandomColor();
-        ctx.strokeStyle = newCol;
-        ctx.rect(left, top, width, height);
-        ctx.stroke();
-      });
-
+      /*
       const res = parseData(blocks);
       dispatch({ page: res }); */
     }
