@@ -27,7 +27,7 @@ const rarityMap = new Map(
 );
 
 // all whitespace + a digit + all whitespace + dash + all whitespace + wildcard
-const rarityRegex = /\W+\d\W*-\W*.*/;
+const rarityRegex = /\W+\d\W*-\W*.*\)/;
 
 function correctName(name: string, tree: BKTree): [string, number] {
   const [result, distance] = tree
