@@ -21,6 +21,7 @@ import {
 import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
 import type { WishHistory } from "./wishHistory.ts";
 import type { WishImage } from "./wishImage";
+import Tesseract from "tesseract.js";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -45,42 +46,51 @@ function genRandomColor() {
 interface ScannerProps {
   images: WishImage[];
   data: WishHistory;
-  processedHashes: Set<string>;
-  setProcessedHashes: Dispatch<SetStateAction<Set<string>>>;
-  dispatch: ActionDispatch<[{ page: parsedHistoryPage }]>;
+  dispatch: ActionDispatch<[{ pages: parsedHistoryPage[] }]>;
 }
 
-function drawBoxes(canvasEl: HTMLCanvasElement,rectangles: Tesseract.Rectangle[]) {
-      const ctx = canvasEl.getContext("2d");
-      if (!ctx) return;
+function drawBoxes(
+  canvasEl: HTMLCanvasElement,
+  rectangles: Tesseract.Rectangle[]
+) {
+  const ctx = canvasEl.getContext("2d");
+  if (!ctx) return;
 
-      rectangles.forEach(({ top, left, height, width }) => {
-        const newCol = genRandomColor();
-        ctx.strokeStyle = newCol;
-        ctx.rect(left, top, width, height);
-        ctx.stroke();
-      });
+  rectangles.forEach(({ top, left, height, width }) => {
+    const newCol = genRandomColor();
+    ctx.strokeStyle = newCol;
+    ctx.rect(left, top, width, height);
+    ctx.stroke();
+  });
 }
 
-function Scanner({
-  images,
-  processedHashes,
-  setProcessedHashes,
-  data,
-  dispatch,
-}: ScannerProps) {
+// TODO: Refactor Scanner
+function Scanner({ images, data, dispatch }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
+  const [scannedImages, setScannedImages] = useState<Set<string>>(new Set());
+  const [processedHashes, setProcessedHashes] = useState<Set<string>>(
+    new Set()
+  );
+  const [finalData, setFinalData] = useState<Tesseract.RecognizeResult[][]>([]);
   const pCount = rects.length;
 
   useEffect(() => {
     if (images.length !== 0 && pCount === images.length) {
-      console.log({ c: pCount, l: images.length });
+      // We've loaded all images
       for (const rect of rects) {
-        drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle))
+        drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
       }
       console.log("Loaded all images");
     }
   }, [pCount, images.length, rects]);
+
+  useEffect(() => {
+    if (finalData.length !== images.length) return;
+    // We've scanned all images
+
+    dispatch({ pages: finalData.map(processResult) });
+
+  }, [finalData, images, dispatch]);
 
   function handleLoad(hash: string, i: number) {
     async function doStuff() {
@@ -122,20 +132,32 @@ function Scanner({
 
   async function handleClick() {
     console.log("clicked", { rects });
+    const newRects = rects.filter(({ image }) => !scannedImages.has(image.id));
+
+    if (newRects.length === 0) {
+      console.log("Already scanned");
+      console.log({ finalData });
+      return;
+    }
+
     console.log("Start time", new Date());
     const scheduler = new Scheduler();
     await scheduler.initialize();
     let i = 0;
     const res = await scanImages(
-      rects,
+      newRects,
       scheduler.scheduler,
       scheduler.pageWorker,
-      () => console.log("progress: ", (i++ / (4 * rects.length)) * 100)
+      (region: ScanRegions) => {
+        console.log("Scanning image", region.image.id);
+        setScannedImages((oldImages) =>
+          new Set(oldImages).add(region.image.id)
+        );
+        console.log("progress: ", (++i / rects.length) * 100);
+      }
     );
-    
-    console.log("end time", new Date());
-    const result = res.map(processResult);
-    console.log("final", {result});
+
+    setFinalData((d) => d.concat(res));
   }
 
   return (
