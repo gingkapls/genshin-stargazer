@@ -72,9 +72,6 @@ function Scanner({
   const [rects, setRects] = useState<ScanRegions[]>([]);
   const pCount = rects.length;
 
-  console.log({ rects });
-  console.log({pCount});
-
   useEffect(() => {
     if (images.length !== 0 && pCount === images.length) {
       console.log({ c: pCount, l: images.length });
@@ -147,7 +144,7 @@ function Scanner({
     
     console.log("end time", new Date());
     const result = res.map(processResult);
-    console.log({result});
+    console.log("final", {result});
   }
 
   return (

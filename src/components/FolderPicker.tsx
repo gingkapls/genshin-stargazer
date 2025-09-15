@@ -10,8 +10,6 @@ function reducer(state: WishHistory, action: { page: parsedHistoryPage }) {
     .split(" ")
     .join("_") as keyof WishHistory;
 
-  console.log(wishType);
-
   return {
     ...state,
     [wishType]: state[wishType].concat([action.page]),
@@ -34,8 +32,8 @@ function FolderPicker() {
     chronicled_wish: [],
   });
 
-  console.log({ data });
-  console.log({ hashes: [...processedHashes.entries()] });
+  // console.log({ data });
+  // console.log({ hashes: [...processedHashes.entries()] });
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
