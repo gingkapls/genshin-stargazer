@@ -67,6 +67,7 @@ function drawBoxes(
 // TODO: Refactor Scanner
 function Scanner({ images, data, dispatch }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
+  // TODO: Lift hashed state upward
   const [scannedImages, setScannedImages] = useState<Set<string>>(new Set());
   const [processedHashes, setProcessedHashes] = useState<Set<string>>(
     new Set()
@@ -89,7 +90,6 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
     // We've scanned all images
 
     dispatch({ pages: finalData.map(processResult) });
-
   }, [finalData, images, dispatch]);
 
   function handleLoad(hash: string, i: number) {
@@ -115,19 +115,9 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
 
       setRects((rects) => rects.concat(rectangle));
       setProcessedHashes(new Set(processedHashes.add(hash)));
-
-      /*
-      const res = parseData(blocks);
-      dispatch({ page: res }); */
     }
 
     doStuff();
-  }
-
-  if (data) {
-    // console.log(data);
-    // const res = parseData(data);
-    // console.log(res);
   }
 
   async function handleClick() {

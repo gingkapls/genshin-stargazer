@@ -74,6 +74,8 @@ function getRectangle(
   };
 }
 
+
+// TODO: Move Scheduler class to its own file
 export class Scheduler {
   static COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
@@ -131,6 +133,8 @@ export class Scheduler {
   }
 }
 
+// TODO: Move elsewhere
+// TODO: Give a better name
 export interface ScanRegions {
   image: HTMLCanvasElement;
   rectangles: Tesseract.Rectangle[];
