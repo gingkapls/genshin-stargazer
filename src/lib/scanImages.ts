@@ -1,4 +1,9 @@
-import Tesseract, { createScheduler, createWorker, PSM } from "tesseract.js";
+import Tesseract, {
+  createScheduler,
+  createWorker,
+  PSM,
+  type RecognizeResult,
+} from "tesseract.js";
 
 // Bounding Box
 export interface bbox {
@@ -79,40 +84,65 @@ const PAGE_PARAMS = {
   preserve_interword_spaces: "1",
 };
 
-class Scheduler {
+export class Scheduler {
   static #instance: Scheduler;
-  scheduler: Tesseract.Scheduler | null = null;
-  workers: Tesseract.Worker[] | null = null;
-  pageWorker: Tesseract.Worker | null = null;
+  scheduler: Tesseract.Scheduler = createScheduler();
+  pageWorker!: Tesseract.Worker;
 
   constructor() {
-    if (Scheduler.#instance) return Scheduler.#instance;
+    if (Scheduler.#instance !== undefined) {
+      return Scheduler.#instance;
+    }
 
     Scheduler.#instance = this;
-    this.scheduler = createScheduler();
   }
 
-  async initialize(callback: Function) {
-    this.workers = await Promise.all(Array(2).map(() => createWorker("en")));
+  async initialize(callback?: Function) {
+    const workers = await Promise.all(
+      Array(10)
+        .fill(0)
+        .map(() => createWorker("eng"))
+    );
 
-    this.workers.forEach((worker) => worker.setParameters(COLUM_PARAMS));
-    this.pageWorker = await createWorker("eng");
-    this.pageWorker.setParameters(PAGE_PARAMS);
+    for await (const worker of workers) {
+      worker.setParameters(COLUM_PARAMS);
+    }
 
-    callback();
+    const pageWorker = await createWorker("eng");
+    await pageWorker.setParameters(PAGE_PARAMS);
+
+    if (typeof callback === "function") callback();
+
+    workers.forEach((worker) => {
+      this.scheduler.addWorker(worker);
+    });
+
+    this.pageWorker = pageWorker;
+
     return this;
   }
 
   async terminate() {
-    this.scheduler?.terminate();
-    this.pageWorker?.terminate();
+    this.scheduler.terminate();
+    this.pageWorker.terminate();
   }
 }
 
-export async function scanImage(
+export interface ScanRegions {
+  image: HTMLImageElement | HTMLCanvasElement;
+  rectangles: Tesseract.Rectangle[];
+  pageRectangle: Tesseract.Rectangle;
+}
+
+export function getRegions(
   image: HTMLCanvasElement | HTMLImageElement,
-  offset: { top: number; left: number; height: number; width: number }
-) {
+  offset: {
+    top: number;
+    left: number;
+    height: number;
+    width: number;
+  }
+): ScanRegions {
   const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
   const rectangles = [
@@ -122,9 +152,45 @@ export async function scanImage(
     TIME_RECEIVED_BBOX,
   ].map((bbox) => getRectangle(bbox, offset));
 
-  return { rectangles, pageRectangle };
+  return { image, rectangles, pageRectangle } satisfies ScanRegions;
+}
 
-  /*
+export async function scanImages(
+  regions: ScanRegions[],
+  scheduler: Tesseract.Scheduler,
+  pageWorker: Tesseract.Worker,
+  callback: (data: Tesseract.RecognizeResult) => void
+): Promise<RecognizeResult[][]> {
+  const results = await Promise.all(
+    regions.map(
+      async (region) =>
+        await Promise.all(
+          region.rectangles
+            .map((rectangle) =>
+              scheduler
+                .addJob(
+                  "recognize",
+                  region.image,
+                  { rectangle },
+                  { blocks: true, text: false }
+                )
+                .then((data) => (callback(data), data))
+            )
+            .concat(
+              pageWorker.recognize(
+                region.image,
+                { rectangle: region.pageRectangle },
+                { blocks: true, text: false }
+              )
+            )
+        )
+    )
+  );
+
+  return results;
+}
+
+/*
   const results = await Promise.all(
     rectangles
       .map((rectangle) =>
@@ -157,6 +223,6 @@ export async function scanImage(
 
   await scheduler.terminate();
   return { rectangles: rectangles.concat(pageRectangle), blocks };
-  */
   // return [results.map((r) => r.data);
 }
+  */

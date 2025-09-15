@@ -1,9 +1,26 @@
-import { useRef, useState, type ActionDispatch } from "react";
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type ActionDispatch,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { processImage } from "../lib/processImage.ts";
-import { scanImage, type bbox } from "../lib/scanImages.ts";
+import {
+  getRegions,
+  scanImage,
+  scanImages,
+  Scheduler,
+  type bbox,
+  type ScanRegions,
+  type ScanResult,
+} from "../lib/scanImages.ts";
 import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
 import type { WishHistory } from "./wishHistory.ts";
 import type { Rectangle } from "tesseract.js";
+import type { WishImage } from "./wishImage";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -26,31 +43,56 @@ function genRandomColor() {
 }
 
 interface ScannerProps {
-  images: string[];
+  images: WishImage[];
   data: WishHistory;
+  processedHashes: Set<string>;
+  setProcessedHashes: Dispatch<SetStateAction<Set<string>>>;
   dispatch: ActionDispatch<[{ page: parsedHistoryPage }]>;
 }
 
-function Scanner({ images, data, dispatch }: ScannerProps) {
-  const outputRef = useRef<HTMLCanvasElement | null>(null);
-  const inputRef = useRef<HTMLImageElement | null>(null);
-  const [rects, setRects] = useState<Rectangle[]>([]);
-  console.log(rects);
+function Scanner({
+  images,
+  processedHashes,
+  setProcessedHashes,
+  data,
+  dispatch,
+}: ScannerProps) {
+  const [rects, setRects] = useState<ScanRegions[]>([]);
+  const pCount = rects.length / 4;
 
-  function handleLoad() {
+  console.log({ rects });
+
+  useEffect(() => {
+    if (images.length !== 0 && pCount === images.length) {
+      console.log({ c: pCount, l: images.length });
+      console.log("Loaded all images");
+    }
+  }, [pCount, images.length]);
+
+  function handleLoad(hash: string, i: number) {
     async function doStuff() {
-      if (outputRef.current === null || inputRef.current === null) return;
+      if (processedHashes.has(hash)) {
+        console.log("Already processed");
+        return;
+      }
 
-      const offset = await processImage(inputRef.current, outputRef.current);
-
-      if (!offset) return;
-
-      const { rectangles, pageRectangle } = await scanImage(
-        outputRef.current,
-        offset
+      const inputEl = document.querySelector<HTMLImageElement>("#" + hash);
+      const canvasEl = document.querySelector<HTMLCanvasElement>(
+        "#" + "canvas" + "_" + hash
       );
 
-      setRects(rects.concat(rectangles));
+      if (inputEl === null || canvasEl === null)
+        throw new Error("Can't find image");
+
+      const offset = await processImage(inputEl, canvasEl);
+
+      if (!offset) throw new Error("No offset found. Couldn't process image");
+
+      const rectangle = getRegions(canvasEl, offset);
+
+      setRects((rects) => rects.concat(rectangle));
+      setProcessedHashes(new Set(processedHashes.add(hash)));
+
       /*       const ctx = outputRef.current.getContext("2d");
       if (!ctx) return;
 
@@ -74,14 +116,43 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
     // console.log(res);
   }
 
+  async function handleClick() {
+    console.log("clicked", { rects });
+    console.log("Start time", new Date());
+    const scheduler = new Scheduler();
+    await scheduler.initialize();
+    let i = 0;
+    const res = await scanImages(
+      rects,
+      scheduler.scheduler,
+      scheduler.pageWorker,
+      () => console.log("progress: ", (i++ / (4 * rects.length)) * 100)
+    );
+    console.log("end time", new Date());
+    console.log(res);
+
+    console.log(data);
+    
+  }
+
   return (
     <>
       <h1>Small Wish test</h1>
-      {images.map((image) => (
-        <>
-          <img ref={inputRef} src={src} alt="sample" onLoad={handleLoad}></img>
-          <canvas ref={outputRef} />
-        </>
+      {images.length !== 0 && processedHashes.size === images.length && (
+        <button type="button" onClick={handleClick}>
+          Scan
+        </button>
+      )}
+      {images.map((image, i) => (
+        <Fragment key={image.hash}>
+          <img
+            id={image.hash}
+            src={image.src}
+            alt="sample"
+            onLoad={() => handleLoad(image.hash, i)}
+          ></img>
+          <canvas id={"canvas" + "_" + image.hash} />
+        </Fragment>
       ))}
     </>
   );
