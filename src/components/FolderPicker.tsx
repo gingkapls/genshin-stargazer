@@ -45,12 +45,7 @@ function FolderPicker() {
   return (
     <>
       <input type="file" multiple onChange={handleChange} />
-      {images.map(
-        (src) =>
-          src !== "null" && (
-            <Scanner key={src} src={src} data={data} dispatch={dispatch} />
-          )
-      )}
+      <Scanner images={images} data={data} dispatch={dispatch} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import Tesseract, { createScheduler, createWorker, PSM } from "tesseract.js";
 
 // Bounding Box
-interface bbox {
+export interface bbox {
   TOP_RATIO: number;
   LEFT_RATIO: number;
   WIDTH_RATIO: number;
@@ -66,32 +66,53 @@ function getRectangle(
   };
 }
 
+const COLUM_PARAMS = {
+  tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
+  tessedit_char_whitelist:
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
+  preserve_interword_spaces: "1",
+};
+
+const PAGE_PARAMS = {
+  tessedit_pageseg_mode: PSM.SINGLE_WORD,
+  tessedit_char_whitelist: "0123456789 ",
+  preserve_interword_spaces: "1",
+};
+
+class Scheduler {
+  static #instance: Scheduler;
+  scheduler: Tesseract.Scheduler | null = null;
+  workers: Tesseract.Worker[] | null = null;
+  pageWorker: Tesseract.Worker | null = null;
+
+  constructor() {
+    if (Scheduler.#instance) return Scheduler.#instance;
+
+    Scheduler.#instance = this;
+    this.scheduler = createScheduler();
+  }
+
+  async initialize(callback: Function) {
+    this.workers = await Promise.all(Array(2).map(() => createWorker("en")));
+
+    this.workers.forEach((worker) => worker.setParameters(COLUM_PARAMS));
+    this.pageWorker = await createWorker("eng");
+    this.pageWorker.setParameters(PAGE_PARAMS);
+
+    callback();
+    return this;
+  }
+
+  async terminate() {
+    this.scheduler?.terminate();
+    this.pageWorker?.terminate();
+  }
+}
+
 export async function scanImage(
   image: HTMLCanvasElement | HTMLImageElement,
   offset: { top: number; left: number; height: number; width: number }
 ) {
-  const scheduler = createScheduler();
-  const worker1 = await createWorker("eng");
-  const worker2 = await createWorker("eng");
-  const pageWorker = await createWorker("eng");
-
-  const COLUM_PARAMS = {
-    tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
-    tessedit_char_whitelist:
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
-    preserve_interword_spaces: "1",
-  };
-
-  const PAGE_PARAMS = {
-    tessedit_pageseg_mode: PSM.SINGLE_WORD,
-    tessedit_char_whitelist: "0123456789 ",
-    preserve_interword_spaces: "1",
-  };
-
-  worker1.setParameters(COLUM_PARAMS);
-  worker2.setParameters(COLUM_PARAMS);
-  pageWorker.setParameters(PAGE_PARAMS);
-
   const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
   const rectangles = [
@@ -101,9 +122,9 @@ export async function scanImage(
     TIME_RECEIVED_BBOX,
   ].map((bbox) => getRectangle(bbox, offset));
 
-  scheduler.addWorker(worker1);
-  scheduler.addWorker(worker2);
+  return { rectangles, pageRectangle };
 
+  /*
   const results = await Promise.all(
     rectangles
       .map((rectangle) =>
@@ -136,5 +157,6 @@ export async function scanImage(
 
   await scheduler.terminate();
   return { rectangles: rectangles.concat(pageRectangle), blocks };
+  */
   // return [results.map((r) => r.data);
 }
