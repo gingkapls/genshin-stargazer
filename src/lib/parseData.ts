@@ -54,8 +54,6 @@ function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
 
   const [correctname, distance] = correctName(cleaned, dict);
 
-  console.log({ cleaned, correctname, distance });
-
   return [correctname, distance];
 }
 
@@ -105,7 +103,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
   const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
 
-  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[0];
+  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
 
   const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
   const wishType = sanitizeItems(wishTypesCol, wishTypesDict)[0];
