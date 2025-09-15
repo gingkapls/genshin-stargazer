@@ -10,6 +10,7 @@ import {
 import { processImage } from "../lib/processImage.ts";
 import {
   getRegions,
+  processResult,
   scanImage,
   scanImages,
   Scheduler,
@@ -128,8 +129,11 @@ function Scanner({
       scheduler.pageWorker,
       () => console.log("progress: ", (i++ / (4 * rects.length)) * 100)
     );
+    
     console.log("end time", new Date());
     console.log(res);
+    const result = res.map(processResult);
+    console.log({result});
 
     console.log(data);
     

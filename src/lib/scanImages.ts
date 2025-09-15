@@ -4,6 +4,7 @@ import Tesseract, {
   PSM,
   type RecognizeResult,
 } from "tesseract.js";
+import { parseData } from "./parseData.ts";
 
 // Bounding Box
 export interface bbox {
@@ -153,6 +154,23 @@ export function getRegions(
   ].map((bbox) => getRectangle(bbox, offset));
 
   return { image, rectangles, pageRectangle } satisfies ScanRegions;
+}
+
+export function processResult(results: RecognizeResult[]) {
+  const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
+    (r) => r.data.blocks!.map((block) => block.text)
+  );
+  const blocks = {
+    itemType,
+    itemName,
+    wishType,
+    timeReceived,
+    pageNumber,
+  } satisfies ScanResult;
+  
+
+  
+  return parseData(blocks);
 }
 
 export async function scanImages(
