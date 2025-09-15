@@ -23,7 +23,7 @@ export interface ScanResult {
 }
 
 const TOP_RATIO = 0.199;
-const HEIGHT_RATIO = 0.654;
+const HEIGHT_RATIO = 0.655;
 
 const ITEM_TYPE_BBOX: bbox = {
   TOP_RATIO,
@@ -48,8 +48,8 @@ const WISH_TYPE_BBOX: bbox = {
 
 const TIME_RECEIVED_BBOX: bbox = {
   TOP_RATIO,
-  LEFT_RATIO: 0.68,
-  WIDTH_RATIO: 0.25,
+  LEFT_RATIO: 0.682,
+  WIDTH_RATIO: 0.26,
   HEIGHT_RATIO,
 };
 
@@ -76,7 +76,7 @@ export class Scheduler {
   static COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     tessedit_char_whitelist:
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890():-' \n",
     preserve_interword_spaces: "1",
   };
 
