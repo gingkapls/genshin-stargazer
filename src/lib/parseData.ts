@@ -2,6 +2,7 @@ import weapons from "../../data/weapon_rarity.json";
 import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
+import { hashCode } from "./hashCode.ts";
 
 export interface Wish {
   itemName: string;
@@ -83,15 +84,16 @@ function sanitizeItems(items: string[], dict: BKTree) {
 }
 
 // function parseDates(dateStr: string) {
-  // We know our date is always going to be in the format
-  // yyyy-mm-dd[\W]hh:mm:ss
+// We know our date is always going to be in the format
+// yyyy-mm-dd[\W]hh:mm:ss
 //   dateStr.replace(/\W/);
 // }
 
 export interface parsedHistoryPage {
-  wishes: Wish[],
-  pageNumber: string,
-  wishType: string,
+  wishes: Wish[];
+  pageNumber: string;
+  wishType: string;
+  hash: string;
 }
 
 function parseData(data: ScanResult): parsedHistoryPage {
@@ -118,9 +120,15 @@ function parseData(data: ScanResult): parsedHistoryPage {
       timeReceived: timeReceived[i],
     };
   });
+  
+  // We use our hash to avoid duplicate pages
+  // (itemName + timeReceived) + pageNumber
+  const hash: string = wishes.reduce(
+    (acc, curr) => acc + hashCode(curr.itemName + curr.timeReceived),
+    ""
+  ) + pageNumber;
 
-  return({ wishes, pageNumber, wishType });
-
+  return { wishes, pageNumber, wishType, hash };
 }
 
 export { parseData };

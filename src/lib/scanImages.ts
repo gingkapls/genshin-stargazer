@@ -66,32 +66,71 @@ function getRectangle(
   };
 }
 
-export async function scanImage(
-  image: HTMLCanvasElement | HTMLImageElement,
-  offset: { top: number; left: number; height: number; width: number }
-) {
-  const scheduler = createScheduler();
-  const worker1 = await createWorker("eng");
-  const worker2 = await createWorker("eng");
-  const pageWorker = await createWorker("eng");
+// Scheduler singleton
+class Scheduler {
+  static scheduler: Tesseract.Scheduler;
+  static pageNumberWorker: Tesseract.Worker | null;
 
-  const COLUM_PARAMS = {
+  static COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     tessedit_char_whitelist:
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890:-' \n",
     preserve_interword_spaces: "1",
   };
 
-  const PAGE_PARAMS = {
+  static PAGE_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_WORD,
     tessedit_char_whitelist: "0123456789 ",
     preserve_interword_spaces: "1",
   };
 
-  worker1.setParameters(COLUM_PARAMS);
-  worker2.setParameters(COLUM_PARAMS);
-  pageWorker.setParameters(PAGE_PARAMS);
+  constructor() {
+    if (Scheduler.scheduler) return this;
+    Scheduler.scheduler = createScheduler();
+    Scheduler.pageNumberWorker = null;
+  }
 
+  get scheduler() {
+    return Scheduler.scheduler;
+  }
+  
+  get pageNumberWorker() {
+    return Scheduler.pageNumberWorker;
+  }
+
+  async initialize() {
+    if (Scheduler.pageNumberWorker !== null) return this;
+
+    const workers = await Promise.all(
+      Array.from({ length: 2 }, () => createWorker("eng"))
+    );
+
+    const pageNumberWorker = await createWorker("eng");
+
+    workers.forEach((worker) => {
+      worker.setParameters(Scheduler.COLUM_PARAMS);
+      Scheduler.scheduler.addWorker(worker);
+    });
+
+    pageNumberWorker.setParameters(Scheduler.PAGE_PARAMS);
+    Scheduler.pageNumberWorker = pageNumberWorker;
+
+    return this;
+  }
+
+  async terminate() {
+    await Scheduler.scheduler.terminate();
+  }
+}
+
+export const sched = await new Scheduler().initialize();
+console.log(sched.scheduler.getNumWorkers(), sched.pageNumberWorker)
+
+export async function scanImage(
+  scheduler: Scheduler,
+  image: HTMLCanvasElement | HTMLImageElement,
+  offset: { top: number; left: number; height: number; width: number }
+) {
   const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
   const rectangles = [
@@ -101,13 +140,10 @@ export async function scanImage(
     TIME_RECEIVED_BBOX,
   ].map((bbox) => getRectangle(bbox, offset));
 
-  scheduler.addWorker(worker1);
-  scheduler.addWorker(worker2);
-
   const results = await Promise.all(
     rectangles
       .map((rectangle) =>
-        scheduler.addJob(
+        scheduler.scheduler.addJob(
           "recognize",
           image,
           { rectangle },
@@ -115,13 +151,15 @@ export async function scanImage(
         )
       )
       .concat(
-        pageWorker.recognize(
+        Scheduler.pageNumberWorker.recognize(
           image,
           { rectangle: pageRectangle },
-          { text: true, blocks: true, hocr: true }
+          { text: false, blocks: true }
         )
       )
   );
+  
+  scheduler.terminate();
 
   const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)
@@ -134,7 +172,6 @@ export async function scanImage(
     pageNumber,
   } satisfies ScanResult;
 
-  await scheduler.terminate();
   return { rectangles: rectangles.concat(pageRectangle), blocks };
   // return [results.map((r) => r.data);
 }
