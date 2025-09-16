@@ -65,6 +65,7 @@ function drawBoxes(
 }
 
 // TODO: Refactor Scanner
+// TODO: Set global data state
 function Scanner({ images, data, dispatch }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
   // TODO: Lift hashed state upward
@@ -92,6 +93,8 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
     dispatch({ pages: finalData.map(processResult) });
   }, [finalData, images, dispatch]);
 
+  // TODO: Lift ProcessedHashes state up
+  // TODO: remove unused i param
   function handleLoad(hash: string, i: number) {
     async function doStuff() {
       if (processedHashes.has(hash)) {
@@ -120,6 +123,7 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
     doStuff();
   }
 
+  // TODO: Refactor this into its own function
   async function handleClick() {
     console.log("clicked", { rects });
     // Only scan new images
