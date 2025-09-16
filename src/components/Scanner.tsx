@@ -71,20 +71,18 @@ function Scanner({ images, dispatch }: ScannerProps) {
     new Set()
   );
 
-  useEffect(() => {
-    if (images.length !== 0 && rects.length === images.length) {
-      // We've loaded and pre-processed dall images
-      for (const rect of rects) {
-        drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
-      }
-      console.log("Loaded all images");
+  if (images.length !== 0 && rects.length === images.length) {
+    // We've loaded and pre-processed dall images
+    for (const rect of rects) {
+      drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
     }
-  }, [images.length, rects]);
+    console.debug("Loaded all images");
+  }
 
   function handleLoad(hash: string) {
     async function doStuff() {
       if (processedHashes.has(hash)) {
-        console.log("Already processed");
+        console.debug("Already processed");
         return;
       }
 
@@ -112,17 +110,17 @@ function Scanner({ images, dispatch }: ScannerProps) {
   // TODO: Refactor this into its own function
   // Function to handle scanning
   async function handleClick() {
-    console.log("clicked", { rects });
+    console.debug("clicked", { rects });
     // Only scan new images
     const newRects = rects.filter(({ image }) => !scannedImages.has(image.id));
 
     // No new images
     if (newRects.length === 0) {
-      console.log("Already scanned");
+      console.debug("Already scanned");
       return;
     }
 
-    console.log("Start time", new Date());
+    console.debug("Start time", new Date());
     const scheduler = new Scheduler();
     await scheduler.initialize();
     let i = 0;
@@ -131,7 +129,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
       scheduler.scheduler,
       scheduler.pageWorker,
       (region: ScanRegions) => {
-        console.log("Scanning image", region.image.id);
+        console.debug("Scanning image", region.image.id);
         setScannedImages((oldImages) =>
           new Set(oldImages).add(region.image.id)
         );
