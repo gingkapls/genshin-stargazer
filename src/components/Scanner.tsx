@@ -45,7 +45,6 @@ function genRandomColor() {
 
 interface ScannerProps {
   images: WishImage[];
-  data: WishHistory;
   dispatch: ActionDispatch<[{ pages: parsedHistoryPage[] }]>;
 }
 
@@ -65,10 +64,8 @@ function drawBoxes(
 }
 
 // TODO: Refactor Scanner
-// TODO: Set global data state
-function Scanner({ images, data, dispatch }: ScannerProps) {
+function Scanner({ images, dispatch }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
-  // TODO: Lift hashed state upward
   const [scannedImages, setScannedImages] = useState<Set<string>>(new Set());
   const [processedHashes, setProcessedHashes] = useState<Set<string>>(
     new Set()
@@ -89,8 +86,9 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
   useEffect(() => {
     if (finalData.length !== images.length) return;
     // We've scanned all images
+    // const newPages = finalData.map(processResult);
 
-    dispatch({ pages: finalData.map(processResult) });
+    // dispatch({ pages: ) });
   }, [finalData, images, dispatch]);
 
   // TODO: Lift ProcessedHashes state up
@@ -124,6 +122,7 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
   }
 
   // TODO: Refactor this into its own function
+  // Function to handle scanning
   async function handleClick() {
     console.log("clicked", { rects });
     // Only scan new images
@@ -132,7 +131,6 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
     // No new images
     if (newRects.length === 0) {
       console.log("Already scanned");
-      console.log({ finalData });
       return;
     }
 
@@ -152,10 +150,14 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
         console.log("progress: ", (++i / rects.length) * 100);
       }
     );
-    
+
     await scheduler.terminate();
 
-    setFinalData((d) => d.concat(res));
+    const result = res.map(processResult);
+
+    // TODO: Move all processing here
+    console.log({ result });
+    dispatch({ pages: result });
   }
 
   return (
