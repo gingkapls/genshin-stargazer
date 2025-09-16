@@ -89,16 +89,11 @@ export class Scheduler {
     preserve_interword_spaces: "1",
   };
 
-  static #instance: Scheduler;
-  scheduler: Tesseract.Scheduler = createScheduler();
+  scheduler: Tesseract.Scheduler;
   pageWorker!: Tesseract.Worker;
 
   constructor() {
-    if (Scheduler.#instance !== undefined) {
-      return Scheduler.#instance;
-    }
-
-    Scheduler.#instance = this;
+   this.scheduler = createScheduler();   
   }
 
   async initialize(callback?: () => void) {
@@ -127,8 +122,8 @@ export class Scheduler {
   }
 
   async terminate() {
-    this.scheduler.terminate();
-    this.pageWorker.terminate();
+    await this.scheduler.terminate();
+    await this.pageWorker.terminate();
   }
 }
 
