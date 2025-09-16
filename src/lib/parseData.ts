@@ -2,6 +2,7 @@ import weapons from "../../data/weapon_rarity.json";
 import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
+import { hashCode } from "./hash.ts";
 
 export interface Wish {
   itemName: string;
@@ -93,9 +94,10 @@ export interface parsedHistoryPage {
   wishes: Wish[];
   pageNumber: string;
   wishType: string;
+  pageHash: string;
 }
 
-// TODO: Remove itemType since it's computable from itemName
+// TODO: Remove rarity and itemType since they're computable from itemName
 function parseData(data: ScanResult): parsedHistoryPage {
   const pageNumber = data.pageNumber[0]?.trim();
 
@@ -112,7 +114,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
 
-  // TODO: Remove rarity and item type since it's computable
+  // TODO: Remove rarity and item type since they're computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
       itemName,
@@ -122,7 +124,13 @@ function parseData(data: ScanResult): parsedHistoryPage {
     };
   });
 
-  return { wishes, pageNumber, wishType };
+  // Create a hash for our page to avoid duplicates
+  const pageHash = wishes.reduce(
+    (acc, cur) => acc + hashCode(cur.itemName + wishType + cur.timeReceived),
+    ""
+  );
+
+  return { wishes, pageNumber, wishType, pageHash };
 }
 
 export { parseData };

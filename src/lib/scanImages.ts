@@ -74,7 +74,6 @@ function getRectangle(
   };
 }
 
-
 // TODO: Move Scheduler class to its own file
 export class Scheduler {
   static COLUM_PARAMS = {
@@ -169,6 +168,7 @@ export function processResult(results: RecognizeResult[]) {
   const [itemType, itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)
   );
+
   const blocks = {
     itemType,
     itemName,
