@@ -3,36 +3,11 @@ import "./App.css";
 import FolderPicker from "./components/FolderPicker.tsx";
 import type { WishHistory } from "./components/wishHistory";
 import type { parsedHistoryPage } from "./lib/parseData.ts";
-
-// TODO: move somewhere better
-function convertToKey(
-  wishType: parsedHistoryPage["wishType"]
-): keyof WishHistory {
-  return wishType
-    .toLowerCase()
-    .split(" ")
-    .join("_")
-    .replaceAll("-", "_") as keyof WishHistory;
-}
+import { historyReducer } from "./lib/historyReducer.ts";
 
 function reducer(state: WishHistory, action: { pages: parsedHistoryPage[] }) {
   // TODO: make it more readable maybe?
-  return action.pages.reduce<WishHistory>(
-    (acc, cur) => {
-      const wishType = convertToKey(cur.wishType);
-
-      const hasPage: boolean =
-        acc[wishType].findIndex(({ pageHash }) => cur.pageHash === pageHash) !==
-        -1;
-
-      // TODO: Implement wish merging algorithm
-      // to not add duplicates
-      acc[wishType] = hasPage ? acc[wishType] : acc[wishType].concat(cur);
-
-      return acc;
-    },
-    { ...state }
-  );
+  return action.pages.reduce<WishHistory>(historyReducer, { ...state });
 }
 
 // TODO: Implement LocalStorage

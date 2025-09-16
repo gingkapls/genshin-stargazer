@@ -22,6 +22,7 @@ import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
 import type { WishHistory } from "./wishHistory.ts";
 import type { WishImage } from "./wishImage";
 import Tesseract from "tesseract.js";
+import { historyReducer } from "../lib/historyReducer.ts";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -61,6 +62,35 @@ function drawBoxes(
     ctx.rect(left, top, width, height);
     ctx.stroke();
   });
+}
+
+// We store the pages from newest to oldest as they are in game
+function pageComparator(
+  p1: parsedHistoryPage,
+  p2: parsedHistoryPage
+): -1 | 0 | 1 {
+  // if there are no wishes
+  // then there's a bigger problem than their order
+  if (p1.wishType !== p2.wishType)
+    throw new Error("Trying to compare different wish types");
+
+  // Last (oldest) wish of p1 vs First (newest) wish of p2
+  // P1 is newer than p2 so p1 should come first
+  // (Higher timestamp is newer)
+  if (p1.wishes.at(-1)!.timeReceived > p2.wishes.at(0)!.timeReceived) return -1;
+
+  // p2 is newer than p1 so p2 should come first
+  if (p1.wishes.at(-1)!.timeReceived < p2.wishes.at(0)!.timeReceived) return 1;
+
+  // If both are same or either is undefined, then we rely on the page numbers
+  // lower = newer
+  if (p1.pageNumber > p2.pageNumber) return -1;
+
+  if (p1.pageNumber < p2.pageNumber) return 1;
+
+  // If in the rare case page numbers are undefined
+  // we return zero since the order is undeterminable
+  return 0;
 }
 
 // TODO: Refactor Scanner
@@ -137,15 +167,24 @@ function Scanner({ images, dispatch }: ScannerProps) {
       }
     );
 
+    // FIXME: Terminating causes problems when uploading in batches
+    // FIXME: Not terminating results in huge memory leaks
     await scheduler.terminate();
 
-    // TODO: Sort pages
     // TODO: Convert into a list of wishes
     const result = res.map(processResult);
 
+    const reduced = result.reduce<WishHistory>(historyReducer, {
+      character_event_wish: [],
+      character_event_wish_2: [],
+      weapon_event_wish: [],
+      permanent_wish: [],
+      chronicled_wish: [],
+    });
+    console.log({ reduced });
+
     // TODO: Move all processing here
-    console.log({ result });
-    dispatch({ pages: result });
+    // dispatch({ pages: result });
   }
 
   return (
