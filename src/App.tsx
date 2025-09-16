@@ -29,8 +29,6 @@ function reducer(state: WishHistory, action: { pages: parsedHistoryPage[] }) {
       // to not add duplicates
       acc[wishType] = hasPage ? acc[wishType] : acc[wishType].concat(cur);
 
-      console.log({ hasPage, page: cur });
-
       return acc;
     },
     { ...state }
