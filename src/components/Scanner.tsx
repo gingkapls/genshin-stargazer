@@ -122,8 +122,10 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
 
   async function handleClick() {
     console.log("clicked", { rects });
+    // Only scan new images
     const newRects = rects.filter(({ image }) => !scannedImages.has(image.id));
 
+    // No new images
     if (newRects.length === 0) {
       console.log("Already scanned");
       console.log({ finalData });
@@ -146,6 +148,8 @@ function Scanner({ images, data, dispatch }: ScannerProps) {
         console.log("progress: ", (++i / rects.length) * 100);
       }
     );
+    
+    await scheduler.terminate();
 
     setFinalData((d) => d.concat(res));
   }
