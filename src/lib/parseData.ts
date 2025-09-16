@@ -94,7 +94,6 @@ export interface parsedHistoryPage {
   wishes: Wish[];
   pageNumber: string;
   wishType: string;
-  pageHash: string;
 }
 
 // TODO: Remove rarity and itemType since they're computable from itemName
@@ -125,12 +124,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
   });
 
   // Create a hash for our page to avoid duplicates
-  const pageHash = wishes.reduce(
-    (acc, cur) => acc + hashCode(cur.itemName + wishType + cur.timeReceived),
-    ""
-  );
-
-  return { wishes, pageNumber, wishType, pageHash };
+  return { wishes, pageNumber, wishType };
 }
 
 export { parseData };
