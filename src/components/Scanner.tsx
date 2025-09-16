@@ -70,30 +70,18 @@ function Scanner({ images, dispatch }: ScannerProps) {
   const [processedHashes, setProcessedHashes] = useState<Set<string>>(
     new Set()
   );
-  const [finalData, setFinalData] = useState<Tesseract.RecognizeResult[][]>([]);
-  const pCount = rects.length;
 
   useEffect(() => {
-    if (images.length !== 0 && pCount === images.length) {
-      // We've loaded all images
+    if (images.length !== 0 && rects.length === images.length) {
+      // We've loaded and pre-processed dall images
       for (const rect of rects) {
         drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
       }
       console.log("Loaded all images");
     }
-  }, [pCount, images.length, rects]);
+  }, [images.length, rects]);
 
-  useEffect(() => {
-    if (finalData.length !== images.length) return;
-    // We've scanned all images
-    // const newPages = finalData.map(processResult);
-
-    // dispatch({ pages: ) });
-  }, [finalData, images, dispatch]);
-
-  // TODO: Lift ProcessedHashes state up
-  // TODO: remove unused i param
-  function handleLoad(hash: string, i: number) {
+  function handleLoad(hash: string) {
     async function doStuff() {
       if (processedHashes.has(hash)) {
         console.log("Already processed");
@@ -153,6 +141,8 @@ function Scanner({ images, dispatch }: ScannerProps) {
 
     await scheduler.terminate();
 
+    // TODO: Sort pages
+    // TODO: Convert into a list of wishes
     const result = res.map(processResult);
 
     // TODO: Move all processing here
