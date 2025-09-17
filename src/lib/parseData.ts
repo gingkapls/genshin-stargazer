@@ -3,11 +3,8 @@ import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
 
-// TODO: Remove itemType and rarity
 export interface Wish {
   itemName: string;
-  itemType: string;
-  rarity: string;
   wishType: string;
   timeReceived: number;
   pageNumber: number;
@@ -34,11 +31,11 @@ const rarityRegex = /\W+\d\W*-\W*.*/;
 
 function correctName(name: string, tree: BKTree): [string, number] {
   const [result, distance] = tree
-  // More tolerant towards longer strings
+    // More tolerant towards longer strings
     .search(name, Math.ceil(name.length / 5))
     .sort(([, d1], [, d2]) => d1 - d2)[0] || [name, Infinity];
-    
-  console.log({result, distance})
+
+  console.log({ result, distance });
 
   return [result, distance];
 }
@@ -55,7 +52,7 @@ function prepareColumn(data: string[], header: string): [string, string[]] {
 
 function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
-  console.log({cleaned})
+  console.log({ cleaned });
 
   if (!cleaned) return [cleaned, Infinity];
 
@@ -104,8 +101,6 @@ function parseData(data: ScanResult): Wish[] {
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
   const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
 
-  const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
-
   const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
   const wishTypes = sanitizeItems(wishTypesCol, wishTypesDict);
 
@@ -113,15 +108,13 @@ function parseData(data: ScanResult): Wish[] {
     (time) =>
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
-  
+
   // TODO: Remove rarity and item type since they're computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
       itemName,
       pageNumber,
-      itemType: itemTypesCol[i],
       wishType: wishTypes[i],
-      rarity: rarityMap.get(itemName) || "3 Stars",
       timeReceived: timeReceived[i],
     };
   });
