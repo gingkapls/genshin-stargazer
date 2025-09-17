@@ -1,32 +1,16 @@
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type ActionDispatch,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { Fragment, useState, type ActionDispatch } from "react";
 import { processImage } from "../lib/processImage.ts";
 import {
   getRegions,
   processResult,
-  scanImage,
   scanImages,
   Scheduler,
-  type bbox,
   type ScanRegions,
-  type ScanResult,
 } from "../lib/scanImages.ts";
-import { parseData, type parsedHistoryPage } from "../lib/parseData.ts";
-import type { WishHistoryList, WishHistoryTable } from "./wishHistory.ts";
+import type { WishHistoryList } from "./wishHistory.ts";
 import type { WishImage } from "./wishImage";
 import Tesseract from "tesseract.js";
-import {
-  historyReducer,
-  historyTableToList,
-  sortWishHistory,
-} from "../lib/historyReducer.ts";
+import { historyReducer, sortWishHistory } from "../lib/historyReducer.ts";
 
 const colors = [
   "#FF5733", // Bright Red-Orange
@@ -169,13 +153,13 @@ function Scanner({ images, dispatch }: ScannerProps) {
           Scan
         </button>
       )}
-      {images.map((image, i) => (
+      {images.map((image) => (
         <Fragment key={image.hash}>
           <img
             id={image.hash}
             src={image.src}
             alt="sample"
-            onLoad={() => handleLoad(image.hash, i)}
+            onLoad={() => handleLoad(image.hash)}
           ></img>
           <canvas id={"canvas" + "_" + image.hash} />
         </Fragment>

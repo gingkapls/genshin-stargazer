@@ -1,8 +1,7 @@
 import type {
   WishHistoryList,
-  WishHistoryTable,
 } from "../components/wishHistory";
-import type { parsedHistoryPage, Wish } from "./parseData.ts";
+import type { Wish } from "./parseData.ts";
 
 // We store the pages from newest to oldest as they are in game
 function wishComparator(w1: Wish, w2: Wish): -1 | 0 | 1 {
@@ -33,7 +32,7 @@ function convertToKey(wishType: Wish["wishType"]): keyof WishHistoryList {
     .toLowerCase()
     .split(" ")
     .join("_")
-    .replaceAll("-", "_") as keyof WishHistoryTable;
+    .replaceAll("-", "_") as keyof WishHistoryList;
 }
 
 // TODO : Refactor to work with wishes instead

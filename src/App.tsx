@@ -2,8 +2,7 @@ import { useReducer } from "react";
 import "./App.css";
 import FolderPicker from "./components/FolderPicker.tsx";
 import type { WishHistoryList } from "./components/wishHistory";
-import type { parsedHistoryPage } from "./lib/parseData.ts";
-import { historyReducer, mergeHistories } from "./lib/historyReducer.ts";
+import { mergeHistories } from "./lib/historyReducer.ts";
 
 function reducer(
   state: WishHistoryList,
