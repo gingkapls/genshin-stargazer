@@ -144,27 +144,19 @@ function Scanner({ images, dispatch }: ScannerProps) {
 
     await scheduler.terminate();
 
-    // TODO: Convert into a list of wishes
-    // console.log({res});
-    const result = res.map(processResult);
-    // console.log({result});
+    const newHistory = res
+      .map(processResult)
+      .reduce<WishHistoryList>(historyReducer, {
+        character_event_wish: [],
+        character_event_wish_2: [],
+        weapon_event_wish: [],
+        permanent_wish: [],
+        chronicled_wish: [],
+      });
 
-    const reduced = result.reduce<WishHistoryTable>(historyReducer, {
-      character_event_wish: [],
-      character_event_wish_2: [],
-      weapon_event_wish: [],
-      permanent_wish: [],
-      chronicled_wish: [],
-    });
+    sortWishHistory(newHistory);
 
-    // sortWishHistory(reduced);
-
-    // console.log(reduced);
-
-    const newHistory = historyTableToList(reduced);
-    
-    console.log({newHistory});
-
+    console.log({ newHistory });
     // TODO: Move all processing here
     dispatch({ newHistory });
   }

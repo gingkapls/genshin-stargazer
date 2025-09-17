@@ -3,11 +3,14 @@ import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
 
+// TODO: Remove itemType and rarity
 export interface Wish {
   itemName: string;
   itemType: string;
   rarity: string;
+  wishType: string;
   timeReceived: number;
+  pageNumber: number;
 }
 
 const itemNamesDict = new BKTree(
@@ -94,15 +97,9 @@ function sanitizeItems(items: string[], dict: BKTree) {
 //   dateStr.replace(/\W/);
 // }
 
-export interface parsedHistoryPage {
-  wishes: Wish[];
-  pageNumber: string;
-  wishType: string;
-}
-
 // TODO: Remove rarity and itemType since they're computable from itemName
-function parseData(data: ScanResult): parsedHistoryPage {
-  const pageNumber = data.pageNumber[0]?.trim();
+function parseData(data: ScanResult): Wish[] {
+  const pageNumber = Number(data.pageNumber[0]?.trim());
 
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
   const itemNames = sanitizeItems(itemNamesCol, itemNamesDict);
@@ -110,7 +107,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
   const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
 
   const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
-  const wishType = sanitizeItems(wishTypesCol, wishTypesDict)[0];
+  const wishTypes = sanitizeItems(wishTypesCol, wishTypesDict);
 
   const timeReceived = prepareColumn(data.timeReceived, "Time Received")[1].map(
     (time) =>
@@ -121,14 +118,15 @@ function parseData(data: ScanResult): parsedHistoryPage {
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
       itemName,
+      pageNumber,
       itemType: itemTypesCol[i],
-      rarity: rarityMap.get(itemName) || "3-star",
+      wishType: wishTypes[i],
+      rarity: rarityMap.get(itemName) || "3 Stars",
       timeReceived: timeReceived[i],
     };
   });
 
-  // Create a hash for our page to avoid duplicates
-  return { wishes, pageNumber, wishType };
+  return wishes;
 }
 
 export { parseData };

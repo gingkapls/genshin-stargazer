@@ -5,37 +5,30 @@ import type {
 import type { parsedHistoryPage, Wish } from "./parseData.ts";
 
 // We store the pages from newest to oldest as they are in game
-function pageComparator(
-  p1: parsedHistoryPage,
-  p2: parsedHistoryPage
-): -1 | 0 | 1 {
-  // if there are no wishes
-  // then there's a bigger problem than their order
-  if (p1.wishType !== p2.wishType)
+function wishComparator(w1: Wish, w2: Wish): -1 | 0 | 1 {
+  if (w1.wishType !== w2.wishType)
     throw new Error("Trying to compare different wish types");
 
   // Last (oldest) wish of p1 vs First (newest) wish of p2
   // P1 is newer than p2 so p1 should come first
   // (Higher timestamp is newer)
-  if (p1.wishes.at(-1)!.timeReceived > p2.wishes.at(0)!.timeReceived) return -1;
+  if (w1.timeReceived > w2.timeReceived) return -1;
 
   // p2 is newer than p1 so p2 should come first
-  if (p1.wishes.at(-1)!.timeReceived < p2.wishes.at(0)!.timeReceived) return 1;
+  if (w1.timeReceived < w2.timeReceived) return 1;
 
   // If both are same or either is undefined, then we rely on the page numbers
   // lower = newer
-  if (p1.pageNumber > p2.pageNumber) return -1;
+  if (w1.pageNumber < w2.pageNumber) return -1;
 
-  if (p1.pageNumber < p2.pageNumber) return 1;
+  if (w1.pageNumber > w2.pageNumber) return 1;
 
   // If in the rare case page numbers are undefined
   // we return zero since the order is undeterminable
   return 0;
 }
 
-function convertToKey(
-  wishType: parsedHistoryPage["wishType"]
-): keyof WishHistoryTable {
+function convertToKey(wishType: Wish["wishType"]): keyof WishHistoryList {
   return wishType
     .toLowerCase()
     .split(" ")
@@ -44,37 +37,31 @@ function convertToKey(
 }
 
 // TODO : Refactor to work with wishes instead
-function historyReducer(
-  acc: WishHistoryTable,
-  cur: parsedHistoryPage
-): WishHistoryTable {
-  const wishType = convertToKey(cur.wishType);
-
-  // TODO: Implement wish merging algorithm
-  // to not add duplicates
-  acc[wishType] = acc[wishType].concat(cur);
+function historyReducer(acc: WishHistoryList, cur: Wish[]): WishHistoryList {
+  cur.forEach((wish) => {
+    const wishType = convertToKey(wish.wishType);
+    acc[wishType].push(wish);
+  });
 
   return acc;
 }
 
 // Mutating cause I can't be bothered and it's fine here
 // FIXME: This doesn't account for sparse histories
-function sortWishHistory(history: WishHistoryTable): WishHistoryTable {
+function sortWishHistory(history: WishHistoryList): WishHistoryList {
   for (const type of Object.keys(history)) {
-    history[type as keyof typeof history].sort(pageComparator);
+    history[type as keyof typeof history].sort(wishComparator);
   }
 
   return history;
 }
 
-function historyTableToList(history: WishHistoryTable): WishHistoryList {
+function historyTableToList(history: WishHistoryList): WishHistoryList {
   const res = {} as WishHistoryList;
 
   for (const type of Object.keys(history)) {
-    res[type as keyof WishHistoryList] = history[type as keyof typeof history]
-      .sort(pageComparator)
-      .map((page) => page.wishes)
-      .flat();
+    res[type as keyof WishHistoryList] =
+      history[type as keyof typeof history].sort(wishComparator);
   }
 
   return res;
@@ -135,6 +122,8 @@ function mergeList(oldList: Wish[], newList: Wish[]): Wish[] {
   for (; j < oldList.length; ++j) {
     mergedList.push(oldList[j]);
   }
+
+  console.log({ oldList, newList, mergedList });
 
   return mergedList;
 }
