@@ -9,13 +9,18 @@ import {
 import Scanner from "./Scanner.tsx";
 import type { WishImage } from "./wishImage";
 import type { WishHistoryList } from "./wishHistory";
+import raidenwish from "../assets/raiden-wish.png";
+import smallwish from "../assets/small.png";
+import incompletewish from "../assets/wish.jpg";
 
 interface FolderPickerProps {
   dispatch: ActionDispatch<[{ newHistory: WishHistoryList }]>;
 }
 
 function FolderPicker({ dispatch }: FolderPickerProps) {
-  const [images, setImages] = useState<WishImage[]>([]);
+  const [images, setImages] = useState<WishImage[]>([
+    { src: incompletewish, hash: "cra1234151" },
+  ]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {

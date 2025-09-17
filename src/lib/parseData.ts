@@ -106,13 +106,14 @@ function parseData(data: ScanResult): parsedHistoryPage {
   const itemTypesCol = prepareColumn(data.itemType, "Item Type")[1];
 
   const wishTypesCol = prepareColumn(data.wishType, "Wish Type")[1];
+  //  FIXME: Not all wishes on the page have the same wishtype
   const wishType = sanitizeItems(wishTypesCol, wishTypesDict)[0];
 
   const timeReceived = prepareColumn(data.timeReceived, "Time Received")[1].map(
     (time) =>
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
-  
+
   // TODO: Remove rarity and item type since they're computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {

@@ -62,6 +62,22 @@ const PAGE_COUNT_BBOX: bbox = {
   HEIGHT_RATIO: 0.08,
 };
 
+const HEADERS_BBOX: bbox = {
+  TOP_RATIO: 0.199,
+  LEFT_RATIO: 0.06,
+  WIDTH_RATIO: 0.85,
+  HEIGHT_RATIO: 0.08,
+};
+
+function generateItemBboxes(count: number = 1) {
+  return Array.from({ length: count }, (_, i) => ({
+    TOP_RATIO: i * 0.25, 
+    LEFT_RATIO: 0.0,
+    WIDTH_RATIO: 1,
+    HEIGHT_RATIO: 0.25,
+  }));
+}
+
 function getRectangle(
   bbox: bbox,
   offset: { top: number; left: number; height: number; width: number }
@@ -93,7 +109,7 @@ export class Scheduler {
   pageWorker!: Tesseract.Worker;
 
   constructor() {
-   this.scheduler = createScheduler();   
+    this.scheduler = createScheduler();
   }
 
   async initialize(callback?: () => void) {
@@ -147,12 +163,16 @@ export function getRegions(
   const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
 
   // TODO: Remove ITEM_TYPE_BBOX since it's computable from ITEM_NAME
-  const rectangles = [
+  /*   const rectangles = [
     ITEM_TYPE_BBOX,
     ITEM_NAME_BBOX,
     WISH_TYPE_BBOX,
     TIME_RECEIVED_BBOX,
-  ].map((bbox) => getRectangle(bbox, offset));
+  ].map((bbox) => getRectangle(bbox, offset)); */
+
+  const rectangles = generateItemBboxes(4).map((bbox) =>
+    getRectangle(bbox, offset)
+  );
 
   return { image, rectangles, pageRectangle } satisfies ScanRegions;
 }
