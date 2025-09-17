@@ -1,19 +1,23 @@
 import { useReducer } from "react";
 import "./App.css";
 import FolderPicker from "./components/FolderPicker.tsx";
-import type { WishHistory } from "./components/wishHistory";
+import type { WishHistoryList } from "./components/wishHistory";
 import type { parsedHistoryPage } from "./lib/parseData.ts";
-import { historyReducer } from "./lib/historyReducer.ts";
+import { historyReducer, mergeHistories } from "./lib/historyReducer.ts";
 
-function reducer(state: WishHistory, action: { pages: parsedHistoryPage[] }) {
+function reducer(
+  state: WishHistoryList,
+  action: { newHistory: WishHistoryList }
+) {
   // TODO: make it more readable maybe?
-  return action.pages.reduce<WishHistory>(historyReducer, { ...state });
+  //
+  return mergeHistories(state, action.newHistory);
 }
 
 // TODO: Implement LocalStorage
 function App() {
   const [data, dispatch] = useReducer<
-    WishHistory,
+    WishHistoryList,
     [Parameters<typeof reducer>[1]]
   >(reducer, {
     character_event_wish: [],

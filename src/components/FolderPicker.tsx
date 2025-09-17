@@ -7,11 +7,11 @@ import {
   type SetStateAction,
 } from "react";
 import Scanner from "./Scanner.tsx";
-import type { parsedHistoryPage } from "../lib/parseData.ts";
 import type { WishImage } from "./wishImage";
+import type { WishHistoryList } from "./wishHistory";
 
 interface FolderPickerProps {
-  dispatch: ActionDispatch<[{ pages: parsedHistoryPage[] }]>;
+  dispatch: ActionDispatch<[{ newHistory: WishHistoryList }]>;
 }
 
 function FolderPicker({ dispatch }: FolderPickerProps) {

@@ -2,7 +2,6 @@ import weapons from "../../data/weapon_rarity.json";
 import characters from "../../data/character_rarity.json";
 import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
-import { hashCode } from "./hash.ts";
 
 export interface Wish {
   itemName: string;
@@ -28,7 +27,7 @@ const rarityMap = new Map(
 );
 
 // all whitespace + a digit + all whitespace + dash + all whitespace + wildcard
-const rarityRegex = /\W+\d\W*-\W*.*\)/;
+const rarityRegex = /\W+\d\W*-\W*.*/;
 
 function correctName(name: string, tree: BKTree): [string, number] {
   const [result, distance] = tree
@@ -56,6 +55,7 @@ function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   return correctName(cleaned, dict);
 }
 
+// FIXME: Doesn't work with raiden shogun
 function sanitizeItems(items: string[], dict: BKTree) {
   const res = [];
 
@@ -112,7 +112,7 @@ function parseData(data: ScanResult): parsedHistoryPage {
     (time) =>
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
-
+  
   // TODO: Remove rarity and item type since they're computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
