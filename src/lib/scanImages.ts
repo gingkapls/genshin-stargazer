@@ -80,7 +80,6 @@ export class Scheduler {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     tessedit_char_whitelist:
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890():-' \n",
-    preserve_interword_spaces: "1",
   };
 
   static PAGE_PARAMS = {

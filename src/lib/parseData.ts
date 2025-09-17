@@ -31,8 +31,11 @@ const rarityRegex = /\W+\d\W*-\W*.*/;
 
 function correctName(name: string, tree: BKTree): [string, number] {
   const [result, distance] = tree
-    .search(name)
+  // More tolerant towards longer strings
+    .search(name, Math.ceil(name.length / 5))
     .sort(([, d1], [, d2]) => d1 - d2)[0] || [name, Infinity];
+    
+  console.log({result, distance})
 
   return [result, distance];
 }
@@ -49,6 +52,7 @@ function prepareColumn(data: string[], header: string): [string, string[]] {
 
 function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
+  console.log({cleaned})
 
   if (!cleaned) return [cleaned, Infinity];
 
@@ -62,7 +66,7 @@ function sanitizeItems(items: string[], dict: BKTree) {
   for (let i = 0; i < items.length; ++i) {
     const [cleaned, distance] = sanitizeSingleItem(items[i], dict);
 
-    if (distance <= 2) {
+    if (distance <= Math.ceil(cleaned.length / 5)) {
       res.push(cleaned);
       continue;
     }
