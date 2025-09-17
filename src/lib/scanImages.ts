@@ -14,7 +14,6 @@ export interface bbox {
   HEIGHT_RATIO: number;
 }
 
-// TODO: Implement hashing
 export interface ScanResult {
   itemName: string[];
   wishType: string[];
@@ -145,7 +144,6 @@ export function getRegions(
   return { image, rectangles, pageRectangle } satisfies ScanRegions;
 }
 
-// TODO: Generate page hash
 export function processResult(results: RecognizeResult[]) {
   const [itemName, wishType, timeReceived, pageNumber] = results.map(
     (r) => r.data.blocks!.map((block) => block.text)

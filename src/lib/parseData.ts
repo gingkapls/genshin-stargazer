@@ -59,7 +59,6 @@ function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   return correctName(cleaned, dict);
 }
 
-// FIXME: Doesn't work with raiden shogun
 function sanitizeItems(items: string[], dict: BKTree) {
   const res = [];
 
@@ -94,7 +93,6 @@ function sanitizeItems(items: string[], dict: BKTree) {
 //   dateStr.replace(/\W/);
 // }
 
-// TODO: Remove rarity and itemType since they're computable from itemName
 function parseData(data: ScanResult): Wish[] {
   const pageNumber = Number(data.pageNumber[0]?.trim());
 
@@ -109,7 +107,6 @@ function parseData(data: ScanResult): Wish[] {
       new Date(time.substring(0, 10) + " " + time.substring(10)).valueOf()
   );
 
-  // TODO: Remove rarity and item type since they're computable
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
       itemName,
