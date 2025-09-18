@@ -200,7 +200,5 @@ export async function scanImages(
     )
   );
 
-  console.log("processImage", { results });
-
   return results;
 }

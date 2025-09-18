@@ -35,7 +35,6 @@ function convertToKey(wishType: Wish["wishType"]): keyof WishHistoryList {
     .replaceAll("-", "_") as keyof WishHistoryList;
 }
 
-// TODO : Refactor to work with wishes instead
 function historyReducer(acc: WishHistoryList, cur: Wish[]): WishHistoryList {
   cur.forEach((wish) => {
     const wishType = convertToKey(wish.wishType);
@@ -46,7 +45,6 @@ function historyReducer(acc: WishHistoryList, cur: Wish[]): WishHistoryList {
 }
 
 // Mutating cause I can't be bothered and it's fine here
-// FIXME: This doesn't account for sparse histories
 function sortWishHistory(history: WishHistoryList): WishHistoryList {
   for (const type of Object.keys(history)) {
     history[type as keyof typeof history].sort(wishComparator);
@@ -121,8 +119,6 @@ function mergeList(oldList: Wish[], newList: Wish[]): Wish[] {
   for (; j < oldList.length; ++j) {
     mergedList.push(oldList[j]);
   }
-
-  console.log({ oldList, newList, mergedList });
 
   return mergedList;
 }

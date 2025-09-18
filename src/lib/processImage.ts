@@ -10,7 +10,15 @@ export async function processImage(
     const dst = new cv.Mat();
 
     // Resizing while maintaining aspect ratio for faster OCR
-    if (input.width > 1920) cv.resize(src, src, new cv.Size(1920, 1920 * (input.height / input.width)), 0, 0, cv.INTER_AREA);
+    if (input.width > 1920)
+      cv.resize(
+        src,
+        src,
+        new cv.Size(1920, (1920 * input.height) / input.width),
+        0,
+        0,
+        cv.INTER_AREA
+      );
 
     // Grayscaling
     cv.cvtColor(src, dst, cv.COLOR_BGR2GRAY);

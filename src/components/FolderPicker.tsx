@@ -1,11 +1,4 @@
-import {
-  useReducer,
-  useState,
-  type ActionDispatch,
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useState, type ActionDispatch, type ChangeEvent } from "react";
 import Scanner from "./Scanner.tsx";
 import type { WishImage } from "./wishImage";
 import type { WishHistoryList } from "./wishHistory";
@@ -40,6 +33,7 @@ function FolderPicker({ dispatch }: FolderPickerProps) {
   return (
     <>
       <input type="file" multiple onChange={handleChange} />
+    <h3>Uploaded {images.length} images</h3>
       <Scanner images={images} dispatch={dispatch} />
     </>
   );

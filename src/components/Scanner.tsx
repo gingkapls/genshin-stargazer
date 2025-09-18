@@ -59,6 +59,8 @@ function Scanner({ images, dispatch }: ScannerProps) {
   const [processedHashes, setProcessedHashes] = useState<Set<string>>(
     new Set()
   );
+  const [progress, setProgress] = useState(0);
+  const [isScanning, setIsScanning] = useState(false);
 
   if (images.length !== 0 && rects.length === images.length) {
     // We've loaded and pre-processed dall images
@@ -99,6 +101,10 @@ function Scanner({ images, dispatch }: ScannerProps) {
   // TODO: Refactor this into its own function
   // Function to handle scanning
   async function handleClick() {
+    if (isScanning) {
+      console.log("Already scanning");
+      return;
+    }
     console.debug("clicked", { rects });
     // Only scan new images
     const newRects = rects.filter(({ image }) => !scannedImages.has(image.id));
@@ -109,6 +115,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
       return;
     }
 
+    setIsScanning(true);
     console.debug("Start time", new Date());
     const scheduler = new Scheduler();
     await scheduler.initialize();
@@ -122,7 +129,9 @@ function Scanner({ images, dispatch }: ScannerProps) {
         setScannedImages((oldImages) =>
           new Set(oldImages).add(region.image.id)
         );
-        console.log("progress: ", (++i / rects.length) * 100);
+        // TODO: Add a progress component
+        // console.log("progress: ", (++i / rects.length) * 100);
+        setProgress((p) => (p += 1));
       }
     );
 
@@ -143,27 +152,44 @@ function Scanner({ images, dispatch }: ScannerProps) {
     console.log({ newHistory });
     // TODO: Move all processing here
     dispatch({ newHistory });
+    setIsScanning(false);
   }
 
+  // TODO: Hide images
+  // TODO: Convert them into thumbnails
   return (
     <>
-      <h1>Small Wish test</h1>
       {images.length !== 0 && processedHashes.size === images.length && (
         <button type="button" onClick={handleClick}>
           Scan
         </button>
       )}
-      {images.map((image) => (
-        <Fragment key={image.hash}>
-          <img
-            id={image.hash}
-            src={image.src}
-            alt="sample"
-            onLoad={() => handleLoad(image.hash)}
-          ></img>
-          <canvas id={"canvas" + "_" + image.hash} />
-        </Fragment>
-      ))}
+      {isScanning && (
+        <p>{`Scanned ${progress} out of ${images.length} images`}</p>
+      )}
+      <section className="images">
+        {images.map((image, i) => (
+          <Fragment key={image.hash}>
+            <img
+              className="src_image"
+              id={image.hash}
+              src={image.src}
+              alt="sample"
+              style={{
+                top: (i + 1) * 100 + "px",
+              }}
+              onLoad={() => handleLoad(image.hash)}
+            ></img>
+            <canvas
+              id={"canvas" + "_" + image.hash}
+              className="out_image"
+              style={{
+                top: (i + 1) * 200 + "px",
+              }}
+            />
+          </Fragment>
+        ))}
+      </section>
     </>
   );
 }

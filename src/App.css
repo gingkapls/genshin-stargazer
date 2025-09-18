@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.images {
+  position: relative;
+}
+
+.out_image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: collapse;
+}
+
+.src_image {
+  /* max-width: 1440px; */
+  max-height: auto;
+}

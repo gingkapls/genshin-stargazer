@@ -22,9 +22,9 @@ const wishTypesDict = new BKTree([
   "Weapon Event Wish",
 ]);
 
-const rarityMap = new Map(
+/* const rarityMap = new Map(
   Object.entries(characters).concat(Object.entries(weapons))
-);
+); */
 
 // all whitespace + a digit + all whitespace + dash + all whitespace + wildcard
 const rarityRegex = /\W+\d\W*-\W*.*/;
@@ -34,8 +34,6 @@ function correctName(name: string, tree: BKTree): [string, number] {
     // More tolerant towards longer strings
     .search(name, Math.ceil(name.length / 5))
     .sort(([, d1], [, d2]) => d1 - d2)[0] || [name, Infinity];
-
-  console.log({ result, distance });
 
   return [result, distance];
 }
@@ -52,7 +50,6 @@ function prepareColumn(data: string[], header: string): [string, string[]] {
 
 function sanitizeSingleItem(name: string, dict: BKTree): [string, number] {
   const cleaned = name?.trim().replace(rarityRegex, "").trim();
-  console.log({ cleaned });
 
   if (!cleaned) return [cleaned, Infinity];
 
