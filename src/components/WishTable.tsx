@@ -115,7 +115,7 @@ function WishTable({ wishes }: { wishes: Wish[] }) {
         </tr>
       </thead>
       <tbody>
-        {wishes.toReversed().map((wish, i, arr) => {
+        {wishes.map((wish, i) => {
           const rarity = getRarity(wish.itemName);
 
           const banner = getBanner(wish.timeReceived);
@@ -132,8 +132,8 @@ function WishTable({ wishes }: { wishes: Wish[] }) {
               </td>
               <td>{rarity}</td>
               <td>{getPity(rarity, pityCounter)}</td>
-              <td>{getPerBanner(arr, i, pityCounter)}</td>
-              <td>{getGroupCount(arr, i, pityCounter)}</td>
+              <td>{getPerBanner(wishes, i, pityCounter)}</td>
+              <td>{getGroupCount(wishes, i, pityCounter)}</td>
               <td>{banner}</td>
               <td>{wish.wishType}</td>
             </tr>
