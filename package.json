@@ -13,7 +13,8 @@
     "@techstark/opencv-js": "^4.11.0-release.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "tesseract.js": "^6.0.1"
+    "tesseract.js": "^6.0.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

@@ -105,6 +105,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
       console.log("Already scanning");
       return;
     }
+
     console.debug("clicked", { rects });
     // Only scan new images
     const newRects = rects.filter(({ image }) => !scannedImages.has(image.id));
@@ -115,7 +116,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
       return;
     }
 
-    setIsScanning(true);
+    setIsScanning(() => true);
     console.debug("Start time", new Date());
     const scheduler = new Scheduler();
     await scheduler.initialize();
@@ -152,7 +153,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
     console.log({ newHistory });
     // TODO: Move all processing here
     dispatch({ newHistory });
-    setIsScanning(false);
+    setIsScanning(() => false);
   }
 
   // TODO: Hide images
