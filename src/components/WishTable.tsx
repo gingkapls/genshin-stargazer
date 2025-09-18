@@ -117,7 +117,7 @@ function WishTable({
             <th>#Roll</th>
             <th>Group</th>
             <th>Banner</th>
-            <th>Type</th>
+            <th>Part</th>
           </tr>
         </thead>
         <tbody>
@@ -141,7 +141,7 @@ function WishTable({
                 <td>{getPerBanner(wishes, i, pityCounter)}</td>
                 <td>{getGroupCount(wishes, i, pityCounter)}</td>
                 <td>{banner}</td>
-                <td>{wish.wishType}</td>
+                <td>{wish.part}</td>
               </tr>
             );
           })}

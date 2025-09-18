@@ -7,6 +7,7 @@ export interface Wish {
   id: ReturnType<typeof crypto.randomUUID>;
   itemName: string;
   wishType: string;
+  part: "" | "Part 2";
   timeReceived: number;
   pageNumber: number;
 }
@@ -110,7 +111,8 @@ function parseData(data: ScanResult): Wish[] {
       id: crypto.randomUUID(),
       itemName,
       pageNumber,
-      wishType: wishTypes[i],
+      wishType: wishTypes[i].replace('-2', ''),
+      part: wishTypes[i].includes('-2') ? "Part 2": "",
       timeReceived: timeReceived[i],
     };
   });
