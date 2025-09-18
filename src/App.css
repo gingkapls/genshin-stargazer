@@ -67,6 +67,16 @@ tr:nth-child(even) {
   background-color: #dedede;
 }
 
+.four-stars {
+  color: #8a6995;
+  font-weight: 600;
+}
+
+.five-stars {
+  color: #cc9832;
+  font-weight: 600;
+}
+
 td,
 th {
   padding: 4px 8px;

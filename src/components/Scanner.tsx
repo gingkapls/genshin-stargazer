@@ -62,11 +62,13 @@ function Scanner({ images, dispatch }: ScannerProps) {
   const [progress, setProgress] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
 
-  if (images.length !== 0 && rects.length === images.length) {
-    // We've loaded and pre-processed dall images
-    for (const rect of rects) {
+  const allImagesLoaded = images.length !== 0 && rects.length === images.length;
+
+  if (allImagesLoaded) {
+    // We've loaded and pre-processed all images
+    /*     for (const rect of rects) {
       drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
-    }
+    } */
     console.debug("Loaded all images");
   }
 
@@ -126,9 +128,6 @@ function Scanner({ images, dispatch }: ScannerProps) {
       scheduler.pageWorker,
       (region: ScanRegions) => {
         console.debug("Scanning image", region.image.id);
-        setScannedImages((oldImages) =>
-          new Set(oldImages).add(region.image.id)
-        );
         // TODO: Add a progress component
         // console.log("progress: ", (++i / rects.length) * 100);
         setProgress((p) => (p += 1));
@@ -152,21 +151,30 @@ function Scanner({ images, dispatch }: ScannerProps) {
     console.log({ newHistory });
     // TODO: Move all processing here
     dispatch({ newHistory });
+    // Set scanned images only after state is set
+    setScannedImages(
+      (oldImages) =>
+        new Set([...oldImages, ...rects.map((rect) => rect.image.id)])
+    );
+
     setIsScanning(() => false);
   }
 
   // TODO: Hide images
   // TODO: Convert them into thumbnails
   return (
+    // Only render Scan button when all images have been processed
     <>
-      {images.length !== 0 && processedHashes.size === images.length && (
+      {allImagesLoaded && (
         <button type="button" onClick={handleClick}>
           Scan
         </button>
       )}
+
       {isScanning && (
         <p>{`Scanned ${progress} out of ${images.length} images`}</p>
       )}
+
       <section className="images">
         {images.map((image, i) => (
           <Fragment key={image.hash}>
