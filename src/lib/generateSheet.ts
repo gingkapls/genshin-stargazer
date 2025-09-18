@@ -1,6 +1,6 @@
 import { utils, writeFileXLSX } from "xlsx";
 
-export function generateSheet(tables: (HTMLTableElement | null)[]) {
+export function generateSheet(tables: HTMLTableElement[] | null) {
   if (!tables || tables.length === 0) return;
   const workbook = utils.book_new();
   const [characterEvent, weaponEvent, standard, beginners, chronicled] =

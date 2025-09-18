@@ -15,7 +15,7 @@ function App() {
     setHistory((prevHistory) => mergeHistories(prevHistory, newHistory));
   }
 
-  const [history, setHistory] = useLocalStorage<WishHistoryList>('history', {
+  const [history, setHistory] = useLocalStorage<WishHistoryList>("history", {
     character_event_wish: [],
     weapon_event_wish: [],
     permanent_wish: [],
@@ -24,7 +24,7 @@ function App() {
   });
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const tables = useRef<Array<HTMLTableElement> | null>(null);
+  const tables = useRef<Array<HTMLTableElement>>(null!);
 
   if (tables.current === null) {
     tables.current = [];
@@ -53,7 +53,7 @@ function App() {
       {Object.values(history).map((wishes, i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
-          ref={(el) => (tables.current[i] = el)}
+          ref={(el: HTMLTableElement) => (tables.current[i] = el)}
           wishes={wishes}
           isActive={i === activeIndex}
         />
