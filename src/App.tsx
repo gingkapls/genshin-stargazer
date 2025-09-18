@@ -24,6 +24,7 @@ function App() {
     character_event_wish: [],
     weapon_event_wish: [],
     permanent_wish: [],
+    beginners_wish: [],
     chronicled_wish: [],
   });
 

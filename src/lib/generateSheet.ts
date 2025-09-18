@@ -3,9 +3,8 @@ import { utils, writeFileXLSX } from "xlsx";
 export function generateSheet(tables: (HTMLTableElement | null)[]) {
   if (!tables || tables.length === 0) return;
   const workbook = utils.book_new();
-  const [characterEvent, weaponEvent, standard, chronicled] = tables.map(
-    (table) => utils.table_to_sheet(table)
-  );
+  const [characterEvent, weaponEvent, standard, beginners, chronicled] =
+    tables.map((table) => utils.table_to_sheet(table));
 
   const information = utils.aoa_to_sheet([
     ["Paimon.moe Wish History Export"],
@@ -16,6 +15,10 @@ export function generateSheet(tables: (HTMLTableElement | null)[]) {
   utils.book_append_sheet(workbook, characterEvent, "Character Event");
   utils.book_append_sheet(workbook, weaponEvent, "Weapon Event");
   utils.book_append_sheet(workbook, standard, "Standard");
+  utils.book_append_sheet(workbook, beginners, "Beginners' Wish");
+
+  // Adding chronicled breaks paimon.moe export gg
+  // utils.book_append_sheet(workbook, chronicled, "Chronicled Wish");
 
   utils.book_append_sheet(workbook, information, "Information");
 

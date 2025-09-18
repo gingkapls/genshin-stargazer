@@ -32,6 +32,7 @@ function convertToKey(wishType: Wish["wishType"]): keyof WishHistoryList {
     .toLowerCase()
     .split(" ")
     .join("_")
+    .replaceAll("'", "")
     .replaceAll("-", "_") as keyof WishHistoryList;
 }
 
