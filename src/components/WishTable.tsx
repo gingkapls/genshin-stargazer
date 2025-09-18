@@ -2,6 +2,7 @@ import type { Wish } from "../lib/parseData.ts";
 import characters from "../../data/character_rarity.json";
 import banners from "../../data/banners.json";
 import weapons from "../../data/weapon_rarity.json";
+import type { WishHistoryList } from "./wishHistory";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
@@ -19,7 +20,11 @@ function getBanner(d: number) {
 }
 
 function getRarity(itemName: string) {
-  return wepMap.get(itemName) || charMap.get(itemName);
+  const rarity = wepMap.get(itemName) || charMap.get(itemName);
+
+  if (!rarity) throw new Error("Couldn't get rarity");
+
+  return rarity;
 }
 
 function getItemType(itemName: string) {
@@ -57,8 +62,6 @@ function getPity(rarity: string, pityCounter: PityCounter) {
 function getPerBanner(wishes: Wish[], i: number, pityCounter: PityCounter) {
   const prevBanner = getBanner(wishes[Math.max(i - 1, 0)].timeReceived);
   const currentBanner = getBanner(wishes[i].timeReceived);
-  
-  console.log({name: wishes[i].itemName, prevBanner, currentBanner})
 
   if (prevBanner === currentBanner) {
     return ++pityCounter.perBanner;
@@ -85,9 +88,13 @@ interface PityCounter {
   fiveStar: number;
 }
 
-function WishTable({ wishes }: { wishes: Wish[] }) {
-  if (wishes.length === 0) return null;
-
+function WishTable({
+  wishes,
+  isActive,
+}: {
+  wishes: Wish[];
+  isActive: boolean;
+}) {
   const pityCounter = {
     perBanner: 0,
     groupCount: 1,
@@ -95,52 +102,53 @@ function WishTable({ wishes }: { wishes: Wish[] }) {
     fiveStar: 0,
   } satisfies PityCounter;
 
-  // TODO: Fix group calculation based on previous time
-  // TODO: Implement banner fetching based on wish type
   // FIXME: Time received column
   return (
-    <table>
-      <caption>{wishes[0].wishType}</caption>
-      <thead>
-        <tr>
-          <th>Item Type</th>
-          <th>Item Name</th>
-          <th>Time Received</th>
-          <th>Stars</th>
-          <th>Pity</th>
-          <th>#Roll</th>
-          <th>Group</th>
-          <th>Banner</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        {wishes.map((wish, i) => {
-          const rarity = getRarity(wish.itemName);
+    <div className={isActive ? "active-tab" : "inactive-tab"}>
+      <table>
+        <caption>{wishes[0]?.wishType}</caption>
+        <thead>
+          <tr>
+            <th>Item Type</th>
+            <th>Item Name</th>
+            <th>Time Received</th>
+            <th>Stars</th>
+            <th>Pity</th>
+            <th>#Roll</th>
+            <th>Group</th>
+            <th>Banner</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {wishes.map((wish, i) => {
+            const rarity = getRarity(wish.itemName);
 
-          const banner = getBanner(wish.timeReceived);
+            const banner = getBanner(wish.timeReceived);
 
-          return (
-            <tr key={wish.id} className={getClassName(wish.itemName)}>
-              <td>{getItemType(wish.itemName)}</td>
-              <td>{wish.itemName}</td>
-              <td>
-                {
-                  // TODO: fix time received
-                  new Date(wish.timeReceived).getFullYear()
-                }
-              </td>
-              <td>{rarity}</td>
-              <td>{getPity(rarity, pityCounter)}</td>
-              <td>{getPerBanner(wishes, i, pityCounter)}</td>
-              <td>{getGroupCount(wishes, i, pityCounter)}</td>
-              <td>{banner}</td>
-              <td>{wish.wishType}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+            return (
+              <tr key={wish.id} className={getClassName(wish.itemName)}>
+                <td>{getItemType(wish.itemName)}</td>
+                <td>{wish.itemName}</td>
+                <td>
+                  {
+                    // TODO: fix time received
+                    new Date(wish.timeReceived).getFullYear()
+                  }
+                </td>
+                <td>{rarity}</td>
+                <td>{getPity(rarity, pityCounter)}</td>
+                <td>{getPerBanner(wishes, i, pityCounter)}</td>
+                <td>{getGroupCount(wishes, i, pityCounter)}</td>
+                <td>{banner}</td>
+                <td>{wish.wishType}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {wishes.length === 0 && "No wishes recorded"}
+    </div>
   );
 }
 

@@ -86,3 +86,13 @@ th {
   padding: 4px 8px;
   border: 1px solid lightgray;
 }
+
+.inactive-tab {
+  height: 0;
+  visibility: collapse;
+  overflow: hidden;
+}
+
+label {
+  text-transform: capitalize;
+}
