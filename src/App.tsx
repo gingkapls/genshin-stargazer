@@ -30,12 +30,12 @@ function App() {
   console.log("App: ", { data });
   return (
     <>
-      {/* <WishTable wishes={data.character_event_wish} /> */}
+      <FolderPicker dispatch={dispatch} />
+      {/* <WishTable wishes={data.permanent_wish} /> */}
+      <WishTable wishes={data.character_event_wish} />
       {/* <WishTable wishes={data.character_event_wish_2} /> */}
       {/* <WishTable wishes={data.weapon_event_wish} /> */}
       {/* <WishTable wishes={data.chronicled_wish} /> */}
-      <WishTable wishes={data.permanent_wish} />
-      <FolderPicker dispatch={dispatch} />
     </>
   );
 }

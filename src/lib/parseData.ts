@@ -4,6 +4,7 @@ import { BKTree } from "./BKTree.ts";
 import type { ScanResult } from "./scanImages.ts";
 
 export interface Wish {
+  id: ReturnType<typeof crypto.randomUUID>;
   itemName: string;
   wishType: string;
   timeReceived: number;
@@ -106,6 +107,7 @@ function parseData(data: ScanResult): Wish[] {
 
   const wishes = itemNames.map<Wish>((itemName, i) => {
     return {
+      id: crypto.randomUUID(),
       itemName,
       pageNumber,
       wishType: wishTypes[i],

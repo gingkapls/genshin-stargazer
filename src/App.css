@@ -43,18 +43,15 @@
 
 .images {
   position: relative;
+  height: 0;
+  overflow: hidden;
 }
 
-.out_image {
+.src_image, .out_image {
   position: absolute;
   top: 0;
   left: 0;
   visibility: collapse;
-}
-
-.src_image {
-  /* max-width: 1440px; */
-  max-height: auto;
 }
 
 table {
