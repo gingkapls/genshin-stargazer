@@ -21,7 +21,6 @@ function App() {
     [Parameters<typeof reducer>[1]]
   >(reducer, {
     character_event_wish: [],
-    character_event_wish_2: [],
     weapon_event_wish: [],
     permanent_wish: [],
     chronicled_wish: [],

@@ -100,7 +100,6 @@ function Scanner({ images, dispatch }: ScannerProps) {
       .map(processResult)
       .reduce<WishHistoryList>(historyReducer, {
         character_event_wish: [],
-        character_event_wish_2: [],
         weapon_event_wish: [],
         permanent_wish: [],
         chronicled_wish: [],
