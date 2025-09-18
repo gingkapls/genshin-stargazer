@@ -9,47 +9,11 @@ import {
 } from "../lib/scanImages.ts";
 import type { WishHistoryList } from "./wishHistory.ts";
 import type { WishImage } from "./wishImage";
-import Tesseract from "tesseract.js";
 import { historyReducer, sortWishHistory } from "../lib/historyReducer.ts";
-
-const colors = [
-  "#FF5733", // Bright Red-Orange
-  "#FFBD33", // Bright Yellow-Orange
-  "#DBFF33", // Bright Lime
-  "#75FF33", // Neon Green
-  "#33FF57", // Bright Green
-  "#33FFBD", // Bright Aqua
-  "#33DBFF", // Bright Sky Blue
-  "#3375FF", // Bright Blue
-  "#5733FF", // Bright Indigo
-  "#BD33FF", // Bright Violet
-  "#FF33DB", // Bright Pink-Magenta
-  "#FF3375", // Bright Hot Pink
-];
-
-function genRandomColor() {
-  const color = colors[Math.round(Math.random() * (colors.length - 1))];
-  return color;
-}
 
 interface ScannerProps {
   images: WishImage[];
   dispatch: ActionDispatch<[{ newHistory: WishHistoryList }]>;
-}
-
-function drawBoxes(
-  canvasEl: HTMLCanvasElement,
-  rectangles: Tesseract.Rectangle[]
-) {
-  const ctx = canvasEl.getContext("2d");
-  if (!ctx) return;
-
-  rectangles.forEach(({ top, left, height, width }) => {
-    const newCol = genRandomColor();
-    ctx.strokeStyle = newCol;
-    ctx.rect(left, top, width, height);
-    ctx.stroke();
-  });
 }
 
 // TODO: Refactor Scanner
@@ -65,10 +29,6 @@ function Scanner({ images, dispatch }: ScannerProps) {
   const allImagesLoaded = images.length !== 0 && rects.length === images.length;
 
   if (allImagesLoaded) {
-    // We've loaded and pre-processed all images
-    /*     for (const rect of rects) {
-      drawBoxes(rect.image, rect.rectangles.concat(rect.pageRectangle));
-    } */
     console.debug("Loaded all images");
   }
 
@@ -151,7 +111,8 @@ function Scanner({ images, dispatch }: ScannerProps) {
     console.log({ newHistory });
     // TODO: Move all processing here
     dispatch({ newHistory });
-    // Set scanned images only after state is set
+    // Set scanned images only after data state is set
+    // to avoid data anomalies
     setScannedImages(
       (oldImages) =>
         new Set([...oldImages, ...rects.map((rect) => rect.image.id)])
