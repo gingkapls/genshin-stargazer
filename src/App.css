@@ -63,8 +63,12 @@ caption {
   font-weight: bold;
 }
 
+tr:nth-child(odd)  {
+  background-color: #eeeeee;
+}
+
 tr:nth-child(even) {
-  background-color: #dedede;
+  background-color: #ffffff;
 }
 
 .four-stars {
@@ -80,5 +84,5 @@ tr:nth-child(even) {
 td,
 th {
   padding: 4px 8px;
-  border: 1px solid black;
+  border: 1px solid lightgray;
 }
