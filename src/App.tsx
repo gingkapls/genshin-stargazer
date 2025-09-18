@@ -5,22 +5,17 @@ import type { WishHistoryList } from "./components/wishHistory";
 import { mergeHistories } from "./lib/historyReducer.ts";
 import { WishTable } from "./components/WishTable.tsx";
 import { generateSheet } from "./lib/generateSheet.ts";
-
-function reducer(
-  state: WishHistoryList,
-  action: { newHistory: WishHistoryList }
-) {
-  // TODO: make it more readable maybe?
-  //
-  return mergeHistories(state, action.newHistory);
-}
+import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 
 // TODO: Implement LocalStorage
 function App() {
-  const [data, dispatch] = useReducer<
-    WishHistoryList,
-    [Parameters<typeof reducer>[1]]
-  >(reducer, {
+  function saveHistory(newHistory: WishHistoryList) {
+    // TODO: make it more readable maybe?
+    //
+    setHistory((prevHistory) => mergeHistories(prevHistory, newHistory));
+  }
+
+  const [history, setHistory] = useLocalStorage<WishHistoryList>('history', {
     character_event_wish: [],
     weapon_event_wish: [],
     permanent_wish: [],
@@ -32,17 +27,17 @@ function App() {
   const tables = useRef<Array<HTMLTableElement> | null>(null);
 
   if (tables.current === null) {
-    tables.current = []
+    tables.current = [];
   }
-  
-  console.log(tables.current.map(el => el.caption));
+
+  console.log(tables.current.map((el) => el.caption));
 
   return (
     <>
-    <button onClick={() => generateSheet(tables.current)}>Export</button>
-      <FolderPicker dispatch={dispatch} />
+      <button onClick={() => generateSheet(tables.current)}>Export</button>
+      <FolderPicker saveHistory={saveHistory} />
       <div>
-        {Object.keys(data).map((event, i) => (
+        {Object.keys(history).map((event, i) => (
           <label key={event}>
             <input
               type="radio"
@@ -55,10 +50,10 @@ function App() {
           </label>
         ))}
       </div>
-      {Object.values(data).map((wishes, i) => (
+      {Object.values(history).map((wishes, i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
-          ref={el => tables.current[i] = el}
+          ref={(el) => (tables.current[i] = el)}
           wishes={wishes}
           isActive={i === activeIndex}
         />

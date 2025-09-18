@@ -4,10 +4,10 @@ import type { WishImage } from "./wishImage";
 import type { WishHistoryList } from "./wishHistory";
 
 interface FolderPickerProps {
-  dispatch: ActionDispatch<[{ newHistory: WishHistoryList }]>;
+  saveHistory: (newHistory: WishHistoryList) => void;
 }
 
-function FolderPicker({ dispatch }: FolderPickerProps) {
+function FolderPicker({ saveHistory }: FolderPickerProps) {
   const [images, setImages] = useState<WishImage[]>([]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -34,7 +34,7 @@ function FolderPicker({ dispatch }: FolderPickerProps) {
     <>
       <input type="file" multiple onChange={handleChange} />
     <h3>Uploaded {images.length} images</h3>
-      <Scanner images={images} dispatch={dispatch} />
+      <Scanner images={images} saveHistory={saveHistory} />
     </>
   );
 }

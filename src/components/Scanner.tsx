@@ -13,11 +13,11 @@ import { historyReducer, sortWishHistory } from "../lib/historyReducer.ts";
 
 interface ScannerProps {
   images: WishImage[];
-  dispatch: ActionDispatch<[{ newHistory: WishHistoryList }]>;
+  saveHistory: (newHistory: WishHistoryList) => void;
 }
 
 // TODO: Refactor Scanner
-function Scanner({ images, dispatch }: ScannerProps) {
+function Scanner({ images, saveHistory }: ScannerProps) {
   const [rects, setRects] = useState<ScanRegions[]>([]);
   const [scannedImages, setScannedImages] = useState<Set<string>>(new Set());
   const [processedHashes, setProcessedHashes] = useState<Set<string>>(
@@ -110,7 +110,7 @@ function Scanner({ images, dispatch }: ScannerProps) {
 
     console.log({ newHistory });
     // TODO: Move all processing here
-    dispatch({ newHistory });
+    saveHistory(newHistory);
     // Set scanned images only after data state is set
     // to avoid data anomalies
     setScannedImages(
