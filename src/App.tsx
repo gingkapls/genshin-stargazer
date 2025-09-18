@@ -4,6 +4,7 @@ import FolderPicker from "./components/FolderPicker.tsx";
 import type { WishHistoryList } from "./components/wishHistory";
 import { mergeHistories } from "./lib/historyReducer.ts";
 import { WishTable } from "./components/WishTable.tsx";
+import { generateSheet } from "./lib/generateSheet.ts";
 
 function reducer(
   state: WishHistoryList,
@@ -27,11 +28,17 @@ function App() {
   });
 
   const [activeIndex, setActiveIndex] = useState(0);
-  console.log(activeIndex)
+  const tables = useRef<Array<HTMLTableElement> | null>(null);
 
-  console.log("App: ", { data });
+  if (tables.current === null) {
+    tables.current = []
+  }
+  
+  console.log(tables.current.map(el => el.caption));
+
   return (
     <>
+    <button onClick={() => generateSheet(tables.current)}>Export</button>
       <FolderPicker dispatch={dispatch} />
       <div>
         {Object.keys(data).map((event, i) => (
@@ -50,6 +57,7 @@ function App() {
       {Object.values(data).map((wishes, i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
+          ref={el => tables.current[i] = el}
           wishes={wishes}
           isActive={i === activeIndex}
         />

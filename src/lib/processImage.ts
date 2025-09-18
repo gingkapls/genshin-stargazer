@@ -53,6 +53,8 @@ export async function processImage(
     cv.imshow(output, dst);
 
     // release resources
+    edges.delete();
+    lines.delete();
     src.delete();
     dst.delete();
 

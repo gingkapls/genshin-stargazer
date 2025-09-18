@@ -86,11 +86,22 @@ function sanitizeItems(items: string[], dict: BKTree) {
 }
 
 // TODO: Implement Date Parser
-// function parseDates(dateStr: string) {
-// We know our date is always going to be in the format
-// yyyy-mm-dd[\W]hh:mm:ss
-//   dateStr.replace(/\W/);
-// }
+function pad(n: number, maxLength = 2, fillString = "0"): string {
+  return n.toString().padStart(maxLength, fillString);
+}
+
+function parseDate(timestamp: number) {
+  const dateObj = new Date(timestamp);
+  const date = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(
+    dateObj.getDate()
+  )}`;
+
+  const time = `${pad(dateObj.getHours())}:${pad(
+    dateObj.getMilliseconds()
+  )}:${pad(dateObj.getSeconds())}`;
+  
+  return `${date} ${time}`;
+}
 
 function parseData(data: ScanResult): Wish[] {
   const pageNumber = Number(data.pageNumber[0]?.trim());
@@ -111,8 +122,8 @@ function parseData(data: ScanResult): Wish[] {
       id: crypto.randomUUID(),
       itemName,
       pageNumber,
-      wishType: wishTypes[i].replace('-2', ''),
-      part: wishTypes[i].includes('-2') ? "Part 2": "",
+      wishType: wishTypes[i].replace("-2", ""),
+      part: wishTypes[i].includes("-2") ? "Part 2" : "",
       timeReceived: timeReceived[i],
     };
   });
@@ -120,4 +131,4 @@ function parseData(data: ScanResult): Wish[] {
   return wishes;
 }
 
-export { parseData };
+export { parseData, parseDate };

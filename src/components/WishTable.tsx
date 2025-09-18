@@ -1,7 +1,8 @@
-import type { Wish } from "../lib/parseData.ts";
+import { parseDate, type Wish } from "../lib/parseData.ts";
 import characters from "../../data/character_rarity.json";
 import banners from "../../data/banners.json";
 import weapons from "../../data/weapon_rarity.json";
+import type { RefObject } from "react";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
@@ -90,9 +91,11 @@ interface PityCounter {
 function WishTable({
   wishes,
   isActive,
+  ref,
 }: {
   wishes: Wish[];
   isActive: boolean;
+  ref: RefObject<HTMLTableElement>;
 }) {
   const pityCounter = {
     perBanner: 0,
@@ -104,14 +107,14 @@ function WishTable({
   // FIXME: Time received column
   return (
     <div className={isActive ? "active-tab" : "inactive-tab"}>
-      <table>
+      <table ref={ref}>
         <caption>{wishes[0]?.wishType}</caption>
         <thead>
           <tr>
-            <th>Item Type</th>
-            <th>Item Name</th>
-            <th>Time Received</th>
-            <th>Stars</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Time</th>
+            <th>⭐</th>
             <th>Pity</th>
             <th>#Roll</th>
             <th>Group</th>
@@ -129,13 +132,8 @@ function WishTable({
               <tr key={wish.id} className={getClassName(wish.itemName)}>
                 <td>{getItemType(wish.itemName)}</td>
                 <td>{wish.itemName}</td>
-                <td>
-                  {
-                    // TODO: fix time received
-                    new Date(wish.timeReceived).getFullYear()
-                  }
-                </td>
-                <td>{rarity}</td>
+                <td>{parseDate(wish.timeReceived)} </td>
+                <td>{rarity[0]}</td>
                 <td>{getPity(rarity, pityCounter)}</td>
                 <td>{getPerBanner(wishes, i, pityCounter)}</td>
                 <td>{getGroupCount(wishes, i, pityCounter)}</td>
