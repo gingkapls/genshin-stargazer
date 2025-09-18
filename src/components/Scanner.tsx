@@ -120,7 +120,6 @@ function Scanner({ images, dispatch }: ScannerProps) {
     console.debug("Start time", new Date());
     const scheduler = new Scheduler();
     await scheduler.initialize();
-    let i = 0;
     const res = await scanImages(
       newRects,
       scheduler.scheduler,

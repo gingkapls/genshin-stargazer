@@ -3,6 +3,7 @@ import "./App.css";
 import FolderPicker from "./components/FolderPicker.tsx";
 import type { WishHistoryList } from "./components/wishHistory";
 import { mergeHistories } from "./lib/historyReducer.ts";
+import { WishTable } from "./components/WishTable.tsx";
 
 function reducer(
   state: WishHistoryList,
@@ -27,9 +28,13 @@ function App() {
   });
 
   console.log("App: ", { data });
-
   return (
     <>
+      {/* <WishTable wishes={data.character_event_wish} /> */}
+      {/* <WishTable wishes={data.character_event_wish_2} /> */}
+      {/* <WishTable wishes={data.weapon_event_wish} /> */}
+      {/* <WishTable wishes={data.chronicled_wish} /> */}
+      <WishTable wishes={data.permanent_wish} />
       <FolderPicker dispatch={dispatch} />
     </>
   );

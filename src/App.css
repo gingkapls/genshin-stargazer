@@ -56,3 +56,22 @@
   /* max-width: 1440px; */
   max-height: auto;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+caption {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #dedede;
+}
+
+td,
+th {
+  padding: 4px 8px;
+  border: 1px solid black;
+}
