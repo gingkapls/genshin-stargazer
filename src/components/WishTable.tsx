@@ -15,7 +15,7 @@ function getBanner(d: number) {
     bannerList.findIndex((banner) => Number(banner[0]) > d),
     1
   );
-  return bannerList[nextIndex - 1];
+  return bannerList[nextIndex - 1][1];
 }
 
 function getRarity(itemName: string) {
@@ -29,26 +29,71 @@ function getItemType(itemName: string) {
 }
 
 function getClassName(itemName: string) {
-  const rarity = getRarity(itemName)?.toLowerCase();
+  const rarity = getRarity(itemName);
 
-  if (rarity === "5 stars") return "five-stars";
-  if (rarity === "4 stars") return "four-stars";
+  if (rarity === "5 Stars") return "five-stars";
+  if (rarity === "4 Stars") return "four-stars";
 
   return "three-star";
 }
 
-function getPity(rarity: string, fiveStarPity: number, fourStarPity: number) {
-  if (rarity === '5 Star') return fiveStarPity;
-  if (rarity === '4 Star') return fourStarPity;
-  
+function getPity(rarity: string, pityCounter: PityCounter) {
+  const prevFiveStarPity = ++pityCounter.fiveStar;
+  const prevFourStarPity = ++pityCounter.fourStar;
+
+  if (rarity === "5 Stars") {
+    pityCounter.fiveStar = 0;
+    return prevFiveStarPity;
+  }
+  if (rarity === "4 Stars") {
+    pityCounter.fourStar = 0;
+    return prevFourStarPity;
+  }
+
   return 1;
+}
+
+// Returns the number of rolls done so far in the same banner
+function getPerBanner(wishes: Wish[], i: number, pityCounter: PityCounter) {
+  const prevBanner = getBanner(wishes[Math.max(i - 1, 0)].timeReceived);
+  const currentBanner = getBanner(wishes[i].timeReceived);
+  
+  console.log({name: wishes[i].itemName, prevBanner, currentBanner})
+
+  if (prevBanner === currentBanner) {
+    return ++pityCounter.perBanner;
+  } else {
+    return (pityCounter.perBanner = 1);
+  }
+}
+
+function getGroupCount(wishes: Wish[], i: number, pityCounter: PityCounter) {
+  const prevWishTime = wishes[Math.max(i - 1, 0)].timeReceived;
+  const curWishTime = wishes[i].timeReceived;
+
+  if (prevWishTime === curWishTime) {
+    return pityCounter.groupCount;
+  } else {
+    return ++pityCounter.groupCount;
+  }
+}
+
+interface PityCounter {
+  perBanner: number;
+  groupCount: number;
+  fourStar: number;
+  fiveStar: number;
 }
 
 function WishTable({ wishes }: { wishes: Wish[] }) {
   if (wishes.length === 0) return null;
-  let groupCount = 1;
-  let fourStarPity = 1;
-  let fiveStarPity = 1;
+
+  const pityCounter = {
+    perBanner: 0,
+    groupCount: 1,
+    fourStar: 0,
+    fiveStar: 0,
+  } satisfies PityCounter;
 
   // TODO: Fix group calculation based on previous time
   // TODO: Implement banner fetching based on wish type
@@ -70,11 +115,10 @@ function WishTable({ wishes }: { wishes: Wish[] }) {
         </tr>
       </thead>
       <tbody>
-        {wishes.map((wish, i) => {
+        {wishes.toReversed().map((wish, i, arr) => {
           const rarity = getRarity(wish.itemName);
-          fourStarPity = rarity?.toLowerCase() === '4 star' ? 0 : fourStarPity + 1;
 
-          fiveStarPity = rarity?.toLowerCase() === '5 star' ? 0 : fiveStarPity + 1;
+          const banner = getBanner(wish.timeReceived);
 
           return (
             <tr key={wish.id} className={getClassName(wish.itemName)}>
@@ -87,14 +131,10 @@ function WishTable({ wishes }: { wishes: Wish[] }) {
                 }
               </td>
               <td>{rarity}</td>
-              <td>{getPity(rarity, fiveStarPity, fourStarPity)}</td>
-              <td>{i + 1}</td>
-              <td>
-                {wishes[Math.max(i - 1, 0)].timeReceived !== wish.timeReceived
-                  ? ++groupCount
-                  : groupCount}
-              </td>
-              <td>{getBanner(wish.timeReceived)[1]}</td>
+              <td>{getPity(rarity, pityCounter)}</td>
+              <td>{getPerBanner(arr, i, pityCounter)}</td>
+              <td>{getGroupCount(arr, i, pityCounter)}</td>
+              <td>{banner}</td>
               <td>{wish.wishType}</td>
             </tr>
           );
