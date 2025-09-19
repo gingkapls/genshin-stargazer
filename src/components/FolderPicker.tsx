@@ -1,4 +1,4 @@
-import { useState, type ActionDispatch, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import Scanner from "./Scanner.tsx";
 import type { WishImage } from "./wishImage";
 import type { WishHistoryList } from "./wishHistory";

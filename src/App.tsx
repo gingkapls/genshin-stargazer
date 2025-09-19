@@ -11,7 +11,6 @@ import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 function App() {
   function saveHistory(newHistory: WishHistoryList) {
     // TODO: make it more readable maybe?
-    //
     setHistory((prevHistory) => mergeHistories(prevHistory, newHistory));
   }
 
@@ -29,8 +28,6 @@ function App() {
   if (tables.current === null) {
     tables.current = [];
   }
-
-  console.log(tables.current.map((el) => el.caption));
 
   return (
     <>
