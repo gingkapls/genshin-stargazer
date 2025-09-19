@@ -94,8 +94,6 @@ function Scanner({ images, saveHistory }: ScannerProps) {
       }
     );
 
-    await scheduler.terminate();
-
     const newHistory = res
       .map(processResult)
       .reduce<WishHistoryList>(historyReducer, {
@@ -117,6 +115,8 @@ function Scanner({ images, saveHistory }: ScannerProps) {
       (oldImages) =>
         new Set([...oldImages, ...rects.map((rect) => rect.image.id)])
     );
+
+    await scheduler.terminate();
 
     setIsScanning(() => false);
   }
