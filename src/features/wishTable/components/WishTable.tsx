@@ -2,7 +2,7 @@ import { parseDate } from "../../dataParser/parseData.ts";
 import characters from "../../../../data/character_rarity.json";
 import banners from "../../../../data/banners.json";
 import weapons from "../../../../data/weapon_rarity.json";
-import type { RefCallback, RefObject } from "react";
+import type { RefCallback } from "react";
 import type { Wish } from "../../../types/Wish.types.ts";
 import type { Banner, BannerList } from "../banners.types.ts";
 import { searchBanners } from "../utils/binarySearch.ts";
