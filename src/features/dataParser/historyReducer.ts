@@ -6,12 +6,11 @@ function wishComparator(w1: Wish, w2: Wish): -1 | 0 | 1 {
   if (w1.wishType !== w2.wishType)
     throw new Error("Trying to compare different wish types");
 
-  // Last (oldest) wish of p1 vs First (newest) wish of p2
-  // P1 is newer than p2 so p1 should come first
+  // w1 is newer than w2 so w1 should come first
   // (Higher timestamp is newer)
   if (w1.timeReceived > w2.timeReceived) return -1;
 
-  // p2 is newer than p1 so p2 should come first
+  // w2 is newer than w1 so w2 should come first
   if (w1.timeReceived < w2.timeReceived) return 1;
 
   // If both are same or either is undefined, then we rely on the page numbers
@@ -47,11 +46,10 @@ function sortWishHistory(history: WishHistory): WishHistory {
   const res = createEmptyWishHistory();
 
   for (const type of Object.keys(history)) {
-    res[type as keyof typeof res] =
-      history[type as keyof typeof history].toSorted(wishComparator);
+    res[type] = history[type].toSorted(wishComparator);
   }
 
-  return history;
+  return res;
 }
 
 // This is only to be used in sorted lists

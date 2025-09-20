@@ -139,7 +139,7 @@ function WishTable({
           </tr>
         </thead>
         <tbody>
-          {wishes.toReversed().map((wish, i, revWishes) => {
+          {wishes.map((wish, i, revWishes) => {
             const rarity = getRarity(wish);
             const banner = getBanner(wish);
             // Reverse the wishes to get them from oldest to newest
