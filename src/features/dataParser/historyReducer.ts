@@ -120,7 +120,7 @@ function mergeHistories(
     res[type as keyof typeof res] = mergeList(
       oldHistory[type as keyof typeof oldHistory],
       newHistory[type as keyof typeof newHistory]
-    ).toReversed();
+    );
   }
 
   return res;
