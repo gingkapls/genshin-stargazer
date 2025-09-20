@@ -47,7 +47,6 @@ function App() {
     tablesRef.current = {};
   }
 
-  // TODO: Lift state up
   return (
     <>
       <div>

@@ -13,7 +13,6 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
     if (e.target.files) {
       const newImages = Array.from(e.target.files, (f) => {
         const i = URL.createObjectURL(f);
-        // TODO: Use hash function
         const hash = "h" + hashCode(f.name + f.size + f.lastModified);
         return { src: i, hash } satisfies WishImage;
       });
