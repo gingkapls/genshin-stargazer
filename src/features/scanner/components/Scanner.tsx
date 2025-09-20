@@ -46,7 +46,6 @@ function Scanner({
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
-  console.log({ i: images.length, sq: scanQueue.length });
 
   const clearScanQueue = useCallback(() => {
     setIsScanning(false);
