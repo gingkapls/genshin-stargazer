@@ -12,7 +12,6 @@ interface ScannerProps {
   saveHistory: (newHistory: WishHistory) => void;
 }
 
-// TODO: Refactor Scanner
 function Scanner({ images, saveHistory }: ScannerProps) {
   const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
@@ -126,7 +125,6 @@ function Scanner({ images, saveHistory }: ScannerProps) {
     setIsScanning(false);
   }, [isScanning, saveHistory, scanQueue, scannedImages, setScannedImages]);
 
-  //FIXME: Scan button doesn't come back on multiple uploads
   return (
     <>
       {!isScanning && !allImagesScanned && (

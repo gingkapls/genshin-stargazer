@@ -23,7 +23,6 @@ async function scanSingleRegion(region: ScanRegions, scheduler: Scheduler) {
   );
 }
 
-// TODO: Better names...
 export async function scanImages(
   regions: ScanRegions[],
   scheduler: Scheduler,

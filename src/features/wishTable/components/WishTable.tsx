@@ -105,7 +105,6 @@ function WishTable({
     fiveStar: 0,
   } satisfies PityCounter;
 
-  // FIXME: Time received column
   return (
     <div className={isActive ? "active-tab" : "inactive-tab"}>
       <table ref={ref}>
@@ -124,10 +123,11 @@ function WishTable({
           </tr>
         </thead>
         <tbody>
-          {wishes.map((wish, i) => {
+          {wishes.toReversed().map((wish, i, revWishes) => {
             const rarity = getRarity(wish.itemName);
-
             const banner = getBanner(wish.timeReceived);
+            // Reverse the wishes to get them from oldest to newest
+            // We pass in the reversed array so that counter calculations are correct
 
             return (
               <tr key={wish.id} className={getClassName(wish.itemName)}>
@@ -136,8 +136,8 @@ function WishTable({
                 <td>{parseDate(wish.timeReceived)} </td>
                 <td>{rarity[0]}</td>
                 <td>{getPity(rarity, pityCounter)}</td>
-                <td>{getPerBanner(wishes, i, pityCounter)}</td>
-                <td>{getGroupCount(wishes, i, pityCounter)}</td>
+                <td>{getPerBanner(revWishes, i, pityCounter)}</td>
+                <td>{getGroupCount(revWishes, i, pityCounter)}</td>
                 <td>{banner}</td>
                 <td>{wish.part}</td>
               </tr>

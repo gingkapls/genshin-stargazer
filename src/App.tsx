@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import "./App.css";
-import { WishTable } from "./components/WishTable.tsx";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
 import type { WishHistory } from "./types/Wish.types.ts";
@@ -8,6 +7,7 @@ import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
 import { ImagePicker } from "./components/ImagePicker.tsx";
 import { generateSheet } from "./features/wishTable/utils/generateSheet.ts";
 import type { EventToTable } from "./types/Table.types.ts";
+import { WishTable } from "./features/wishTable/components/WishTable.tsx";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
