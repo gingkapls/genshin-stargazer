@@ -1,28 +1,23 @@
-import { Fragment, useState, type ActionDispatch } from "react";
-import { processImage } from "../lib/processImage.ts";
-import {
-  getRegions,
-  processResult,
-  scanImages,
-  Scheduler,
-  type ScanRegions,
-} from "../lib/scanImages.ts";
-import type { WishHistoryList } from "./wishHistory.ts";
-import type { WishImage } from "./wishImage";
-import { historyReducer, sortWishHistory } from "../lib/historyReducer.ts";
-import { useLocalStorage } from "../hooks/useLocalStorage.tsx";
+import { Fragment, useCallback, useState } from "react";
+import { getScanRegion } from "../../dataParser/processImage.ts";
+import { scanImages } from "../utils/scanImages.ts";
+import { useLocalStorage } from "../../../hooks/useLocalStorage.tsx";
+import type { ScanRegions } from "../utils/scan.types.ts";
+import { processHistory } from "../../dataParser/processHistory.ts";
+import { Scheduler } from "../utils/Scheduler.ts";
+import type { WishHistory, WishImage } from "../../../types/Wish.types.ts";
 
 interface ScannerProps {
   images: WishImage[];
-  saveHistory: (newHistory: WishHistoryList) => void;
+  saveHistory: (newHistory: WishHistory) => void;
 }
 
 // TODO: Refactor Scanner
 function Scanner({ images, saveHistory }: ScannerProps) {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
 
-  const [rects, setRects] = useState<ScanRegions[]>([]);
+  const [scanQueue, setScanQueue] = useState<ScanRegions[]>([]);
 
   const [scannedImages, setScannedImages] = useLocalStorage<{
     [hash: string]: boolean;
@@ -32,15 +27,17 @@ function Scanner({ images, saveHistory }: ScannerProps) {
     [hash: string]: boolean;
   }>({});
 
-  const allImagesLoaded = images.length !== 0 && rects.length === images.length;
-  const allImagesScanned = images.length !== 0 && rects.length === 0;
+  const allImagesLoaded =
+    images.length !== 0 && scanQueue.length === images.length;
+
+  const allImagesScanned = scanQueue.length === 0;
 
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
 
-  function handleLoad(hash: string) {
-    async function doStuff() {
+  const handleLoad = useCallback(
+    async (hash: string) => {
       if (processedHashes[hash]) {
         console.debug("Already processed");
         return;
@@ -54,93 +51,84 @@ function Scanner({ images, saveHistory }: ScannerProps) {
       if (inputEl === null || canvasEl === null)
         throw new Error("Can't find image to process");
 
-      const offset = await processImage(inputEl, canvasEl);
+      const newScanRegion = await getScanRegion(inputEl, canvasEl);
 
-      if (!offset) throw new Error("No offset found. Couldn't process image");
-
-      const rectangle = getRegions(canvasEl, offset);
-
-      setRects((rects) => rects.concat(rectangle));
+      setScanQueue((prevQueue) => prevQueue.concat(newScanRegion));
       setProcessedHashes((pHashes) => ({
         ...pHashes,
         [hash]: true,
       }));
-    }
+    },
+    [processedHashes]
+  );
 
-    doStuff();
-  }
-
-  // TODO: Refactor this into its own function
   // Function to handle scanning
-  async function handleClick() {
+  const handleClick = useCallback(async () => {
     if (isScanning) {
       console.debug("Already scanning");
       return;
     }
-    console.debug("clicked", { rects });
+    console.debug("clicked", { scanQueue });
 
     // Only scan new images
-    const newRects = rects.filter(({ image }) => !scannedImages[image.id]);
+    const newScanQueue = scanQueue.filter(
+      ({ image }) => !scannedImages[image.id]
+    );
 
     // No new images
-    if (newRects.length === 0) {
+    if (newScanQueue.length === 0) {
       console.debug("There are no new images");
       setIsScanning(false);
+      setScanQueue([]);
       return;
     }
 
     // Critical Section
     setIsScanning(true);
     console.debug("Start time", new Date());
+
     const scheduler = new Scheduler();
     await scheduler.initialize();
-    const res = await scanImages(
-      newRects,
-      scheduler.scheduler,
-      scheduler.pageWorker,
+
+    const scanResults = await scanImages(
+      newScanQueue,
+      scheduler,
       (region: ScanRegions) => {
         console.debug("Scanning image", region.image.id);
-        // TODO: Add a progress component
         setProgress((p) => (p += 1));
       }
     );
 
-    const newHistory = res
-      .map(processResult)
-      .reduce<WishHistoryList>(historyReducer, {
-        character_event_wish: [],
-        weapon_event_wish: [],
-        permanent_wish: [],
-        beginners_wish: [],
-        chronicled_wish: [],
-      });
-
-    sortWishHistory(newHistory);
+    const newHistory = processHistory(scanResults);
 
     console.debug({ newHistory });
     saveHistory(newHistory);
 
     // Set scanned images only after data state is set
-    // to avoid data anomalies
+    // to avoid inconsistent cache
     setScannedImages((oldImages) => ({
       ...oldImages,
-      ...rects.reduce<{ [hash: string]: boolean }>((acc, cur) => {
+      // Reducing our array of newly scanned rectangles into a object of hashes
+      ...newScanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
         acc[cur.image.id] = true;
         return acc;
       }, {}),
     }));
 
     // Empty the images to scan state
-    setRects([]);
+    setScanQueue([]);
+    setProgress(0);
 
+    // Cleanup
     await scheduler.terminate();
 
     setIsScanning(false);
-  }
+  }, [isScanning, saveHistory, scanQueue, scannedImages, setScannedImages]);
 
+  //FIXME: Scan button doesn't come back on multiple uploads
   return (
     <>
-      {allImagesLoaded && !isScanning && !allImagesScanned && (
+      {!isScanning && !allImagesScanned && (
         <button type="button" onClick={handleClick}>
           Scan
         </button>
@@ -148,31 +136,22 @@ function Scanner({ images, saveHistory }: ScannerProps) {
 
       {isScanning && (
         <>
-          <p>{`Scanned ${progress} out of ${rects.length} images`}</p>
-          <progress value={progress + 1} max={rects.length} />
+          <p>{`Scanned ${progress} out of ${scanQueue.length} images`}</p>
+          <progress value={progress} max={scanQueue.length} />
         </>
       )}
 
       <section className="images">
-        {images.map((image, i) => (
+        {images.map((image) => (
           <Fragment key={image.hash}>
             <img
               className="src_image"
               id={image.hash}
               src={image.src}
               alt="sample"
-              style={{
-                top: (i + 1) * 100 + "px",
-              }}
               onLoad={() => handleLoad(image.hash)}
             ></img>
-            <canvas
-              id={"canvas" + "_" + image.hash}
-              className="out_image"
-              style={{
-                top: (i + 1) * 200 + "px",
-              }}
-            />
+            <canvas id={"canvas" + "_" + image.hash} className="out_image" />
           </Fragment>
         ))}
       </section>

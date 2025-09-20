@@ -1,6 +1,14 @@
-import { getOpenCv, translateException } from "./opencv.ts";
+import type { Rectangle } from "tesseract.js";
+import { getOpenCv, translateException } from "../scanner/lib/opencv/opencv.ts";
+import type { bbox, ScanRegions } from "../scanner/utils/scan.types.ts";
+import {
+  ITEM_NAME_BBOX,
+  PAGE_COUNT_BBOX,
+  TIME_RECEIVED_BBOX,
+  WISH_TYPE_BBOX,
+} from "../scanner/utils/config.ts";
 
-export async function processImage(
+async function preprocessImage(
   input: HTMLImageElement,
   output: HTMLCanvasElement
 ) {
@@ -64,7 +72,44 @@ export async function processImage(
       height,
       width,
     };
-  } catch (err) {
+  } catch (err: unknown) {
     console.error(translateException(cv, err));
   }
 }
+
+function getRectangle(
+  bbox: bbox,
+  offset: { top: number; left: number; height: number; width: number }
+): Tesseract.Rectangle {
+  return {
+    top: offset.top + bbox.TOP_RATIO * offset.height,
+    left: offset.left + bbox.LEFT_RATIO * offset.width,
+    width: bbox.WIDTH_RATIO * offset.width,
+    height: bbox.HEIGHT_RATIO * offset.height,
+  };
+}
+
+function calcRegions(image: HTMLCanvasElement, offset: Rectangle): ScanRegions {
+  const pageRectangle = getRectangle(PAGE_COUNT_BBOX, offset);
+
+  const rectangles = [ITEM_NAME_BBOX, WISH_TYPE_BBOX, TIME_RECEIVED_BBOX].map(
+    (bbox) => getRectangle(bbox, offset)
+  );
+
+  return { image, rectangles, pageRectangle } satisfies ScanRegions;
+}
+
+async function getScanRegion(
+  inputEl: HTMLImageElement,
+  outputEl: HTMLCanvasElement
+) {
+  const offset = await preprocessImage(inputEl, outputEl);
+
+  if (!offset) throw new Error("No offset found. Couldn't process image");
+
+  const rectangle = calcRegions(outputEl, offset);
+
+  return rectangle;
+}
+
+export { getScanRegion };

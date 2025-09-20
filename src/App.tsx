@@ -1,26 +1,22 @@
-import { useReducer, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import FolderPicker from "./components/FolderPicker.tsx";
-import type { WishHistoryList } from "./components/wishHistory";
-import { mergeHistories } from "./lib/historyReducer.ts";
 import { WishTable } from "./components/WishTable.tsx";
-import { generateSheet } from "./lib/generateSheet.ts";
+import { generateSheet } from "./features/tableGenerator/generateSheet.ts";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
+import { mergeHistories } from "./features/dataParser/historyReducer.ts";
+import type { WishHistory } from "./types/Wish.types.ts";
+import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
 
-// TODO: Implement LocalStorage
 function App() {
-  function saveHistory(newHistory: WishHistoryList) {
-    // TODO: make it more readable maybe?
+  function saveHistory(newHistory: WishHistory) {
     setHistory((prevHistory) => mergeHistories(prevHistory, newHistory));
   }
 
-  const [history, setHistory] = useLocalStorage<WishHistoryList>("history", {
-    character_event_wish: [],
-    weapon_event_wish: [],
-    permanent_wish: [],
-    beginners_wish: [],
-    chronicled_wish: [],
-  });
+  const [history, setHistory] = useLocalStorage<WishHistory>(
+    "history",
+    createEmptyWishHistory()
+  );
 
   const [activeIndex, setActiveIndex] = useState(0);
   const tables = useRef<Array<HTMLTableElement>>(null!);

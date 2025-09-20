@@ -3,6 +3,9 @@ import { utils, writeFileXLSX } from "xlsx";
 export function generateSheet(tables: HTMLTableElement[] | null) {
   if (!tables || tables.length === 0) return;
   const workbook = utils.book_new();
+
+  // Preserving chronicled just in case it's fixed in the future
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [characterEvent, weaponEvent, standard, beginners, chronicled] =
     tables.map((table) => utils.table_to_sheet(table));
 

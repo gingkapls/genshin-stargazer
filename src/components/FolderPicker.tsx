@@ -1,10 +1,9 @@
 import { useState, type ChangeEvent } from "react";
-import Scanner from "./Scanner.tsx";
-import type { WishImage } from "./wishImage";
-import type { WishHistoryList } from "./wishHistory";
+import Scanner from "../features/scanner/components/Scanner.tsx";
+import type { WishHistory, WishImage } from "../types/Wish.types.ts";
 
 interface FolderPickerProps {
-  saveHistory: (newHistory: WishHistoryList) => void;
+  saveHistory: (newHistory: WishHistory) => void;
 }
 
 function FolderPicker({ saveHistory }: FolderPickerProps) {
@@ -14,6 +13,7 @@ function FolderPicker({ saveHistory }: FolderPickerProps) {
     if (e.target.files) {
       const newImages = Array.from(e.target.files, (f) => {
         const i = URL.createObjectURL(f);
+        // TODO: Use hash function
         const hash =
           "h" + f.name.replaceAll(/[.-]/g, "_") + f.size + f.lastModified;
         return { src: i, hash } satisfies WishImage;

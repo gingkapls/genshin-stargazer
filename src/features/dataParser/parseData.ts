@@ -1,16 +1,8 @@
-import weapons from "../../data/weapon_rarity.json";
-import characters from "../../data/character_rarity.json";
-import { BKTree } from "./BKTree.ts";
-import type { ScanResult } from "./scanImages.ts";
-
-export interface Wish {
-  id: ReturnType<typeof crypto.randomUUID>;
-  itemName: string;
-  wishType: string;
-  part: "" | "Part 2";
-  timeReceived: number;
-  pageNumber: number;
-}
+import weapons from "../../../data/weapon_rarity.json";
+import characters from "../../../data/character_rarity.json";
+import { BKTree } from "../../lib/BKTree.ts";
+import type { ScanResult } from "../scanner/utils/scan.types.ts";
+import type { Wish } from "../../types/Wish.types.ts";
 
 const itemNamesDict = new BKTree(
   Object.keys(weapons).concat(Object.keys(characters))
@@ -23,10 +15,6 @@ const wishTypesDict = new BKTree([
   "Chronicled Wish",
   "Weapon Event Wish",
 ]);
-
-/* const rarityMap = new Map(
-  Object.entries(characters).concat(Object.entries(weapons))
-); */
 
 // all whitespace + a digit + all whitespace + dash + all whitespace + wildcard
 const rarityRegex = /\W+\d\W*-\W*.*/;
@@ -85,7 +73,6 @@ function sanitizeItems(items: string[], dict: BKTree) {
   return res;
 }
 
-// TODO: Implement Date Parser
 function pad(n: number, maxLength = 2, fillString = "0"): string {
   return n.toString().padStart(maxLength, fillString);
 }
@@ -99,11 +86,11 @@ function parseDate(timestamp: number) {
   const time = `${pad(dateObj.getHours())}:${pad(
     dateObj.getMilliseconds()
   )}:${pad(dateObj.getSeconds())}`;
-  
+
   return `${date} ${time}`;
 }
 
-function parseData(data: ScanResult): Wish[] {
+function parseScanResults(data: ScanResult): Wish[] {
   const pageNumber = Number(data.pageNumber[0]?.trim());
 
   const itemNamesCol = prepareColumn(data.itemName, "Item Name")[1];
@@ -131,4 +118,4 @@ function parseData(data: ScanResult): Wish[] {
   return wishes;
 }
 
-export { parseData, parseDate };
+export { parseScanResults, parseDate };

@@ -1,7 +1,5 @@
-import type {
-  WishHistoryList,
-} from "../components/wishHistory";
-import type { Wish } from "./parseData.ts";
+import { createEmptyWishHistory } from "../../lib/createEmptyWishHistory.ts";
+import type { Wish, WishHistory } from "../../types/Wish.types.ts";
 
 // We store the pages from newest to oldest as they are in game
 function wishComparator(w1: Wish, w2: Wish): -1 | 0 | 1 {
@@ -27,16 +25,16 @@ function wishComparator(w1: Wish, w2: Wish): -1 | 0 | 1 {
   return 0;
 }
 
-function convertToKey(wishType: Wish["wishType"]): keyof WishHistoryList {
+function convertToKey(wishType: Wish["wishType"]): keyof WishHistory {
   return wishType
     .toLowerCase()
     .split(" ")
     .join("_")
     .replaceAll("'", "")
-    .replaceAll("-", "_") as keyof WishHistoryList;
+    .replaceAll("-", "_") as keyof WishHistory;
 }
 
-function historyReducer(acc: WishHistoryList, cur: Wish[]): WishHistoryList {
+function historyReducer(acc: WishHistory, cur: Wish[]): WishHistory {
   cur.forEach((wish) => {
     const wishType = convertToKey(wish.wishType);
     acc[wishType].push(wish);
@@ -45,28 +43,18 @@ function historyReducer(acc: WishHistoryList, cur: Wish[]): WishHistoryList {
   return acc;
 }
 
-// Mutating cause I can't be bothered and it's fine here
-function sortWishHistory(history: WishHistoryList): WishHistoryList {
+function sortWishHistory(history: WishHistory): WishHistory {
+  const res = createEmptyWishHistory();
+
   for (const type of Object.keys(history)) {
-    history[type as keyof typeof history].sort(wishComparator);
+    res[type as keyof typeof res] =
+      history[type as keyof typeof history].toSorted(wishComparator);
   }
 
   return history;
 }
 
-function historyTableToList(history: WishHistoryList): WishHistoryList {
-  const res = {} as WishHistoryList;
-
-  for (const type of Object.keys(history)) {
-    res[type as keyof WishHistoryList] =
-      history[type as keyof typeof history].sort(wishComparator);
-  }
-
-  return res;
-}
-
-// This is only to be used with same type of wishes
-// and in sorted lists
+// This is only to be used in sorted lists
 function isSameWish(w1: Wish, w2: Wish) {
   return w1.itemName === w2.itemName && w1.timeReceived === w2.timeReceived;
 }
@@ -125,19 +113,19 @@ function mergeList(oldList: Wish[], newList: Wish[]): Wish[] {
 }
 
 function mergeHistories(
-  oldHistory: WishHistoryList,
-  newHistory: WishHistoryList
-): WishHistoryList {
-  const res = {} as WishHistoryList;
+  oldHistory: WishHistory,
+  newHistory: WishHistory
+): WishHistory {
+  const res = {} as WishHistory;
 
   for (const type of Object.keys(oldHistory)) {
     res[type as keyof typeof res] = mergeList(
       oldHistory[type as keyof typeof oldHistory],
       newHistory[type as keyof typeof newHistory]
-    ).toReversed();;
+    ).toReversed();
   }
 
   return res;
 }
 
-export { sortWishHistory, historyReducer, mergeHistories, historyTableToList };
+export { sortWishHistory, historyReducer, mergeHistories };

@@ -1,8 +1,9 @@
-import { parseDate, type Wish } from "../lib/parseData.ts";
+import { parseDate } from "../features/dataParser/parseData.ts";
 import characters from "../../data/character_rarity.json";
 import banners from "../../data/banners.json";
 import weapons from "../../data/weapon_rarity.json";
 import type { RefObject } from "react";
+import type { Wish } from "../types/Wish.types.ts";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
