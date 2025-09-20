@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import { WishTable } from "./components/WishTable.tsx";
-import { generateSheet } from "./features/tableGenerator/generateSheet.ts";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
 import type { WishHistory } from "./types/Wish.types.ts";
 import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
 import { ImagePicker } from "./components/ImagePicker.tsx";
+import { generateSheet } from "./features/wishTable/utils/generateSheet.ts";
+import type { EventToTable } from "./types/Table.types.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -18,11 +19,11 @@ function App() {
     createEmptyWishHistory()
   );
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const tables = useRef<Array<HTMLTableElement>>(null!);
+  const [activeTab, setActiveTab] = useState("character_event_wish");
+  const tables = useRef<EventToTable>(null!);
 
   if (tables.current === null) {
-    tables.current = [];
+    tables.current = {};
   }
 
   return (
@@ -30,25 +31,25 @@ function App() {
       <button onClick={() => generateSheet(tables.current)}>Export</button>
       <ImagePicker saveHistory={saveHistory} />
       <div>
-        {Object.keys(history).map((event, i) => (
+        {Object.keys(history).map((event) => (
           <label key={event}>
             <input
               type="radio"
-              defaultChecked={i === 0}
+              defaultChecked={event === activeTab}
               name="active_tab"
-              value={i}
-              onChange={(e) => setActiveIndex(Number(e.target.value))}
+              value={event}
+              onChange={(e) => setActiveTab(event)}
             />
             {event.split("_").join(" ")}
           </label>
         ))}
       </div>
-      {Object.values(history).map((wishes, i) => (
+      {Object.entries(history).map(([event, wishes], i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
-          ref={(el: HTMLTableElement) => (tables.current[i] = el)}
+          ref={(el: HTMLTableElement) => (tables.current[event] = el)}
           wishes={wishes}
-          isActive={i === activeIndex}
+          isActive={event === activeTab}
         />
       ))}
     </>

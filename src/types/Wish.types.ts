@@ -13,6 +13,7 @@ export interface WishImage {
 }
 
 export interface WishHistory {
+  [key: string]: Wish[];
   character_event_wish: Wish[];
   weapon_event_wish: Wish[];
   permanent_wish: Wish[];
