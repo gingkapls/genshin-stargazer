@@ -1,7 +1,7 @@
 import { utils, writeFileXLSX } from "xlsx";
-import type { TableRef } from "../../../types/Wish.types.ts";
+import type { EventToTable } from "../../../types/Table.types.ts";
 
-function tablesToSheets(tables: TableRef) {
+function tablesToSheets(tables: EventToTable) {
   return {
     character_event_wish: utils.table_to_sheet(tables.character_event_wish),
     weapon_event_wish: utils.table_to_sheet(tables.weapon_event_wish),
@@ -11,7 +11,7 @@ function tablesToSheets(tables: TableRef) {
   };
 }
 
-export function generateSheet(tables: TableRef | null) {
+export function generateSheet(tables: EventToTable | null) {
   if (tables === null) throw new Error("Couldnt get tables");
 
   const workbook = utils.book_new();
