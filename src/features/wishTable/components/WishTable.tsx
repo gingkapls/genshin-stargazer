@@ -4,25 +4,24 @@ import banners from "../../../../data/banners.json";
 import weapons from "../../../../data/weapon_rarity.json";
 import type { RefObject } from "react";
 import type { Wish } from "../../../types/Wish.types.ts";
+import type { Banner, BannerList } from "../banners.types.ts";
+import { searchBanners } from "../utils/binarySearch.ts";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
-const bannerList = Object.entries(banners)
-  .map(([date, bannerTuple]) => [new Date(date).valueOf(), bannerTuple])
-  .sort(([d1], [d2]) => Number(d1) - Number(d2));
-  
+const bannerList: BannerList = Object.entries<string[]>(banners)
+  .map<Banner>(([date, bannerTuple]) => [new Date(date).valueOf(), bannerTuple])
+  .sort(
+    ([timestamp1], [timestamp2]) => Number(timestamp1) - Number(timestamp2)
+  );
+
 function getBanner({ wishType, timeReceived, part }: Wish) {
   // Subtracting one wish because we get the banner after the searched one
   // FIXME: This doesn't work if the wish is on the latest banner because there is no wish newer than the latest
   // possible fix is having a placeholder banner with a very large value as the timestamp
-  const index =
-    Math.max(
-      bannerList.findIndex((banner) => Number(banner[0]) > timeReceived),
-      1
-    ) - 1;
+  const index = searchBanners(bannerList, timeReceived);
 
-    // This will always be an array of banners
-  const banners = bannerList[index][1] as string[];
+  const banners = bannerList[index][1];
 
   switch (wishType) {
     case "Character Event Wish":
