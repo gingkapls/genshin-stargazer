@@ -7,7 +7,7 @@ import type { Wish } from "../../../types/Wish.types.ts";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
-const bannerList: [number, [string, string]][] = Object.entries(banners)
+const bannerList = Object.entries(banners)
   .map(([date, bannerTuple]) => [new Date(date).valueOf(), bannerTuple])
   .sort(([d1], [d2]) => Number(d1) - Number(d2));
 
