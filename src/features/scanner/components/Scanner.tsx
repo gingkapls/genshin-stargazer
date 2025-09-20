@@ -36,6 +36,7 @@ function Scanner({ images, saveHistory }: ScannerProps) {
     console.debug("Loaded all images");
   }
 
+  // Image Processing
   const handleLoad = useCallback(
     async (hash: string) => {
       if (processedHashes[hash]) {
@@ -54,8 +55,8 @@ function Scanner({ images, saveHistory }: ScannerProps) {
       const newScanRegion = await getScanRegion(inputEl, canvasEl);
 
       setScanQueue((prevQueue) => prevQueue.concat(newScanRegion));
-      setProcessedHashes((pHashes) => ({
-        ...pHashes,
+      setProcessedHashes((prevHashes) => ({
+        ...prevHashes,
         [hash]: true,
       }));
     },

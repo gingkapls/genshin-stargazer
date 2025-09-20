@@ -19,14 +19,7 @@ function FolderPicker({ saveHistory }: FolderPickerProps) {
         return { src: i, hash } satisfies WishImage;
       });
 
-      // Adding the previous images
-      // and deduplicate them before sending them to the scanner
-      const uniqueImages = images.concat(
-        newImages.filter(
-          (image) => images.findIndex((i) => i.hash === image.hash) === -1
-        )
-      );
-      setImages(uniqueImages);
+      setImages(newImages);
     }
   }
 
