@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 import "./App.css";
-import FolderPicker from "./components/FolderPicker.tsx";
 import { WishTable } from "./components/WishTable.tsx";
 import { generateSheet } from "./features/tableGenerator/generateSheet.ts";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
 import type { WishHistory } from "./types/Wish.types.ts";
 import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
+import { ImagePicker } from "./components/ImagePicker.tsx";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -28,7 +28,7 @@ function App() {
   return (
     <>
       <button onClick={() => generateSheet(tables.current)}>Export</button>
-      <FolderPicker saveHistory={saveHistory} />
+      <ImagePicker saveHistory={saveHistory} />
       <div>
         {Object.keys(history).map((event, i) => (
           <label key={event}>

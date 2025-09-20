@@ -6,7 +6,7 @@ interface FolderPickerProps {
   saveHistory: (newHistory: WishHistory) => void;
 }
 
-function FolderPicker({ saveHistory }: FolderPickerProps) {
+function ImagePicker({ saveHistory }: FolderPickerProps) {
   const [images, setImages] = useState<WishImage[]>([]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -25,11 +25,11 @@ function FolderPicker({ saveHistory }: FolderPickerProps) {
 
   return (
     <>
-      <input type="file" multiple onChange={handleChange} />
+      <input type="file" multiple accept="image/*" onChange={handleChange} />
     <h3>Uploaded {images.length} images</h3>
       <Scanner images={images} saveHistory={saveHistory} />
     </>
   );
 }
 
-export default FolderPicker;
+export { ImagePicker};
