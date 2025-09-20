@@ -14,6 +14,7 @@ import { getScanRegion } from "../../imageProcessor/processImage.ts";
 
 interface ScannerProps {
   images: WishImage[];
+  setImages: Dispatch<SetStateAction<WishImage[]>>;
   scannedImages: { [hash: string]: boolean };
   setScannedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
   saveHistory: (newHistory: WishHistory) => void;
@@ -23,6 +24,7 @@ interface ScannerProps {
 
 function Scanner({
   images,
+  setImages,
   scannedImages,
   setScannedImages,
   processedImages,
@@ -42,6 +44,14 @@ function Scanner({
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
+  console.log({ i: images.length, sq: scanQueue.length });
+
+  const clearScanQueue = useCallback(() => {
+    setIsScanning(false);
+    setScanQueue([]);
+    setImages([]);
+    setProgress(1);
+  }, [setScanQueue, setImages]);
 
   // Image Processing
   const handleLoad = useCallback(
@@ -86,8 +96,7 @@ function Scanner({
     // No new images
     if (newScanQueue.length === 0) {
       console.debug("There are no new images");
-      setIsScanning(false);
-      setScanQueue([]);
+      clearScanQueue();
       return;
     }
 
@@ -123,15 +132,14 @@ function Scanner({
       }, {}),
     }));
 
-    // Empty the images to scan state
-    setScanQueue([]);
-    setProgress(1);
+    // Reset scan state
+    clearScanQueue();
 
     // Cleanup
     await scheduler.terminate();
 
     setIsScanning(false);
-  }, [isScanning, saveHistory, scanQueue, scannedImages, setScannedImages]);
+  }, [isScanning, saveHistory, scanQueue, scannedImages, setScannedImages, clearScanQueue]);
 
   return (
     <>

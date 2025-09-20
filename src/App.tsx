@@ -64,7 +64,6 @@ function App() {
 
       <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
       <ImagePicker
-        saveHistory={saveHistory}
         setImages={setImages}
         images={images}
       />
@@ -86,6 +85,7 @@ function App() {
         processedImages={processedImages}
         setProcessedImages={setProcessedImages}
         images={images}
+        setImages={setImages}
         scannedImages={scannedImages}
         setScannedImages={setScannedImages}
         saveHistory={saveHistory}
