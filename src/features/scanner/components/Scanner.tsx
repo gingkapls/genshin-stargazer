@@ -1,6 +1,11 @@
-import { Fragment, useCallback, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { scanImages } from "../utils/scanImages.ts";
-import { useLocalStorage } from "../../../hooks/useLocalStorage.tsx";
 import type { ScanRegions } from "../utils/scan.types.ts";
 import { processHistory } from "../../dataParser/processHistory.ts";
 import { Scheduler } from "../utils/Scheduler.ts";
@@ -9,22 +14,25 @@ import { getScanRegion } from "../../imageProcessor/processImage.ts";
 
 interface ScannerProps {
   images: WishImage[];
+  scannedImages: { [hash: string]: boolean };
+  setScannedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
   saveHistory: (newHistory: WishHistory) => void;
+  processedImages: { [hash: string]: boolean };
+  setProcessedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
 }
 
-function Scanner({ images, saveHistory }: ScannerProps) {
+function Scanner({
+  images,
+  scannedImages,
+  setScannedImages,
+  processedImages,
+  setProcessedImages,
+  saveHistory,
+}: ScannerProps) {
   const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
 
   const [scanQueue, setScanQueue] = useState<ScanRegions[]>([]);
-
-  const [scannedImages, setScannedImages] = useLocalStorage<{
-    [hash: string]: boolean;
-  }>("scannedImages", {});
-
-  const [processedHashes, setProcessedHashes] = useState<{
-    [hash: string]: boolean;
-  }>({});
 
   const allImagesLoaded =
     images.length !== 0 && scanQueue.length === images.length;
@@ -38,7 +46,7 @@ function Scanner({ images, saveHistory }: ScannerProps) {
   // Image Processing
   const handleLoad = useCallback(
     async (hash: string) => {
-      if (processedHashes[hash]) {
+      if (processedImages[hash]) {
         console.debug("Already processed");
         return;
       }
@@ -54,12 +62,12 @@ function Scanner({ images, saveHistory }: ScannerProps) {
       const newScanRegion = await getScanRegion(inputEl, canvasEl);
 
       setScanQueue((prevQueue) => prevQueue.concat(newScanRegion));
-      setProcessedHashes((prevHashes) => ({
+      setProcessedImages((prevHashes) => ({
         ...prevHashes,
         [hash]: true,
       }));
     },
-    [processedHashes]
+    [processedImages, setProcessedImages]
   );
 
   // Function to handle scanning
@@ -135,7 +143,7 @@ function Scanner({ images, saveHistory }: ScannerProps) {
 
       {isScanning && (
         <>
-          <p>{`Scanned ${progress} out of ${scanQueue.length} images`}</p>
+          <p>{`Scanning image #${progress} out of ${scanQueue.length} images`}</p>
           <progress value={progress} max={scanQueue.length} />
         </>
       )}

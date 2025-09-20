@@ -1,14 +1,13 @@
-import { useState, type ChangeEvent } from "react";
-import Scanner from "../features/scanner/components/Scanner.tsx";
+import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import type { WishHistory, WishImage } from "../types/Wish.types.ts";
 
 interface FolderPickerProps {
   saveHistory: (newHistory: WishHistory) => void;
+  images: WishImage[];
+  setImages: Dispatch<SetStateAction<WishImage[]>>;
 }
 
-function ImagePicker({ saveHistory }: FolderPickerProps) {
-  const [images, setImages] = useState<WishImage[]>([]);
-
+function ImagePicker({ images, setImages }: FolderPickerProps) {
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
       const newImages = Array.from(e.target.files, (f) => {
@@ -26,10 +25,9 @@ function ImagePicker({ saveHistory }: FolderPickerProps) {
   return (
     <>
       <input type="file" multiple accept="image/*" onChange={handleChange} />
-    <h3>Uploaded {images.length} images</h3>
-      <Scanner images={images} saveHistory={saveHistory} />
+      <h3>Uploaded {images.length} images</h3>
     </>
   );
 }
 
-export { ImagePicker};
+export { ImagePicker };

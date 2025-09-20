@@ -16,9 +16,6 @@ const bannerList: BannerList = Object.entries<string[]>(banners)
   );
 
 function getBanner({ wishType, timeReceived, part }: Wish) {
-  // Subtracting one wish because we get the banner after the searched one
-  // FIXME: This doesn't work if the wish is on the latest banner because there is no wish newer than the latest
-  // possible fix is having a placeholder banner with a very large value as the timestamp
   const index = searchBanners(bannerList, timeReceived);
 
   const banners = bannerList[index][1];
