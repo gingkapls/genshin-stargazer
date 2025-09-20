@@ -79,7 +79,7 @@ function App() {
               value={event}
               onChange={() => setActiveTab(event)}
             />
-            {event.split("_").join(" ")}
+            {event.split("_").join(" ")} ({history[event].length})
           </label>
         ))}
       </div>

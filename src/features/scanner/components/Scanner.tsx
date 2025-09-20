@@ -125,7 +125,7 @@ function Scanner({
 
     // Empty the images to scan state
     setScanQueue([]);
-    setProgress(0);
+    setProgress(1);
 
     // Cleanup
     await scheduler.terminate();
@@ -135,7 +135,7 @@ function Scanner({
 
   return (
     <>
-      {!isScanning && !allImagesScanned && (
+      {allImagesLoaded && !isScanning && !allImagesScanned && (
         <button type="button" onClick={handleClick}>
           Scan
         </button>

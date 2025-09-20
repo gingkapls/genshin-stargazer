@@ -1,5 +1,6 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import type { WishHistory, WishImage } from "../types/Wish.types.ts";
+import { hashCode } from "../lib/hash.ts";
 
 interface FolderPickerProps {
   saveHistory: (newHistory: WishHistory) => void;
@@ -13,8 +14,7 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
       const newImages = Array.from(e.target.files, (f) => {
         const i = URL.createObjectURL(f);
         // TODO: Use hash function
-        const hash =
-          "h" + f.name.replaceAll(/[.-]/g, "_") + f.size + f.lastModified;
+        const hash = "h" + hashCode(f.name + f.size + f.lastModified);
         return { src: i, hash } satisfies WishImage;
       });
 
