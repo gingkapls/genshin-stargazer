@@ -1,11 +1,11 @@
 import { Fragment, useCallback, useState } from "react";
-import { getScanRegion } from "../../dataParser/processImage.ts";
 import { scanImages } from "../utils/scanImages.ts";
 import { useLocalStorage } from "../../../hooks/useLocalStorage.tsx";
 import type { ScanRegions } from "../utils/scan.types.ts";
 import { processHistory } from "../../dataParser/processHistory.ts";
 import { Scheduler } from "../utils/Scheduler.ts";
 import type { WishHistory, WishImage } from "../../../types/Wish.types.ts";
+import { getScanRegion } from "../../imageProcessor/processImage.ts";
 
 interface ScannerProps {
   images: WishImage[];

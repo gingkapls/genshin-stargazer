@@ -1,12 +1,12 @@
 import type { Rectangle } from "tesseract.js";
-import { getOpenCv, translateException } from "../scanner/lib/opencv/opencv.ts";
+import { getOpenCv, translateException } from "./lib/opencv/opencv.ts";
 import type { bbox, ScanRegions } from "../scanner/utils/scan.types.ts";
 import {
   ITEM_NAME_BBOX,
   PAGE_COUNT_BBOX,
   TIME_RECEIVED_BBOX,
   WISH_TYPE_BBOX,
-} from "../scanner/utils/config.ts";
+} from "../scanner/utils/config/bboxes.ts";
 
 async function preprocessImage(
   input: HTMLImageElement,
@@ -48,9 +48,13 @@ async function preprocessImage(
     let maxY = 0;
 
     for (let i = 0; i < lines.rows; ++i) {
+      // x1: i * 4
+      // y1: i * 4 + 1
       minX = Math.min(minX, lines.data32S[i * 4]);
       minY = Math.min(minY, lines.data32S[i * 4 + 1]);
 
+      // x2: i * 4 + 2
+      // y2: i * 4 + 3
       maxX = Math.max(maxX, lines.data32S[i * 4 + 2]);
       maxY = Math.max(maxY, lines.data32S[i * 4 + 3]);
     }
