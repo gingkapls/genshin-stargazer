@@ -10,18 +10,19 @@ const charMap = new Map(Object.entries(characters));
 const bannerList = Object.entries(banners)
   .map(([date, bannerTuple]) => [new Date(date).valueOf(), bannerTuple])
   .sort(([d1], [d2]) => Number(d1) - Number(d2));
-
-console.log(bannerList);
-
+  
 function getBanner({ wishType, timeReceived, part }: Wish) {
   // Subtracting one wish because we get the banner after the searched one
+  // FIXME: This doesn't work if the wish is on the latest banner because there is no wish newer than the latest
+  // possible fix is having a placeholder banner with a very large value as the timestamp
   const index =
     Math.max(
       bannerList.findIndex((banner) => Number(banner[0]) > timeReceived),
       1
     ) - 1;
 
-  const banners = bannerList[index][1];
+    // This will always be an array of banners
+  const banners = bannerList[index][1] as string[];
 
   switch (wishType) {
     case "Character Event Wish":
@@ -33,6 +34,7 @@ function getBanner({ wishType, timeReceived, part }: Wish) {
     case "Beginners' Wish":
       return "Beginners' Wish";
     case "Chronicled Wish":
+      console.log(banners[2], index);
       return banners[2] || "Chronicled Wish";
     default:
       throw new Error("Couldn't get wish type");
