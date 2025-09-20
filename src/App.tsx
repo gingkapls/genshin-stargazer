@@ -8,6 +8,7 @@ import { ImagePicker } from "./components/ImagePicker.tsx";
 import { generateSheet } from "./features/wishTable/utils/generateSheet.ts";
 import type { EventToTable } from "./types/Table.types.ts";
 import { WishTable } from "./features/wishTable/components/WishTable.tsx";
+import { Modal } from "./components/Modal.tsx";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -20,15 +21,25 @@ function App() {
   );
 
   const [activeTab, setActiveTab] = useState("character_event_wish");
-  const tables = useRef<EventToTable>(null!);
+  const tablesRef = useRef<EventToTable>(null!);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  if (tables.current === null) {
-    tables.current = {};
+  if (tablesRef.current === null) {
+    tablesRef.current = {};
   }
 
   return (
     <>
-      <button onClick={() => generateSheet(tables.current)}>Export</button>
+      <Modal title="Delete data" ref={dialogRef}>
+        Hello
+        <button onClick={() => dialogRef.current?.close()}>No</button>
+        <button onClick={() => dialogRef.current?.close()}>Yes</button>
+      </Modal>
+      <button onClick={() => dialogRef.current?.showModal()}>
+        Show dialog
+      </button>
+
+      <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
       <ImagePicker saveHistory={saveHistory} />
       <div>
         {Object.keys(history).map((event) => (
@@ -47,7 +58,7 @@ function App() {
       {Object.entries(history).map(([event, wishes], i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
-          ref={(el: HTMLTableElement) => (tables.current[event] = el)}
+          ref={(el: HTMLTableElement) => (tablesRef.current[event] = el)}
           wishes={wishes}
           isActive={event === activeTab}
         />

@@ -9,6 +9,7 @@ const itemNamesDict = new BKTree(
 const wishTypesDict = new BKTree([
   "Character Event Wish",
   "Character Event Wish-2",
+  "Beginners' Wish",
   "Permanent Wish",
   "Chronicled Wish",
   "Weapon Event Wish",

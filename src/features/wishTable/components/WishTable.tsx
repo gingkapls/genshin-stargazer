@@ -7,20 +7,39 @@ import type { Wish } from "../../../types/Wish.types.ts";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
-const bannerList = Object.entries(banners)
-  .map(([date, name]) => [new Date(date).valueOf(), name])
+const bannerList: [number, [string, string]][] = Object.entries(banners)
+  .map(([date, bannerTuple]) => [new Date(date).valueOf(), bannerTuple])
   .sort(([d1], [d2]) => Number(d1) - Number(d2));
 
-function getBanner(d: number) {
-  //FIXME:  Account for Character Event Wish-2 and 1
-  const nextIndex = Math.max(
-    bannerList.findIndex((banner) => Number(banner[0]) > d),
-    1
-  );
-  return bannerList[nextIndex - 1][1];
+console.log(bannerList);
+
+function getBanner({ wishType, timeReceived, part }: Wish) {
+  // Subtracting one wish because we get the banner after the searched one
+  const index =
+    Math.max(
+      bannerList.findIndex((banner) => Number(banner[0]) > timeReceived),
+      1
+    ) - 1;
+
+  const banners = bannerList[index][1];
+
+  switch (wishType) {
+    case "Character Event Wish":
+      return banners[part === "Part 2" ? 1 : 0];
+    case "Weapon Event Wish":
+      return "Epitome Invocation";
+    case "Permanent Wish":
+      return "Wanderlust Invocation";
+    case "Beginners' Wish":
+      return "Beginners' Wish";
+    case "Chronicled Wish":
+      return banners[2] || "Chronicled Wish";
+    default:
+      throw new Error("Couldn't get wish type");
+  }
 }
 
-function getRarity(itemName: string) {
+function getRarity({ itemName }: Wish) {
   const rarity = wepMap.get(itemName) || charMap.get(itemName);
 
   if (!rarity) throw new Error("Couldn't get rarity");
@@ -28,14 +47,14 @@ function getRarity(itemName: string) {
   return rarity;
 }
 
-function getItemType(itemName: string) {
+function getItemType({ itemName }: Wish) {
   if (wepMap.get(itemName)) return "Weapon";
 
   return "Character";
 }
 
-function getClassName(itemName: string) {
-  const rarity = getRarity(itemName);
+function getClassName(wish: Wish) {
+  const rarity = getRarity(wish);
 
   if (rarity === "5 Stars") return "five-stars";
   if (rarity === "4 Stars") return "four-stars";
@@ -61,8 +80,8 @@ function getPity(rarity: string, pityCounter: PityCounter) {
 
 // Returns the number of rolls done so far in the same banner
 function getPerBanner(wishes: Wish[], i: number, pityCounter: PityCounter) {
-  const prevBanner = getBanner(wishes[Math.max(i - 1, 0)].timeReceived);
-  const currentBanner = getBanner(wishes[i].timeReceived);
+  const prevBanner = getBanner(wishes[Math.max(i - 1, 0)]);
+  const currentBanner = getBanner(wishes[i]);
 
   if (prevBanner === currentBanner) {
     return ++pityCounter.perBanner;
@@ -124,14 +143,14 @@ function WishTable({
         </thead>
         <tbody>
           {wishes.toReversed().map((wish, i, revWishes) => {
-            const rarity = getRarity(wish.itemName);
-            const banner = getBanner(wish.timeReceived);
+            const rarity = getRarity(wish);
+            const banner = getBanner(wish);
             // Reverse the wishes to get them from oldest to newest
             // We pass in the reversed array so that counter calculations are correct
 
             return (
-              <tr key={wish.id} className={getClassName(wish.itemName)}>
-                <td>{getItemType(wish.itemName)}</td>
+              <tr key={wish.id} className={getClassName(wish)}>
+                <td>{getItemType(wish)}</td>
                 <td>{wish.itemName}</td>
                 <td>{parseDate(wish.timeReceived)} </td>
                 <td>{rarity[0]}</td>
