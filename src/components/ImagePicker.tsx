@@ -1,9 +1,8 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
-import type { WishHistory, WishImage } from "../types/Wish.types.ts";
+import type { WishImage } from "../types/Wish.types.ts";
 import { hashCode } from "../lib/hash.ts";
 
 interface FolderPickerProps {
-  saveHistory: (newHistory: WishHistory) => void;
   images: WishImage[];
   setImages: Dispatch<SetStateAction<WishImage[]>>;
 }
@@ -24,7 +23,7 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
   return (
     <>
       <input type="file" multiple accept="image/*" onChange={handleChange} />
-      <h3>Uploaded {images.length} images</h3>
+      <h3>Images to scan: {images.length}</h3>
     </>
   );
 }

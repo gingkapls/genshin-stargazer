@@ -10,6 +10,7 @@ import type { EventToTable } from "./types/Table.types.ts";
 import { WishTable } from "./features/wishTable/components/WishTable.tsx";
 import { Modal } from "./components/Modal.tsx";
 import Scanner from "./features/scanner/components/Scanner.tsx";
+import type { ScanRegions } from "./features/scanner/utils/scan.types.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -33,19 +34,23 @@ function App() {
   }>("scannedImages", {});
 
   const [processedImages, setProcessedImages] = useState<{
-    [hash: string]: boolean;
+    [hash: string]: ScanRegions;
   }>({});
 
   const [images, setImages] = useState<WishImage[]>([]);
 
   const [activeTab, setActiveTab] = useState("character_event_wish");
 
-  const tablesRef = useRef<EventToTable>(null!);
+  const tablesRef = useRef<EventToTable>(null);
   const clearHistoryDialogRef = useRef<HTMLDialogElement>(null);
 
-  if (tablesRef.current === null) {
-    tablesRef.current = {};
-  }
+  const getTables = () => {
+    if (tablesRef.current === null) {
+      tablesRef.current = {};
+    }
+
+    return tablesRef.current;
+  };
 
   return (
     <>
@@ -63,11 +68,7 @@ function App() {
       </div>
 
       <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
-      <ImagePicker
-        saveHistory={saveHistory}
-        setImages={setImages}
-        images={images}
-      />
+      <ImagePicker setImages={setImages} images={images} />
       <div>
         {Object.keys(history).map((event) => (
           <label key={event}>
@@ -86,6 +87,7 @@ function App() {
         processedImages={processedImages}
         setProcessedImages={setProcessedImages}
         images={images}
+        setImages={setImages}
         scannedImages={scannedImages}
         setScannedImages={setScannedImages}
         saveHistory={saveHistory}
@@ -93,7 +95,14 @@ function App() {
       {Object.entries(history).map(([event, wishes], i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
-          ref={(el: HTMLTableElement) => (tablesRef.current[event] = el)}
+          ref={(el: HTMLTableElement) => {
+            const t = getTables();
+            t[event] = el;
+
+            return () => {
+              t[event] = null;
+            };
+          }}
           wishes={wishes}
           isActive={event === activeTab}
         />
