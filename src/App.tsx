@@ -10,6 +10,7 @@ import type { EventToTable } from "./types/Table.types.ts";
 import { WishTable } from "./features/wishTable/components/WishTable.tsx";
 import { Modal } from "./components/Modal.tsx";
 import Scanner from "./features/scanner/components/Scanner.tsx";
+import type { ScanRegions } from "./features/scanner/utils/scan.types.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -33,7 +34,7 @@ function App() {
   }>("scannedImages", {});
 
   const [processedImages, setProcessedImages] = useState<{
-    [hash: string]: boolean;
+    [hash: string]: ScanRegions;
   }>({});
 
   const [images, setImages] = useState<WishImage[]>([]);

@@ -18,8 +18,8 @@ interface ScannerProps {
   scannedImages: { [hash: string]: boolean };
   setScannedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
   saveHistory: (newHistory: WishHistory) => void;
-  processedImages: { [hash: string]: boolean };
-  setProcessedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
+  processedImages: { [hash: string]: ScanRegions };
+  setProcessedImages: Dispatch<SetStateAction<{ [hash: string]: ScanRegions }>>;
 }
 
 function Scanner({
@@ -34,7 +34,9 @@ function Scanner({
   const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
 
-  const [scanQueue, setScanQueue] = useState<ScanRegions[]>([]);
+  const scanQueue = Object.values(processedImages).filter(
+    ({ image }) => !scannedImages[image.id]
+  );
 
   const allImagesLoaded =
     images.length !== 0 && scanQueue.length === images.length;
@@ -48,16 +50,18 @@ function Scanner({
 
   const clearScanQueue = useCallback(() => {
     setIsScanning(false);
-    setScanQueue([]);
     setImages([]);
     setProgress(1);
-  }, [setScanQueue, setImages]);
+  }, [setImages]);
 
   // Image Processing
   const handleLoad = useCallback(
     async (hash: string) => {
       if (processedImages[hash]) {
         console.debug("Already processed");
+        setImages((prevImages) =>
+          prevImages.filter((image) => image.hash !== hash)
+        );
         return;
       }
 
@@ -71,13 +75,12 @@ function Scanner({
 
       const newScanRegion = await getScanRegion(inputEl, canvasEl);
 
-      setScanQueue((prevQueue) => prevQueue.concat(newScanRegion));
       setProcessedImages((prevHashes) => ({
         ...prevHashes,
-        [hash]: true,
+        [hash]: newScanRegion,
       }));
     },
-    [processedImages, setProcessedImages]
+    [setImages, processedImages, setProcessedImages]
   );
 
   // Function to handle scanning
@@ -88,13 +91,8 @@ function Scanner({
     }
     console.debug("clicked", { scanQueue });
 
-    // Only scan new images
-    const newScanQueue = scanQueue.filter(
-      ({ image }) => !scannedImages[image.id]
-    );
-
     // No new images
-    if (newScanQueue.length === 0) {
+    if (scanQueue.length === 0) {
       console.debug("There are no new images");
       clearScanQueue();
       return;
@@ -108,7 +106,7 @@ function Scanner({
     await scheduler.initialize();
 
     const scanResults = await scanImages(
-      newScanQueue,
+      scanQueue,
       scheduler,
       (region: ScanRegions) => {
         console.debug("Scanning image", region.image.id);
@@ -126,7 +124,7 @@ function Scanner({
     setScannedImages((oldImages) => ({
       ...oldImages,
       // Reducing our array of newly scanned rectangles into a object of hashes
-      ...newScanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
+      ...scanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
         acc[cur.image.id] = true;
         return acc;
       }, {}),
@@ -139,7 +137,7 @@ function Scanner({
     await scheduler.terminate();
 
     setIsScanning(false);
-  }, [isScanning, saveHistory, scanQueue, scannedImages, setScannedImages, clearScanQueue]);
+  }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
   return (
     <>
