@@ -63,23 +63,27 @@ function App() {
       </Modal>
 
       <header>
-        <h1>Wish History Scanner</h1>
-        <ImagePicker setImages={setImages} images={images} />
-        <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
-        <button onClick={() => clearHistoryDialogRef.current?.showModal()}>
-          Delete history
-        </button>
+        <div>
+          <h1>Wish History Scanner</h1>
+          <ImagePicker setImages={setImages} images={images} />
+          <button onClick={() => generateSheet(tablesRef.current)}>
+            Export
+          </button>
+          <button onClick={() => clearHistoryDialogRef.current?.showModal()}>
+            Delete history
+          </button>
+        </div>
+        <div className="wish-type-container">
+          <span>Wish Type</span>
+          <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
+            {Object.keys(history).map((event) => (
+              <option key={event} value={event}>
+                {event.split("_").join(" ")} ({history[event].length})
+              </option>
+            ))}
+          </select>
+        </div>
       </header>
-      <div className="wish-type-container">
-        <span>Wish Type</span>
-        <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
-          {Object.keys(history).map((event) => (
-            <option key={event} value={event}>
-              {event.split("_").join(" ")} ({history[event].length})
-            </option>
-          ))}
-        </select>
-      </div>
 
       {Object.entries(history).map(([event, wishes], i) => (
         <WishTable

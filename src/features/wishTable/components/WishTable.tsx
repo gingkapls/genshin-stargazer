@@ -161,7 +161,7 @@ function WishTable({
           })}
         </tbody>
       </table>
-      {wishes.length === 0 && "No wishes recorded"}
+      <span>{wishes.length === 0 && "No wishes recorded"}</span>
     </div>
   );
 }
