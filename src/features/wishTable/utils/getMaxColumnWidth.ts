@@ -24,18 +24,22 @@ function getSingleMaxColumnWidth(
   numRows: number
 ) {
   return {
-    // + 2 for padding for good measure
+    // + 1 for padding for good measure
+    // We OR by 0 in cases where the cell is empty
     wch:
       getRows(columnName, numRows).reduce(
-        (maxWidth, r) => Math.max(maxWidth, String(worksheet[r].v).length),
+        (maxWidth, r) =>
+          Math.max(maxWidth, String(worksheet[r]?.v || 0).length),
         0
-      ) + 2,
+      ) + 1,
   };
 }
 
 function getMaxColumnWidths(worksheet: WorkSheet) {
   // Range is in the format "A1:I6" for example
-  const end = worksheet["!fullref"].split(":")[1];
+  const ref = worksheet["!fullref"] || worksheet["!ref"];
+
+  const end = ref.split(":")[1];
   const [numCols, numRows] = getRange(end);
   console.log(getCols(numCols).map((col) => getRows(col, numRows)));
 

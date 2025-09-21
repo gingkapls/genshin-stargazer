@@ -32,7 +32,7 @@ export function generateSheet(tables: EventToTable | null) {
     ["Export Date", "2025-09-15 08:47:17"],
   ]);
 
-  [
+  /*   [
     character_event_wish,
     weapon_event_wish,
     beginners_wish,
@@ -40,15 +40,19 @@ export function generateSheet(tables: EventToTable | null) {
     chronicled_wish,
   ].forEach(
     (worksheet) => (worksheet["!cols"] = getMaxColumnWidths(worksheet))
-  );
+  ); */
 
   utils.book_append_sheet(workbook, character_event_wish, "Character Event");
   utils.book_append_sheet(workbook, weapon_event_wish, "Weapon Event");
   utils.book_append_sheet(workbook, permanent_wish, "Standard");
   utils.book_append_sheet(workbook, beginners_wish, "Beginners' Wish");
   utils.book_append_sheet(workbook, chronicled_wish, "Chronicled Wish");
-
   utils.book_append_sheet(workbook, information, "Information");
+
+  // Adjusting widths
+  Object.values(workbook.Sheets).forEach((sheet) => {
+    sheet["!cols"] = getMaxColumnWidths(sheet);
+  });
 
   writeFileXLSX(workbook, "test.xlsx");
 }
