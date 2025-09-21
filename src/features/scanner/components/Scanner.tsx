@@ -1,6 +1,7 @@
 import {
   Fragment,
   useCallback,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -11,6 +12,7 @@ import { processHistory } from "../../dataParser/processHistory.ts";
 import { Scheduler } from "../utils/Scheduler.ts";
 import type { WishHistory, WishImage } from "../../../types/Wish.types.ts";
 import { getScanRegion } from "../../imageProcessor/processImage.ts";
+import { Modal } from "../../../components/Modal.tsx";
 
 interface ScannerProps {
   images: WishImage[];
@@ -33,10 +35,13 @@ function Scanner({
 }: ScannerProps) {
   const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
+  const [error, setError] = useState<Error | null>(new Error("hi"));
 
   const scanQueue = Object.values(processedImages).filter(
     ({ image }) => !scannedImages[image.id]
   );
+
+  const errorModalRef = useRef<HTMLDialogElement | null>(null);
 
   const allImagesLoaded =
     images.length !== 0 && scanQueue.length === images.length;
@@ -52,6 +57,12 @@ function Scanner({
     setImages([]);
     setProgress(1);
   }, [setImages]);
+
+  console.log({
+    i: images.length,
+    s: scanQueue.length,
+    p: Object.values(processedImages).length,
+  });
 
   // Image Processing
   const handleLoad = useCallback(
@@ -102,40 +113,41 @@ function Scanner({
     console.debug("Start time", new Date());
 
     const scheduler = new Scheduler();
-    await scheduler.initialize();
+    try {
+      await scheduler.initialize();
+      const scanResults = await scanImages(
+        scanQueue,
+        scheduler,
+        (region: ScanRegions) => {
+          console.debug("Scanning image", region.image.id);
+          setProgress((p) => (p += 1));
+        }
+      );
+      const newHistory = processHistory(scanResults);
+      console.debug({ newHistory });
+      saveHistory(newHistory);
 
-    const scanResults = await scanImages(
-      scanQueue,
-      scheduler,
-      (region: ScanRegions) => {
-        console.debug("Scanning image", region.image.id);
-        setProgress((p) => (p += 1));
-      }
-    );
+      // Set scanned images only after data state is set
+      // to avoid inconsistent cache
+      setScannedImages((oldImages) => ({
+        ...oldImages,
+        // Reducing our array of newly scanned rectangles into a object of hashes
+        ...scanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
+          acc[cur.image.id] = true;
+          return acc;
+        }, {}),
+      }));
+    } catch (e) {
+      if (e instanceof Error) console.log(e.cause);
+    } finally {
+      // Reset scan state
+      console.log("Clean up");
+      clearScanQueue();
 
-    const newHistory = processHistory(scanResults);
-
-    console.debug({ newHistory });
-    saveHistory(newHistory);
-
-    // Set scanned images only after data state is set
-    // to avoid inconsistent cache
-    setScannedImages((oldImages) => ({
-      ...oldImages,
-      // Reducing our array of newly scanned rectangles into a object of hashes
-      ...scanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
-        acc[cur.image.id] = true;
-        return acc;
-      }, {}),
-    }));
-
-    // Reset scan state
-    clearScanQueue();
-
-    // Cleanup
-    await scheduler.terminate();
-
-    setIsScanning(false);
+      // Cleanup
+      await scheduler.terminate();
+      setIsScanning(false);
+    }
   }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
   return (
@@ -145,7 +157,10 @@ function Scanner({
           Scan
         </button>
       )}
-
+      <Modal open={true} ref={errorModalRef} onClose={() => setError(null)}>
+        {error && error.message}
+        <button>Close me!</button>
+      </Modal>
       {isScanning && (
         <>
           <p>{`Scanning image #${progress} out of ${scanQueue.length} images`}</p>

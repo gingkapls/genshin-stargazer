@@ -3,24 +3,28 @@ import type { ScanRegions } from "./scan.types";
 import type { Scheduler } from "./Scheduler.ts";
 
 async function scanSingleRegion(region: ScanRegions, scheduler: Scheduler) {
-  return await Promise.all(
-    region.rectangles
-      .map((rectangle) =>
-        scheduler.scheduler.addJob(
-          "recognize",
-          region.image,
-          { rectangle },
-          { blocks: true, text: false }
+  try {
+    return await Promise.all(
+      region.rectangles
+        .map((rectangle) =>
+          scheduler.scheduler.addJob(
+            "recognize",
+            region.image,
+            { rectangle },
+            { blocks: true, text: false }
+          )
         )
-      )
-      .concat(
-        scheduler.pageWorker.recognize(
-          region.image,
-          { rectangle: region.pageRectangle },
-          { blocks: true, text: false }
+        .concat(
+          scheduler.pageWorker.recognize(
+            region.image,
+            { rectangle: region.pageRectangle },
+            { blocks: true, text: false }
+          )
         )
-      )
-  );
+    );
+  } catch (e) {
+    throw new Error("Error scanning image", { cause: region });
+  }
 }
 
 export async function scanImages(
