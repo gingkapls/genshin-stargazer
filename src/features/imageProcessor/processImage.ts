@@ -111,9 +111,21 @@ async function getScanRegion(
 
   if (!offset) throw new Error("No offset found. Couldn't process image");
 
-  const rectangle = calcRegions(outputEl, offset);
+  const region = calcRegions(outputEl, offset);
 
-  return rectangle;
+  // There is a NaN or Infinity hidden in our rectangles' bounds
+  // This means the image was not a valid wish history screenshot
+  if (
+    region.rectangles.some((rect) =>
+      Object.values(rect).some(
+        (value) => Number.isNaN(value) || !Number.isFinite(value)
+      )
+    )
+  ) {
+    throw new Error("Image is not a valid valid", { cause: inputEl });
+  }
+
+  return region;
 }
 
 export { getScanRegion };

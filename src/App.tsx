@@ -69,6 +69,15 @@ function App() {
           <button onClick={() => generateSheet(tablesRef.current)}>
             Export
           </button>
+          <Scanner
+            processedImages={processedImages}
+            setProcessedImages={setProcessedImages}
+            images={images}
+            setImages={setImages}
+            scannedImages={scannedImages}
+            setScannedImages={setScannedImages}
+            saveHistory={saveHistory}
+          />
           <button onClick={() => clearHistoryDialogRef.current?.showModal()}>
             Delete history
           </button>
@@ -100,16 +109,6 @@ function App() {
           isActive={event === activeTab}
         />
       ))}
-
-      <Scanner
-        processedImages={processedImages}
-        setProcessedImages={setProcessedImages}
-        images={images}
-        setImages={setImages}
-        scannedImages={scannedImages}
-        setScannedImages={setScannedImages}
-        saveHistory={saveHistory}
-      />
     </main>
   );
 }

@@ -23,7 +23,6 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
   return (
     <>
       <input type="file" multiple accept="image/*" onChange={handleChange} />
-      <h3>Images to scan: {images.length}</h3>
     </>
   );
 }

@@ -5,12 +5,10 @@ interface ModalProps extends React.DialogHTMLAttributes<HTMLDialogElement> {
   ref?: RefObject<HTMLDialogElement | null>;
 }
 
-function Modal({ ref, onClose, children }: ModalProps) {
+function Modal({ children, ...props }: ModalProps) {
   return (
     <>
-      <dialog ref={ref} onClose={onClose}>
-        {children}
-      </dialog>
+      <dialog {...props}>{children}</dialog>
     </>
   );
 }
