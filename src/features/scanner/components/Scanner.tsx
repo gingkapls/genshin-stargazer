@@ -46,13 +46,20 @@ function Scanner({
 
   // Happy path
   const scanQueue = Object.values(processedImages).filter(
-    ({ image }) => !scannedImages[image.id]
+    (region) => !scannedImages[region.image.id]
   );
 
-  const allImagesLoaded =
-    scanQueue.length >= images.length;
+  console.log(processedImages);
+  console.log(scannedImages);
+
+  // FIXME: Uploading small number of images one-by-one
+  // results in scanQueue growing larger than images array
+  // even if it has not finished loading all images
+  const allImagesLoaded = images.every((img) => processedImages[img.hash]);
 
   const allImagesScanned = scanQueue.length === 0;
+
+  console.log(allImagesLoaded);
 
   if (allImagesLoaded) {
     console.debug("Loaded all images");
@@ -80,7 +87,7 @@ function Scanner({
   const handleLoad = useCallback(
     async (hash: string) => {
       try {
-        if (processedImages[hash] || scannedImages[hash]) {
+        if (processedImages[hash]) {
           console.debug("Already processed");
           setImages((prevImages) =>
             prevImages.filter((image) => image.hash !== hash)
@@ -108,7 +115,7 @@ function Scanner({
         }
       }
     },
-    [setImages, scannedImages, processedImages, setProcessedImages]
+    [setImages, processedImages, setProcessedImages]
   );
 
   // Function to handle scanning

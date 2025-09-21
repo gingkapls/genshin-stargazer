@@ -9,15 +9,18 @@ interface FolderPickerProps {
 
 function ImagePicker({ images, setImages }: FolderPickerProps) {
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      const newImages = Array.from(e.target.files, (f) => {
-        const i = URL.createObjectURL(f);
-        const hash = "h" + hashCode(f.name + f.size + f.lastModified);
-        return { src: i, hash } satisfies WishImage;
-      });
+    if (!e.target.files) return;
+    const newImages = Array.from(e.target.files, (f) => {
+      const i = URL.createObjectURL(f);
+      const hash = "h" + hashCode(f.name + f.size + f.lastModified);
+      return { src: i, hash } satisfies WishImage;
+    });
 
-      setImages(newImages);
-    }
+    const uniqueImages = newImages.filter(
+      (img) => images.findIndex((i) => i.hash === img.hash) === -1
+    );
+
+    setImages(images.concat(uniqueImages));
   }
 
   return (
