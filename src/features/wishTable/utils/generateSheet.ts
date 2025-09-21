@@ -54,5 +54,6 @@ export function generateSheet(tables: EventToTable | null) {
     sheet["!cols"] = getMaxColumnWidths(sheet);
   });
 
+  // TODO: Set filename and date
   writeFileXLSX(workbook, "test.xlsx");
 }

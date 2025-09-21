@@ -70,18 +70,16 @@ function App() {
       <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
       <ImagePicker setImages={setImages} images={images} />
       <div>
-        {Object.keys(history).map((event) => (
-          <label key={event}>
-            <input
-              type="radio"
-              defaultChecked={event === activeTab}
-              name="active_tab"
+        <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
+          {Object.keys(history).map((event) => (
+            <option
+              key={event}
               value={event}
-              onChange={() => setActiveTab(event)}
-            />
-            {event.split("_").join(" ")} ({history[event].length})
-          </label>
-        ))}
+            >
+              {event.split("_").join(" ")} ({history[event].length})
+            </option>
+          ))}
+        </select>
       </div>
       <Scanner
         processedImages={processedImages}
