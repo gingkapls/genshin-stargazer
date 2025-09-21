@@ -7,11 +7,6 @@ export interface Wish {
   pageNumber: number;
 }
 
-export interface WishImage {
-  src: string;
-  hash: string;
-}
-
 export interface WishHistory {
   [key: string]: Wish[];
   character_event_wish: Wish[];

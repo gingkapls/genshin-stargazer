@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./App.css";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
-import type { WishHistory, WishImage } from "./types/Wish.types.ts";
+import type { WishHistory } from "./types/Wish.types.ts";
 import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
 import { ImagePicker } from "./components/ImagePicker.tsx";
 import { generateSheet } from "./features/wishTable/utils/generateSheet.ts";
@@ -10,7 +10,7 @@ import type { EventToTable } from "./types/Table.types.ts";
 import { WishTable } from "./features/wishTable/components/WishTable.tsx";
 import { Modal } from "./components/Modal.tsx";
 import Scanner from "./features/scanner/components/Scanner.tsx";
-import type { ScanRegions } from "./features/scanner/utils/scan.types.ts";
+import type { Images, ProcessedImages, ScannedImages } from "./types/State.type.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -29,15 +29,11 @@ function App() {
     createEmptyWishHistory()
   );
 
-  const [scannedImages, setScannedImages] = useLocalStorage<{
-    [hash: string]: boolean;
-  }>("scannedImages", {});
+  const [scannedImages, setScannedImages] = useLocalStorage<ScannedImages>("scannedImages", {});
 
-  const [processedImages, setProcessedImages] = useState<{
-    [hash: string]: ScanRegions;
-  }>({});
+  const [processedImages, setProcessedImages] = useState<ProcessedImages>({});
 
-  const [images, setImages] = useState<WishImage[]>([]);
+  const [images, setImages] = useState<Images>({});
 
   const [activeTab, setActiveTab] = useState("character_event_wish");
 

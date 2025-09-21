@@ -10,18 +10,23 @@ import { scanImages } from "../utils/scanImages.ts";
 import type { ScanRegions } from "../utils/scan.types.ts";
 import { processHistory } from "../../dataParser/processHistory.ts";
 import { Scheduler } from "../utils/Scheduler.ts";
-import type { WishHistory, WishImage } from "../../../types/Wish.types.ts";
+import type { WishHistory } from "../../../types/Wish.types.ts";
 import { getScanRegion } from "../../imageProcessor/processImage.ts";
 import { Modal } from "../../../components/Modal.tsx";
+import type {
+  Images,
+  ProcessedImages,
+  ScannedImages,
+} from "../../../types/State.type.ts";
 
 interface ScannerProps {
-  images: WishImage[];
-  setImages: Dispatch<SetStateAction<WishImage[]>>;
-  scannedImages: { [hash: string]: boolean };
-  setScannedImages: Dispatch<SetStateAction<{ [hash: string]: boolean }>>;
+  images: Images;
+  setImages: Dispatch<SetStateAction<Images>>;
+  scannedImages: ScannedImages;
+  setScannedImages: Dispatch<SetStateAction<ScannedImages>>;
   saveHistory: (newHistory: WishHistory) => void;
-  processedImages: { [hash: string]: ScanRegions };
-  setProcessedImages: Dispatch<SetStateAction<{ [hash: string]: ScanRegions }>>;
+  processedImages: ProcessedImages;
+  setProcessedImages: Dispatch<SetStateAction<ProcessedImages>>;
 }
 
 function Scanner({
@@ -52,10 +57,9 @@ function Scanner({
   console.log(processedImages);
   console.log(scannedImages);
 
-  // FIXME: Uploading small number of images one-by-one
-  // results in scanQueue growing larger than images array
-  // even if it has not finished loading all images
-  const allImagesLoaded = images.every((img) => processedImages[img.hash]);
+  const allImagesLoaded = Object.keys(images).every(
+    (hash) => processedImages[hash]
+  );
 
   const allImagesScanned = scanQueue.length === 0;
 
@@ -68,18 +72,18 @@ function Scanner({
   console.log({
     sc: Object.values(scannedImages).length,
     sq: scanQueue.length,
-    i: images.length,
+    i: Object.values(images).length,
     p: Object.values(processedImages).length,
   });
 
   const handleErrorModalClose = useCallback(() => {
-    setImages([]);
+    setImages({});
     setError(null);
   }, [setImages]);
 
   const clearScanQueue = useCallback(() => {
     setIsScanning(false);
-    setImages([]);
+    setImages({});
     setProgress(1);
   }, [setImages]);
 
@@ -89,9 +93,13 @@ function Scanner({
       try {
         if (processedImages[hash]) {
           console.debug("Already processed");
-          setImages((prevImages) =>
-            prevImages.filter((image) => image.hash !== hash)
-          );
+
+          setImages((prevImages) => {
+            const res = { ...prevImages };
+            delete res[hash];
+            return res;
+          });
+
           return;
         }
 
@@ -170,6 +178,7 @@ function Scanner({
     setIsScanning(false);
   }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
+  // Implement Loading indicator while processing
   return (
     <>
       <p>Images to scan {scanQueue.length}</p>
@@ -186,16 +195,16 @@ function Scanner({
       )}
 
       <section className="images">
-        {images.map((image) => (
-          <Fragment key={image.hash}>
+        {Object.entries(images).map(([hash, src]) => (
+          <Fragment key={hash}>
             <img
               className="src_image"
-              id={image.hash}
-              src={image.src}
+              id={hash}
+              src={src}
               alt="sample"
-              onLoad={() => handleLoad(image.hash)}
+              onLoad={() => handleLoad(hash)}
             ></img>
-            <canvas id={"canvas" + "_" + image.hash} className="out_image" />
+            <canvas id={"canvas" + "_" + hash} className="out_image" />
           </Fragment>
         ))}
       </section>
