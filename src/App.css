@@ -4,6 +4,7 @@
 
 :root {
   font-size: 17px;
+  min-height: 100%;
 }
 
 :root,
@@ -74,14 +75,14 @@ th {
   padding: 8px 12px;
   border: 1px solid #d4bc8e;
   text-align: center;
-  max-width: min-content;
+  width: min-content;
 }
 
 th {
   background-color: #ede0ca;
   color: #5b5454;
   position: sticky;
-  top: 0;
+  top: -1px;
 }
 
 td {

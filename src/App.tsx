@@ -71,7 +71,7 @@ function App() {
         </button>
       </header>
       <div className="wish-type-container">
-      <span>Wish Type</span>
+        <span>Wish Type</span>
         <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
           {Object.keys(history).map((event) => (
             <option key={event} value={event}>
@@ -80,15 +80,7 @@ function App() {
           ))}
         </select>
       </div>
-      <Scanner
-        processedImages={processedImages}
-        setProcessedImages={setProcessedImages}
-        images={images}
-        setImages={setImages}
-        scannedImages={scannedImages}
-        setScannedImages={setScannedImages}
-        saveHistory={saveHistory}
-      />
+
       {Object.entries(history).map(([event, wishes], i) => (
         <WishTable
           key={wishes[0]?.wishType || i}
@@ -104,6 +96,16 @@ function App() {
           isActive={event === activeTab}
         />
       ))}
+
+      <Scanner
+        processedImages={processedImages}
+        setProcessedImages={setProcessedImages}
+        images={images}
+        setImages={setImages}
+        scannedImages={scannedImages}
+        setScannedImages={setScannedImages}
+        saveHistory={saveHistory}
+      />
     </main>
   );
 }
