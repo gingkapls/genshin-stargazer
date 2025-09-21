@@ -53,29 +53,28 @@ function App() {
   };
 
   return (
-    <>
-      <div>
-        <Modal title="Delete data" ref={clearHistoryDialogRef}>
-          Do you want to delete your history?
-          <button onClick={() => clearHistoryDialogRef.current?.close()}>
-            No
-          </button>
-          <button onClick={handleClearHistory}>Yes</button>
-        </Modal>
+    <main>
+      <Modal title="Delete data" ref={clearHistoryDialogRef}>
+        Do you want to delete your history?
+        <button onClick={() => clearHistoryDialogRef.current?.close()}>
+          No
+        </button>
+        <button onClick={handleClearHistory}>Yes</button>
+      </Modal>
+
+      <header>
+        <h1>Wish History Scanner</h1>
+        <ImagePicker setImages={setImages} images={images} />
+        <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
         <button onClick={() => clearHistoryDialogRef.current?.showModal()}>
           Delete history
         </button>
-      </div>
-
-      <button onClick={() => generateSheet(tablesRef.current)}>Export</button>
-      <ImagePicker setImages={setImages} images={images} />
-      <div>
+      </header>
+      <div className="wish-type-container">
+      <span>Wish Type</span>
         <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
           {Object.keys(history).map((event) => (
-            <option
-              key={event}
-              value={event}
-            >
+            <option key={event} value={event}>
               {event.split("_").join(" ")} ({history[event].length})
             </option>
           ))}
@@ -105,7 +104,7 @@ function App() {
           isActive={event === activeTab}
         />
       ))}
-    </>
+    </main>
   );
 }
 

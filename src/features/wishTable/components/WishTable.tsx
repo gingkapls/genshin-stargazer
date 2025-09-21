@@ -122,7 +122,7 @@ function WishTable({
   } satisfies PityCounter;
 
   return (
-    <div className={isActive ? "active-tab" : "inactive-tab"}>
+    <div className={"table-container " + (isActive ? "active-tab" : "inactive-tab")}>
       <table ref={ref}>
         <caption>{wishes[0]?.wishType}</caption>
         <thead>
