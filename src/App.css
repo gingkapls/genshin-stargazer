@@ -222,17 +222,17 @@ select {
   height: 100%;
   overflow: scroll;
   justify-content: space-between;
+  color: var(--text-fg-color);
+  font-weight: 700;
 
   & span {
     align-self: center;
-    margin: auto;
+    margin: 5% 0 auto 0;
   }
 }
 
 table {
   border-collapse: collapse;
-  font-weight: 700;
-  color: var(--text-fg-color);
   position: relative;
 }
 
@@ -267,6 +267,53 @@ td {
 
 .five-stars {
   color: #bd6a32;
+}
+
+dialog {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  backdrop-filter: blur(4px);
+}
+
+.dialog-modal-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  place-items: center;
+  place-content: center;
+}
+
+.dialog-modal-card {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  place-content: center;
+  background-color: #f6f1e7;
+  padding: 48px;
+  border-radius: 4px;
+  color: var(--text-fg-color);
+  font-weight: 700;
+  gap: 16px;
+
+  & h4 {
+    color: var(--heading-fg-color);
+    font-size: 2rem;
+    margin: 0;
+  }
+}
+
+.modal-actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.error-modal > img {
+  box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
+    0px 0px 0px 4px #f4ddb4;
 }
 
 .inactive-tab {

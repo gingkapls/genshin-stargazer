@@ -181,9 +181,9 @@ function Scanner({
   // TODO: Implement Loading indicator while processing
   return (
     <>
-    {!allImagesLoaded && <progress></progress>}
+      {!allImagesLoaded && <progress></progress>}
       {allImagesLoaded && !isScanning && !allImagesScanned && (
-        <button type="button" className='btn btn-scan' onClick={handleClick}>
+        <button type="button" className="btn btn-scan" onClick={handleClick}>
           Scan ({scanQueue.length})
         </button>
       )}
@@ -210,18 +210,23 @@ function Scanner({
       </section>
 
       <Modal
+        title="Error"
         className="modal error-modal"
         ref={errorModalRef}
         onClose={handleErrorModalClose}
       >
-        {(error?.message || "There was an error processing the image") + " Please reupload the images"}
+        <span>
+          {(error?.message || "There was an error processing the image") +
+            " Please reupload the images"}
+        </span>
         <img
-          height="320px"
           src={error?.cause?.src}
           alt="error-image"
           className="error-image"
         />
-        <button onClick={() => errorModalRef.current?.close()}>Okay</button>
+        <button className="btn" onClick={() => errorModalRef.current?.close()}>
+          Okay
+        </button>
       </Modal>
     </>
   );
