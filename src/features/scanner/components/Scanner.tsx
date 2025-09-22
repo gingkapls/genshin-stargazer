@@ -178,7 +178,7 @@ function Scanner({
     setIsScanning(false);
   }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
-  // Implement Loading indicator while processing
+  // TODO: Implement Loading indicator while processing
   return (
     <>
       <p>Images to scan {scanQueue.length}</p>
@@ -214,7 +214,13 @@ function Scanner({
         ref={errorModalRef}
         onClose={handleErrorModalClose}
       >
-        {error?.message || "There was an error processing the image"}
+        {(error?.message || "There was an error processing the image") + " Please reupload the images"}
+        <img
+          height="320px"
+          src={error?.cause?.src}
+          alt="error-image"
+          className="error-image"
+        />
         <button onClick={() => errorModalRef.current?.close()}>Okay</button>
       </Modal>
     </>

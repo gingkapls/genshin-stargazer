@@ -122,7 +122,7 @@ async function getScanRegion(
       )
     )
   ) {
-    throw new Error("Image is not a valid valid", { cause: inputEl });
+    throw new Error("There was a problem scanning this image.", { cause: inputEl });
   }
 
   return region;
