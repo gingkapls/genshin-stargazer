@@ -9,6 +9,7 @@
   min-height: 100%;
   --text-fg-color: #8a8c8e;
   --heading-fg-color: #5b5454;
+  --main-bg-color: #eeebe5;
 }
 
 :root,
@@ -37,8 +38,9 @@ body {
   width: 90%;
   height: 90%;
   justify-content: center;
-  background-color: #eeebe5;
-  padding: 40px;
+  background-color: var(--main-bg-color);
+  padding: 0 min(3vw, 40px);
+  border-bottom: min(3vw, 40px) solid var(--main-bg-color);
   overflow-y: scroll;
 }
 
@@ -55,12 +57,12 @@ header {
   place-items: center;
   flex-direction: column;
   width: 100%;
-  padding: 12px 16px;
 }
 
 h1,
 h3 {
   color: var(--heading-fg-color);
+  margin: 0;
 }
 
 .toolbar {
@@ -74,7 +76,34 @@ h3 {
 .wish-type-container {
   display: flex;
   width: 100%;
+  padding: 12px;
   justify-content: space-between;
+  align-items: center;
+  background-color: #ebd9b4;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  & h3 {
+    font-size: 2rem;
+  }
+}
+
+option {
+  text-transform: capitalize;
+}
+
+select {
+  text-transform: capitalize;
+  box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 4px #fffaee,
+    0px 0px 0px 6px #f4ddb4;
+  background-color: #fff9e9;
+  border: none;
+  border-radius: 2px;
+  font-weight: 600;
+  color: var(--heading-fg-color);
+  font-size: 1.2rem;
+  flex: 1;
+  width: 100%;
 }
 
 .table-container {
@@ -136,11 +165,6 @@ td {
   height: 0;
   visibility: collapse;
   overflow: hidden;
-}
-
-option,
-select {
-  text-transform: capitalize;
 }
 
 .src_image,

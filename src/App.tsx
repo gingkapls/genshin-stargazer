@@ -86,7 +86,7 @@ function App() {
           </button>
         </div>
         <div className="wish-type-container">
-          <span>Wish Type</span>
+          <h3>Wish Type</h3>
           <select name="events" onChange={(e) => setActiveTab(e.target.value)}>
             {Object.keys(history).map((event) => (
               <option key={event} value={event}>
