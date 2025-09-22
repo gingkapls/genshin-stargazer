@@ -202,10 +202,10 @@ select {
     box-shadow: inset 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
       0px 0px 0px 4px #f4ddb4;
   }
-  
+
   &:hover {
     cursor: pointer;
-    filter: brightness(0.90);
+    filter: brightness(0.9);
   }
 }
 
