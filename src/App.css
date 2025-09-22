@@ -21,6 +21,9 @@ body {
 body {
   font-size: 1.23rem;
   margin: 0;
+  display: flex;
+  place-items: center;
+  justify-content: center;
 }
 
 .images {
@@ -31,16 +34,20 @@ body {
 
 #root {
   display: flex;
+  width: 90%;
+  height: 90%;
   justify-content: center;
+  background-color: #eeebe5;
+  padding: 40px;
+  overflow-y: scroll;
 }
 
 main {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   place-items: center;
-  height: 98%;
-  width: 90%;
-  background-color: #e7e1db;
+  height: 100%;
+  width: 100%;
 }
 
 header {
@@ -54,6 +61,14 @@ header {
 h1,
 h3 {
   color: var(--heading-fg-color);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  place-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .wish-type-container {

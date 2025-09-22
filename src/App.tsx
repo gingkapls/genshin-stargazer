@@ -66,7 +66,7 @@ function App() {
       </Modal>
 
       <header>
-        <div>
+        <div className="toolbar">
           <h1>Wish History Scanner</h1>
           <ImagePicker setImages={setImages} images={images} />
           <button onClick={() => generateSheet(tablesRef.current)}>
@@ -97,12 +97,12 @@ function App() {
         </div>
         <section className="instructions">
           <p>
-            You can upload screenshots of your Genshin Impact in-game wish
+            ※ You can upload screenshots of your Genshin Impact in-game wish
             history to export them. The images can be added to the queue one by
             one or multiple at a time until you press the scan button. The
             images are processed as soon as they are added. The export button
             exports the wish history as an excel spreadsheet that can be used
-            with wish trackers.
+            imported into wish trackers.
           </p>
           <p>
             If an image can not be processed, you will get an error and that
