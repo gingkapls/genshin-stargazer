@@ -182,7 +182,7 @@ function Scanner({
   return (
     <>
       {allImagesLoaded && !isScanning && !allImagesScanned && (
-        <button type="button" className='btn-scan' onClick={handleClick}>
+        <button type="button" className='btn btn-scan' onClick={handleClick}>
           Scan ({scanQueue.length})
         </button>
       )}

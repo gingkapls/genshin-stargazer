@@ -69,7 +69,7 @@ function App() {
         <div className="toolbar">
           <h1>Wish History Scanner</h1>
           <button
-            className="btn-export"
+            className="btn btn-export"
             onClick={() => generateSheet(tablesRef.current)}
           >
             Export
@@ -86,7 +86,7 @@ function App() {
           />
 
           <button
-            className="btn-delete"
+            className="btn btn-delete"
             onClick={() => clearHistoryDialogRef.current?.showModal()}
           >
             Delete history

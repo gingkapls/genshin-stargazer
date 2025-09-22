@@ -58,7 +58,7 @@ header {
   place-items: center;
   flex-direction: column;
   width: 100%;
-  
+
   & input[type="file"] {
     height: 0;
     width: 0;
@@ -74,12 +74,14 @@ h3 {
 .toolbar {
   display: grid;
   grid-template-areas:
-    "heading btn-export"
-    "btn-add btn-delete"
-    "btn-scan btn-delete";
+    "heading heading"
+    "btn-scan btn-export"
+    ". btn-delete"
+    "btn-add btn-delete";
 
   width: 100%;
-  margin: 16px 0;
+  margin: 24px 0;
+  gap: 16px;
 
   & .top-bar {
     width: 100%;
@@ -87,15 +89,42 @@ h3 {
     flex-wrap: wrap;
     place-items: center;
   }
-  
-  button {
-    width: fit-content;
+
+  h1 {
+    grid-area: heading;
+  }
+}
+
+.btn {
+  all: initial;
+  appearance: none;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
+    0px 0px 0px 4px #f4ddb4;
+  background-color: #fff9e9;
+  width: max-content;
+  height: min-content;
+  border-radius: 2px;
+  color: var(--heading-fg-color);
+  font-family: serif;
+  font-size: 1rem;
+  padding: 8px 12px;
+
+  &:hover {
+    filter: brightness(0.95);
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+  &:active {
+    box-shadow: inset 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
+      0px 0px 0px 4px #f4ddb4;
   }
 }
 
 .btn-add {
   grid-area: btn-add;
-
 }
 
 .btn-scan {
@@ -106,14 +135,15 @@ h3 {
   grid-area: btn-delete;
   justify-self: end;
   align-self: end;
+  background-color: #ebd9b4;
+  box-shadow: 0px 0px 0px 2px #fffaee, 0px 0px 0px 4px #f1e0bc,
+    0px 0px 0px 6px #ddc794;
 }
 
 .btn-export {
   grid-area: btn-export;
   justify-self: end;
 }
-
-
 
 .wish-type-container {
   display: flex;
@@ -167,6 +197,21 @@ select {
   flex: 1;
   min-width: min-content;
   padding-left: 24px;
+
+  &:active {
+    box-shadow: inset 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
+      0px 0px 0px 4px #f4ddb4;
+  }
+  
+  &:hover {
+    cursor: pointer;
+    filter: brightness(0.90);
+  }
+}
+
+.instructions {
+  color: var(--text-fg-color);
+  font-weight: 700;
 }
 
 .table-container {
