@@ -25,7 +25,17 @@ body {
   display: flex;
   place-items: center;
   justify-content: center;
-  background-color: cornflowerblue;
+  background: #b8d2dc;
+  background: radial-gradient(
+    circle,
+    rgba(184, 210, 220, 1) 0%,
+    rgba(155, 187, 208, 1) 16%,
+    rgba(202, 208, 216, 1) 31%,
+    rgba(90, 127, 170, 1) 54%,
+    rgba(126, 175, 224, 1) 67%,
+    rgba(178, 200, 214, 1) 85%,
+    rgba(145, 178, 202, 1) 100%
+  );
 }
 
 .images {
@@ -43,6 +53,30 @@ body {
   padding: 0 min(3vw, 40px);
   border-bottom: min(3vw, 40px) solid var(--main-bg-color);
   overflow-y: scroll;
+}
+
+#root,
+.dialog-modal-card {
+  border-width: 8px;
+  border-style: solid;
+  border-image: linear-gradient(
+      330deg,
+      rgba(144, 126, 91, 1) 0%,
+      rgba(107, 89, 73, 1) 2%,
+      rgba(76, 81, 111, 1) 6%,
+      rgba(76, 81, 111, 1) 18%,
+      rgba(115, 133, 102, 1) 28%,
+      rgba(140, 121, 88, 1) 40%,
+      rgba(130, 156, 189, 1) 46%,
+      rgba(120, 147, 181, 1) 56%,
+      rgba(114, 122, 160, 1) 64%,
+      rgba(114, 122, 160, 1) 74%,
+      rgba(153, 134, 103, 1) 81%,
+      rgba(95, 127, 147, 1) 89%,
+      rgba(74, 79, 109, 1) 93%,
+      rgba(145, 178, 202, 1) 100%
+    )
+    1;
 }
 
 main {
@@ -110,11 +144,11 @@ h3 {
   font-family: serif;
   font-size: 1rem;
   padding: 8px 12px;
+  cursor: pointer;
 
   &:hover {
     filter: brightness(0.95);
     transform: scale(1.05);
-    cursor: pointer;
   }
 
   &:active {
@@ -293,6 +327,7 @@ dialog {
   background-color: #f6f1e7;
   padding: 48px;
   border-radius: 4px;
+  border-width: 4px;
   color: var(--text-fg-color);
   font-weight: 700;
   gap: 16px;
@@ -314,6 +349,7 @@ dialog {
 .error-modal > img {
   box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
     0px 0px 0px 4px #f4ddb4;
+  max-width: 40%;
 }
 
 .inactive-tab {
