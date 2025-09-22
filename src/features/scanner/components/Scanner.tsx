@@ -181,7 +181,7 @@ function Scanner({
   // TODO: Implement Loading indicator while processing
   return (
     <>
-      <p>Images to scan {scanQueue.length}</p>
+      <span>Images to scan {scanQueue.length}</span>
       {allImagesLoaded && !isScanning && !allImagesScanned && (
         <button type="button" onClick={handleClick}>
           Scan
@@ -189,7 +189,7 @@ function Scanner({
       )}
       {isScanning && (
         <>
-          <p>{`Scanning image #${progress} out of ${scanQueue.length} images`}</p>
+          <span>{`Scanning image #${progress} out of ${scanQueue.length} images`}</span>
           <progress value={progress} max={scanQueue.length} />
         </>
       )}

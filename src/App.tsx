@@ -67,11 +67,13 @@ function App() {
 
       <header>
         <div className="toolbar">
-          <h1>Wish History Scanner</h1>
-          <ImagePicker setImages={setImages} images={images} />
-          <button onClick={() => generateSheet(tablesRef.current)}>
-            Export
-          </button>
+          <div className='top-bar'>
+            <h1>Wish History Scanner</h1>
+            <ImagePicker setImages={setImages} images={images} />
+            <button className='btn-export' onClick={() => generateSheet(tablesRef.current)}>
+              Export
+            </button>
+          </div>
           <Scanner
             processedImages={processedImages}
             setProcessedImages={setProcessedImages}
@@ -81,7 +83,11 @@ function App() {
             setScannedImages={setScannedImages}
             saveHistory={saveHistory}
           />
-          <button onClick={() => clearHistoryDialogRef.current?.showModal()}>
+
+          <button
+            className="btn-delete"
+            onClick={() => clearHistoryDialogRef.current?.showModal()}
+          >
             Delete history
           </button>
         </div>
