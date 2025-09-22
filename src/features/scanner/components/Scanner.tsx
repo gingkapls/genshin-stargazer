@@ -181,10 +181,9 @@ function Scanner({
   // TODO: Implement Loading indicator while processing
   return (
     <>
-      <span>Images to scan {scanQueue.length}</span>
       {allImagesLoaded && !isScanning && !allImagesScanned && (
-        <button type="button" onClick={handleClick}>
-          Scan
+        <button type="button" className='btn-scan' onClick={handleClick}>
+          Scan ({scanQueue.length})
         </button>
       )}
       {isScanning && (

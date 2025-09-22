@@ -5,7 +5,7 @@
 }
 
 :root {
-  font-size: 17px;
+  font-size: 13px;
   min-height: 100%;
   --text-fg-color: #8a8c8e;
   --heading-fg-color: #5b5454;
@@ -25,6 +25,7 @@ body {
   display: flex;
   place-items: center;
   justify-content: center;
+  background-color: cornflowerblue;
 }
 
 .images {
@@ -57,6 +58,11 @@ header {
   place-items: center;
   flex-direction: column;
   width: 100%;
+  
+  & input[type="file"] {
+    height: 0;
+    width: 0;
+  }
 }
 
 h1,
@@ -66,12 +72,13 @@ h3 {
 }
 
 .toolbar {
-  display: flex;
-  flex-direction: column;
-  place-items: start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-areas:
+    "heading btn-export"
+    "btn-add btn-delete"
+    "btn-scan btn-delete";
+
   width: 100%;
-  gap: 16px;
   margin: 16px 0;
 
   & .top-bar {
@@ -80,12 +87,33 @@ h3 {
     flex-wrap: wrap;
     place-items: center;
   }
-
-  & .btn-delete,
-  .btn-export {
-    margin-left: auto;
+  
+  button {
+    width: fit-content;
   }
 }
+
+.btn-add {
+  grid-area: btn-add;
+
+}
+
+.btn-scan {
+  grid-area: btn-scan;
+}
+
+.btn-delete {
+  grid-area: btn-delete;
+  justify-self: end;
+  align-self: end;
+}
+
+.btn-export {
+  grid-area: btn-export;
+  justify-self: end;
+}
+
+
 
 .wish-type-container {
   display: flex;

@@ -25,7 +25,10 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
 
   return (
     <>
-      <input type="file" multiple accept="image/*" onChange={handleChange} />
+      <label className="btn-add">
+        Add images
+        <input type="file" multiple accept="image/*" onChange={handleChange} />
+      </label>
     </>
   );
 }

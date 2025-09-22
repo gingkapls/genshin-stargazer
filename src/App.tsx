@@ -67,13 +67,14 @@ function App() {
 
       <header>
         <div className="toolbar">
-          <div className='top-bar'>
-            <h1>Wish History Scanner</h1>
-            <ImagePicker setImages={setImages} images={images} />
-            <button className='btn-export' onClick={() => generateSheet(tablesRef.current)}>
-              Export
-            </button>
-          </div>
+          <h1>Wish History Scanner</h1>
+          <button
+            className="btn-export"
+            onClick={() => generateSheet(tablesRef.current)}
+          >
+            Export
+          </button>
+          <ImagePicker setImages={setImages} images={images} />
           <Scanner
             processedImages={processedImages}
             setProcessedImages={setProcessedImages}
