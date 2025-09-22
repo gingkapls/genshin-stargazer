@@ -349,7 +349,7 @@ dialog {
 .error-modal > img {
   box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
     0px 0px 0px 4px #f4ddb4;
-  max-width: 40%;
+  max-width: min(75vw, 75vh);
 }
 
 .inactive-tab {
