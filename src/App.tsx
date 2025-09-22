@@ -10,7 +10,11 @@ import type { EventToTable } from "./types/Table.types.ts";
 import { WishTable } from "./features/wishTable/components/WishTable.tsx";
 import { Modal } from "./components/Modal.tsx";
 import Scanner from "./features/scanner/components/Scanner.tsx";
-import type { Images, ProcessedImages, ScannedImages } from "./types/State.type.ts";
+import type {
+  Images,
+  ProcessedImages,
+  ScannedImages,
+} from "./types/State.type.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -29,7 +33,10 @@ function App() {
     createEmptyWishHistory()
   );
 
-  const [scannedImages, setScannedImages] = useLocalStorage<ScannedImages>("scannedImages", {});
+  const [scannedImages, setScannedImages] = useLocalStorage<ScannedImages>(
+    "scannedImages",
+    {}
+  );
 
   const [processedImages, setProcessedImages] = useState<ProcessedImages>({});
 
@@ -88,6 +95,22 @@ function App() {
             ))}
           </select>
         </div>
+        <section className="instructions">
+          <p>
+            You can upload screenshots of your Genshin Impact in-game wish
+            history to export them. The images can be added to the queue one by
+            one or multiple at a time until you press the scan button. The
+            images are processed as soon as they are added. The export button
+            exports the wish history as an excel spreadsheet that can be used
+            with wish trackers.
+          </p>
+          <p>
+            If an image can not be processed, you will get an error and that
+            upload batch will be discarded. Please open an issue on github along
+            with the image if that image was a valid wish history screenshot.
+          </p>
+          <p>All the processing is done on your device, no data is uploaded.</p>
+        </section>
       </header>
 
       {Object.entries(history).map(([event, wishes], i) => (
