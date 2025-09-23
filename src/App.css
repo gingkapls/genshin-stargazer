@@ -30,7 +30,7 @@ body {
 }
 
 body {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin: 0;
   display: flex;
   font-family: "Bree Serif";
@@ -342,7 +342,7 @@ td {
   color: #a053e0;
 }
 
-.five-stars {
+a, .five-stars {
   color: #bd6a32;
 }
 
@@ -476,4 +476,9 @@ h1 {
     height: 1lh !important;
     font-size: inherit !important;
   }
+}
+
+a {
+  font-weight: 900;
+  text-decoration: underline;
 }

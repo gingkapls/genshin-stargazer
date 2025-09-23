@@ -1,69 +1,31 @@
-# React + TypeScript + Vite
+## What is this?
+- A web app that lets users add genshin wish history screenshots to convert them into a list of wishes.
+- The data is stored within browser storage and can be exported as an excel spreadsheet to be imported into wish trackers
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Usage Instructions
+※ You can add screenshots of your Genshin Impact in-game wish history to export them. They can be added to the queue one by one or multiple at a time. The images are processed as soon as they are added and the scan button appears after that. The export button exports the wish history as an excel spreadsheet that can be imported into wish trackers.
 
-Currently, two official plugins are available:
+If an image can not be processed, you will get an error and that batch will be discarded. Please open an issue on Github along with the image if that image was a valid wish history screenshot.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+All the processing is done on your device, no data is uploaded.
 
-## Expanding the ESLint configuration
+## Pipeline
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. User adds file(s) to the application using the file picker.
+1. OpenCV preprocesses the images and detects table borders using Probabilistic Hough Line Transform.
+1. Processed images are hashed by metadata into an ephemeral hashmap to avoid reprocessing the same images in a single session.
+1. The columnn bounds are computed with ROI and fed into Tesseract which runs OCR and outputs column data as blocks.
+1. The text blocks are parsed and any mis-scanning is corrected with a fuzzy matching algorithm.
+1. The corrected text blocks are converted into lists of wishes separated by events.
+1. The stored wish history and the new history are merged, removing any duplicates.
+1. Once the new wish history is saved to storage, the hashes of the newly scanned images are added to persistent browser storage to avoid rescanning in the future.
+1. If at any point there is an error in processing or scanning an image, the user is informed of the error and the entire batch is discarded to preserve data integrity.
+1. The wish history is displayed as table on the web page.
+1. The stored wish history can be exported into the `XLSX` format.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Known Issues
+1. In rare cases where two identical halves of a single 10-pull are uploaded in different batches, the merging algorithm will only include one half. This is by design because it is an unlikely event, and fixing this would make the merging result in duplicate entries every other time. The fix is to always upload a ten pull in a single batch which avoids this problem.
+1. No localization support - deemed unfeasible for a single-person toy project which may not even see much use.
+1. The data is stored along with the codebase, which will be fixed a later date (likely never).
+1. The codebase looks like a mess :(
