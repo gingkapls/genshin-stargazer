@@ -204,10 +204,10 @@ function Scanner({
     setIsScanning(false);
   }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
-  // TODO: Implement Loading indicator while processing
   return (
     <>
       {!allImagesLoaded && <ProgressIndicator />}
+
       {allImagesLoaded && !isScanning && !allImagesScanned && (
         <button type="button" className="btn btn-scan" onClick={handleClick}>
           Scan ({scanQueue.length})
