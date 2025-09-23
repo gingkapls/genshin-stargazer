@@ -83,9 +83,9 @@ function parseDate(timestamp: number) {
     dateObj.getDate()
   )}`;
 
-  const time = `${pad(dateObj.getHours())}:${pad(
-    dateObj.getMilliseconds()
-  )}:${pad(dateObj.getSeconds())}`;
+  const time = `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(
+    dateObj.getSeconds()
+  )}`;
 
   return `${date} ${time}`;
 }

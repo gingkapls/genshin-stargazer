@@ -1,6 +1,7 @@
 import { utils, writeFileXLSX } from "xlsx";
 import type { EventToTable } from "../../../types/Table.types.ts";
 import { getMaxColumnWidths } from "./getMaxColumnWidth.ts";
+import { parseDate } from "../../dataParser/parseData.ts";
 
 function tablesToSheets(tables: EventToTable) {
   return {
@@ -54,6 +55,8 @@ export function generateSheet(tables: EventToTable | null) {
     sheet["!cols"] = getMaxColumnWidths(sheet);
   });
 
-  // TODO: Set filename and date
-  writeFileXLSX(workbook, "test.xlsx");
+  // Colons may cause problems in filenames
+  const today = parseDate(new Date().valueOf()).replaceAll(":", "_");
+
+  writeFileXLSX(workbook, "genshin-wish-export " + today + ".xlsx");
 }

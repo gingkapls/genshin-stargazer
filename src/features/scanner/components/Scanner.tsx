@@ -57,7 +57,8 @@ function Scanner({
     (region) => !scannedImages[region.image.id]
   );
 
-  const progressPercent = Math.round((progress * 100) / scanQueue.length);
+  // +1 so that the progress isn't 100% from the start for single images
+  const progressPercent = Math.round((progress * 100) / (scanQueue.length + 1));
 
   const [scanResultTable, setScanResultTable] = useState<WishHistory | null>(
     null
@@ -68,27 +69,15 @@ function Scanner({
     if (resultsModalRef.current) resultsModalRef.current.showModal();
   }
 
-  console.debug(processedImages);
-  console.debug(scannedImages);
-
   const allImagesLoaded = Object.keys(images).every(
     (hash) => processedImages[hash]
   );
 
   const allImagesScanned = scanQueue.length === 0;
 
-  console.debug(allImagesLoaded);
-
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
-
-  console.debug({
-    sc: Object.values(scannedImages).length,
-    sq: scanQueue.length,
-    i: Object.values(images).length,
-    p: Object.values(processedImages).length,
-  });
 
   const handleErrorModalClose = useCallback(() => {
     if (!error) return;
@@ -179,7 +168,6 @@ function Scanner({
       );
       const newHistory = processHistory(scanResults);
 
-      console.debug({ newHistory });
       saveHistory(newHistory);
       setScanResultTable(newHistory);
 

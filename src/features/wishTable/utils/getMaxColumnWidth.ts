@@ -41,7 +41,6 @@ function getMaxColumnWidths(worksheet: WorkSheet) {
 
   const end = ref.split(":")[1];
   const [numCols, numRows] = getRange(end);
-  console.log(getCols(numCols).map((col) => getRows(col, numRows)));
 
   return getCols(numCols).map((col) =>
     getSingleMaxColumnWidth(worksheet, col, numRows)

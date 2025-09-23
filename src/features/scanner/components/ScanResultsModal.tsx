@@ -37,6 +37,7 @@ function ScanResultsModal({
       onClose={() => setScanResultTable(null)}
     >
       <table>
+        <caption>{total === 0 ? "No New Wishes" : "Wishes Added"}</caption>
         <thead>
           <tr>
             <th>Event Name</th>

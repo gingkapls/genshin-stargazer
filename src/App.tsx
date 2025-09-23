@@ -16,7 +16,6 @@ import type {
   ScannedImages,
 } from "./types/State.type.ts";
 import { Instructions } from "./components/Instructions.tsx";
-import { ProgressIndicator } from "./components/ProgressIndicator.tsx";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
