@@ -20,7 +20,7 @@ body {
 }
 
 body {
-  font-size: 1.23rem;
+  font-size: 1.2rem;
   margin: 0;
   display: flex;
   place-items: center;
@@ -94,6 +94,7 @@ header {
   flex-direction: column;
   width: 100%;
   gap: 24px;
+  margin-top: 24px;
 
   & input[type="file"] {
     height: 0;
@@ -227,7 +228,7 @@ select {
   border-radius: 2px;
   font-weight: 600;
   color: var(--heading-fg-color);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   line-height: normal;
   flex: 1;
   min-width: min-content;
@@ -280,7 +281,6 @@ select {
   justify-content: space-between;
   color: var(--text-fg-color);
   font-weight: 700;
-  border: 1px solid #d4bc8e;
 
   & span {
     align-self: center;
@@ -313,7 +313,6 @@ th {
   top: -1px;
 }
 
-.table-container,
 td {
   background-color: #f6f1e7;
 }
@@ -332,6 +331,10 @@ dialog {
   background-color: transparent;
   border: none;
   backdrop-filter: blur(4px);
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  min-height: 100%;
 }
 
 .dialog-modal-container {
@@ -348,12 +351,12 @@ dialog {
   place-items: center;
   place-content: center;
   background-color: #f6f1e7;
-  padding: 48px;
+  padding: 32px;
   border-radius: 4px;
   border-width: 4px;
   color: var(--text-fg-color);
   font-weight: 700;
-  gap: 16px;
+  gap: 24px;
 
   & h4 {
     color: var(--heading-fg-color);
@@ -372,7 +375,15 @@ dialog {
 .error-modal > img {
   box-shadow: 0px 0px 0px 2px #f4ddb4, 0px 0px 0px 3px #fffaee,
     0px 0px 0px 4px #f4ddb4;
-  max-width: min(75vw, 75vh);
+  max-width: min(50vw, 60vh);
+}
+
+.results-modal {
+  width: fit-content;
+
+  & td {
+    width: max-content;
+  }
 }
 
 .inactive-tab {

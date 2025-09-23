@@ -19,6 +19,7 @@ import type {
   ScannedImages,
 } from "../../../types/State.type.ts";
 import { ImageError } from "../../../utils/ImageError.ts";
+import { ScanResultsModal } from "./ScanResultsModal.tsx";
 
 interface ScannerProps {
   images: Images;
@@ -54,6 +55,15 @@ function Scanner({
   const scanQueue = Object.values(processedImages).filter(
     (region) => !scannedImages[region.image.id]
   );
+
+  const [scanResultTable, setScanResultTable] = useState<WishHistory | null>(
+    null
+  );
+  const resultsModalRef = useRef<HTMLDialogElement | null>(null);
+
+  if (scanResultTable) {
+    if(resultsModalRef.current) resultsModalRef.current.showModal();
+  }
 
   console.debug(processedImages);
   console.debug(scannedImages);
@@ -165,8 +175,10 @@ function Scanner({
         }
       );
       const newHistory = processHistory(scanResults);
+
       console.debug({ newHistory });
       saveHistory(newHistory);
+      setScanResultTable(newHistory);
 
       // Set scanned images only after data state is set
       // to avoid inconsistent cache
@@ -200,7 +212,6 @@ function Scanner({
       )}
       {isScanning && (
         <>
-          <span>{`Scanning image #${progress} out of ${scanQueue.length} images`}</span>
           <progress value={progress} max={scanQueue.length} />
         </>
       )}
@@ -222,7 +233,7 @@ function Scanner({
 
       <Modal
         title="Error"
-        className="modal error-modal"
+        className="error-modal"
         ref={errorModalRef}
         onClose={handleErrorModalClose}
       >
@@ -235,6 +246,12 @@ function Scanner({
           Okay
         </button>
       </Modal>
+
+      <ScanResultsModal
+        ref={resultsModalRef}
+        scanResultTable={scanResultTable}
+        setScanResultTable={setScanResultTable}
+      />
     </>
   );
 }
