@@ -1,6 +1,6 @@
 import weapons from "../../../data/weapon_rarity.json";
 import characters from "../../../data/character_rarity.json";
-import { BKTree } from "../../lib/BKTree.ts";
+import { BKTree } from "../../utils/BKTree.ts";
 import type { ScanResult } from "../scanner/utils/scan.types.ts";
 import type { Wish } from "../../types/Wish.types.ts";
 

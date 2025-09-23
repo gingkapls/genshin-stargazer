@@ -1,4 +1,4 @@
-import { createEmptyWishHistory } from "../../lib/createEmptyWishHistory.ts";
+import { createEmptyWishHistory } from "../../utils/createEmptyWishHistory.ts";
 import type { Wish, WishHistory } from "../../types/Wish.types.ts";
 
 // We store the pages from newest to oldest as they are in game

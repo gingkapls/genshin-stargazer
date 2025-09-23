@@ -1,6 +1,6 @@
 import type { RecognizeResult } from "tesseract.js";
 import type { ScanResult } from "../scanner/utils/scan.types.ts";
-import { createEmptyWishHistory } from "../../lib/createEmptyWishHistory.ts";
+import { createEmptyWishHistory } from "../../utils/createEmptyWishHistory.ts";
 import { historyReducer, sortWishHistory } from "./historyReducer.ts";
 import type { Wish, WishHistory } from "../../types/Wish.types.ts";
 import { parseScanResults } from "./parseData.ts";

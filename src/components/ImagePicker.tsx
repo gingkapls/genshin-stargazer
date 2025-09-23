@@ -1,5 +1,5 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
-import { hashCode } from "../lib/hash.ts";
+import { hashCode } from "../utils/hash.ts";
 import type { Images } from "../types/State.type.ts";
 
 interface FolderPickerProps {

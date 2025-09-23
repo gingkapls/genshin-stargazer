@@ -3,7 +3,7 @@ import "./App.css";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
 import type { WishHistory } from "./types/Wish.types.ts";
-import { createEmptyWishHistory } from "./lib/createEmptyWishHistory.ts";
+import { createEmptyWishHistory } from "./utils/createEmptyWishHistory.ts";
 import { ImagePicker } from "./components/ImagePicker.tsx";
 import { generateSheet } from "./features/wishTable/utils/generateSheet.ts";
 import type { EventToTable } from "./types/Table.types.ts";
