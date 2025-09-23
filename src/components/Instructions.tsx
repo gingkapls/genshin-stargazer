@@ -1,10 +1,15 @@
 import { useLocalStorage } from "../hooks/useLocalStorage.tsx";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function Instructions() {
   const [showInstructions, setShowInstructions] = useLocalStorage(
     "showInstructions",
     true
   );
+  
+  const icon = showInstructions ? <ExpandLessIcon /> : <ExpandMoreIcon />
+  const text = showInstructions ? "Hide Instructions" : "Show Instructions"
 
   return (
     <>
@@ -30,7 +35,7 @@ function Instructions() {
         className="btn"
         onClick={() => setShowInstructions(!showInstructions)}
       >
-        {showInstructions ? "Hide" : "Show"} instructions
+      {icon} {text}
       </button>
     </>
   );

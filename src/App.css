@@ -59,8 +59,10 @@ body {
 #root {
   display: flex;
   width: 95%;
+  min-width: 95%;
   height: fit-content;
   max-height: 95%;
+  min-height: 95%;
   justify-content: center;
   background-color: var(--main-bg-color);
   padding: 0 min(2.5vh, 30px);
@@ -145,6 +147,10 @@ h3 {
 
 .btn {
   all: initial;
+  display: flex;
+  place-items: center;
+  place-content: center;
+  gap: 6px;
   appearance: none;
   font-weight: 600;
   text-shadow: inherit;
@@ -158,7 +164,7 @@ h3 {
   border-radius: 2px;
   color: var(--heading-fg-color);
   font-family: serif;
-  padding: 8px 12px;
+  padding: 6px 8px;
   cursor: pointer;
 
   &:hover {
@@ -459,5 +465,15 @@ dialog {
 
   100% {
     transform: rotate(1turn);
+  }
+}
+
+h1 {
+  & svg {
+    float: left;
+    color: #e1c383;
+    margin-right: 8px;
+    height: 1lh !important;
+    font-size: inherit !important;
   }
 }

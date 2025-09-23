@@ -1,6 +1,7 @@
 import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import { hashCode } from "../utils/hash.ts";
 import type { Images } from "../types/State.type.ts";
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 
 interface FolderPickerProps {
   images: Images;
@@ -26,7 +27,7 @@ function ImagePicker({ images, setImages }: FolderPickerProps) {
   return (
     <>
       <label className="btn btn-add">
-        Add images
+        <InsertPhotoIcon /> Add images
         <input type="file" multiple accept="image/*" onChange={handleChange} />
       </label>
     </>

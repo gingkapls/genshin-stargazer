@@ -16,6 +16,9 @@ import type {
   ScannedImages,
 } from "./types/State.type.ts";
 import { Instructions } from "./components/Instructions.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -61,12 +64,14 @@ function App() {
       <main>
         <header>
           <div className="toolbar">
-            <h1>Wish History Scanner</h1>
+            <h1>
+              <AutoAwesomeIcon /> Wish History Scanner
+            </h1>
             <button
               className="btn btn-export"
               onClick={() => generateSheet(tablesRef.current)}
             >
-              Export
+              Export <FileDownloadIcon />
             </button>
             <ImagePicker setImages={setImages} images={images} />
             <Scanner
@@ -83,7 +88,7 @@ function App() {
               className="btn btn-delete"
               onClick={() => clearHistoryDialogRef.current?.showModal()}
             >
-              Delete history
+              Delete history <DeleteIcon />
             </button>
           </div>
           <div className="wish-type-container">
