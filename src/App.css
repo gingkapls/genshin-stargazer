@@ -93,7 +93,7 @@ header {
   place-items: center;
   flex-direction: column;
   width: 100%;
-  gap: 24px;
+  gap: 32px;
   margin-top: 24px;
 
   & input[type="file"] {
@@ -229,6 +229,7 @@ select {
   font-weight: 600;
   color: var(--heading-fg-color);
   font-size: 1.5rem;
+  height: 1.5lh;
   line-height: normal;
   flex: 1;
   min-width: min-content;
