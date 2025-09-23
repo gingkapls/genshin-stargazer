@@ -400,3 +400,50 @@ dialog {
   left: 0;
   visibility: collapse;
 }
+
+.progress-label {
+  width: auto;
+  height: 50px;
+  border-radius: 100%;
+  background-color: #eeebe5;
+  display: flex;
+  place-items: center;
+  place-content: center;
+
+  & progress {
+    height: 0;
+    visibility: collapse;
+    width: 100%;
+  }
+
+  &:after {
+    content: attr(data-value);
+    margin: auto;
+    /* animation: 2s rotate cubic-bezier(0.79, 0.25, 0.15, 0.67) infinite reverse; */
+    animation: 2s rotate cubic-bezier(0.67, 0.15, 0.25, 0.79) infinite reverse;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+}
+
+.progress-wrapper {
+  aspect-ratio: 1;
+  width: 55px;
+  height: 65px;
+  background: linear-gradient(#ddc794 30%, transparent 30%);
+  border-radius: 100%;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  animation: 2s rotate cubic-bezier(0.79, 0.25, 0.15, 0.67) infinite;
+}
+
+@keyframes rotate {
+  0% {
+    animation-timing-function: ease-in;
+  }
+
+  100% {
+    transform: rotate(1turn);
+  }
+}

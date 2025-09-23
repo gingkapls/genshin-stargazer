@@ -20,6 +20,7 @@ import type {
 } from "../../../types/State.type.ts";
 import { ImageError } from "../../../utils/ImageError.ts";
 import { ScanResultsModal } from "./ScanResultsModal.tsx";
+import { ProgressIndicator } from "../../../components/ProgressIndicator.tsx";
 
 interface ScannerProps {
   images: Images;
@@ -56,13 +57,15 @@ function Scanner({
     (region) => !scannedImages[region.image.id]
   );
 
+  const progressPercent = Math.round((progress * 100) / scanQueue.length);
+
   const [scanResultTable, setScanResultTable] = useState<WishHistory | null>(
     null
   );
   const resultsModalRef = useRef<HTMLDialogElement | null>(null);
 
   if (scanResultTable) {
-    if(resultsModalRef.current) resultsModalRef.current.showModal();
+    if (resultsModalRef.current) resultsModalRef.current.showModal();
   }
 
   console.debug(processedImages);
@@ -204,17 +207,13 @@ function Scanner({
   // TODO: Implement Loading indicator while processing
   return (
     <>
-      {!allImagesLoaded && <progress></progress>}
+      {!allImagesLoaded && <ProgressIndicator />}
       {allImagesLoaded && !isScanning && !allImagesScanned && (
         <button type="button" className="btn btn-scan" onClick={handleClick}>
           Scan ({scanQueue.length})
         </button>
       )}
-      {isScanning && (
-        <>
-          <progress value={progress} max={scanQueue.length} />
-        </>
-      )}
+      {isScanning && <ProgressIndicator value={progressPercent.toString()} />}
 
       <section className="images">
         {Object.entries(images).map(([hash, src]) => (
