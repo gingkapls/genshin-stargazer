@@ -93,6 +93,7 @@ header {
   place-items: center;
   flex-direction: column;
   width: 100%;
+  gap: 24px;
 
   & input[type="file"] {
     height: 0;
@@ -115,8 +116,7 @@ h3 {
     "btn-add btn-delete";
 
   width: 100%;
-  margin: 24px 0;
-  gap: 16px;
+  gap: 12px;
 
   & .top-bar {
     width: 100%;
@@ -227,7 +227,7 @@ select {
   border-radius: 2px;
   font-weight: 600;
   color: var(--heading-fg-color);
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: normal;
   flex: 1;
   min-width: min-content;
@@ -247,6 +247,26 @@ select {
 .instructions {
   color: var(--text-fg-color);
   font-weight: 700;
+
+  & p {
+    margin: 8px 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.instructions + .btn {
+  align-self: start;
+}
+
+.instructions.hidden {
+  display: none;
 }
 
 .table-container {
