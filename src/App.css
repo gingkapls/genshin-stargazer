@@ -51,8 +51,7 @@ body {
   max-height: 95%;
   justify-content: center;
   background-color: var(--main-bg-color);
-  padding: 0 min(3vw, 40px);
-  border-bottom: min(3vw, 40px) solid var(--main-bg-color);
+  padding: 0 min(2.5vh, 30px);
   overflow-y: scroll;
 }
 
