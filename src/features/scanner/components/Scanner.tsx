@@ -18,6 +18,7 @@ import type {
   ProcessedImages,
   ScannedImages,
 } from "../../../types/State.type.ts";
+import { ImageError } from "../../../utils/ImageError.ts";
 
 interface ScannerProps {
   images: Images;
@@ -40,7 +41,7 @@ function Scanner({
 }: ScannerProps) {
   const [progress, setProgress] = useState(1);
   const [isScanning, setIsScanning] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<ImageError | null>(null);
   const errorModalRef = useRef<HTMLDialogElement | null>(null);
 
   // There was an error processing the image
@@ -54,8 +55,8 @@ function Scanner({
     (region) => !scannedImages[region.image.id]
   );
 
-  console.log(processedImages);
-  console.log(scannedImages);
+  console.debug(processedImages);
+  console.debug(scannedImages);
 
   const allImagesLoaded = Object.keys(images).every(
     (hash) => processedImages[hash]
@@ -63,13 +64,13 @@ function Scanner({
 
   const allImagesScanned = scanQueue.length === 0;
 
-  console.log(allImagesLoaded);
+  console.debug(allImagesLoaded);
 
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
 
-  console.log({
+  console.debug({
     sc: Object.values(scannedImages).length,
     sq: scanQueue.length,
     i: Object.values(images).length,
@@ -77,9 +78,16 @@ function Scanner({
   });
 
   const handleErrorModalClose = useCallback(() => {
+    if (!error) return;
+
     setImages({});
+    setProcessedImages((prevImages) => {
+      const newImages = { ...prevImages };
+      delete newImages[error.image.id];
+      return newImages;
+    });
     setError(null);
-  }, [setImages]);
+  }, [setImages, setProcessedImages, error]);
 
   const clearScanQueue = useCallback(() => {
     setIsScanning(false);
@@ -118,7 +126,7 @@ function Scanner({
           [hash]: newScanRegion,
         }));
       } catch (e) {
-        if (e instanceof Error) {
+        if (e instanceof ImageError) {
           setError(e);
         }
       }
@@ -147,29 +155,32 @@ function Scanner({
 
     const scheduler = new Scheduler();
     await scheduler.initialize();
-    const scanResults = await scanImages(
-      scanQueue,
-      scheduler,
-      (region: ScanRegions) => {
-        console.debug("Scanning image", region.image.id);
-        setProgress((p) => (p += 1));
-      }
-    );
-    const newHistory = processHistory(scanResults);
-    console.debug({ newHistory });
+    try {
+      const scanResults = await scanImages(
+        scanQueue,
+        scheduler,
+        (region: ScanRegions) => {
+          console.debug("Scanning image", region.image.id);
+          setProgress((p) => (p += 1));
+        }
+      );
+      const newHistory = processHistory(scanResults);
+      console.debug({ newHistory });
+      saveHistory(newHistory);
 
-    saveHistory(newHistory);
-
-    // Set scanned images only after data state is set
-    // to avoid inconsistent cache
-    setScannedImages((oldImages) => ({
-      ...oldImages,
-      // Reducing our array of newly scanned rectangles into a object of hashes
-      ...scanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
-        acc[cur.image.id] = true;
-        return acc;
-      }, {}),
-    }));
+      // Set scanned images only after data state is set
+      // to avoid inconsistent cache
+      setScannedImages((oldImages) => ({
+        ...oldImages,
+        // Reducing our array of newly scanned rectangles into a object of hashes
+        ...scanQueue.reduce<{ [hash: string]: boolean }>((acc, cur) => {
+          acc[cur.image.id] = true;
+          return acc;
+        }, {}),
+      }));
+    } catch (error) {
+      if (error instanceof ImageError) setError(error);
+    }
 
     // Cleanup
     // Reset scan state
@@ -219,11 +230,7 @@ function Scanner({
           {(error?.message || "There was an error processing the image") +
             " Please reupload the images"}
         </span>
-        <img
-          src={error?.cause?.src}
-          alt="error-image"
-          className="error-image"
-        />
+        <img src={error?.image.src} alt="error-image" className="error-image" />
         <button className="btn" onClick={() => errorModalRef.current?.close()}>
           Okay
         </button>

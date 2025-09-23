@@ -7,6 +7,7 @@ import {
   TIME_RECEIVED_BBOX,
   WISH_TYPE_BBOX,
 } from "../scanner/utils/config/bboxes.ts";
+import { ImageError } from "../../utils/ImageError.ts";
 
 async function preprocessImage(
   input: HTMLImageElement,
@@ -122,7 +123,7 @@ async function getScanRegion(
       )
     )
   ) {
-    throw new Error("There was a problem scanning this image.", { cause: inputEl });
+    throw new ImageError("There was a problem scanning this image.", inputEl);
   }
 
   return region;
