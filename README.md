@@ -29,3 +29,8 @@ All the processing is done on your device, no data is uploaded.
 1. No localization support - deemed unfeasible for a single-person toy project which may not even see much use.
 1. The data is stored along with the codebase, which will be fixed a later date (likely never).
 1. The codebase looks like a mess :(
+
+
+## Copyright
+Genshin Wish Scanner is not affiliated with HoYoverse.
+Genshin Impact, game content and materials are trademarks and copyrights of HoYoverse.
