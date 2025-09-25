@@ -218,7 +218,7 @@ function Scanner({
             <p>
               Downloading data for the scanner.
               <br />
-              This may take upto a few minutes.
+              This may take a minute the first time.
             </p>
             <ProgressIndicator />
           </div>
