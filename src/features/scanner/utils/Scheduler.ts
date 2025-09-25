@@ -23,7 +23,7 @@ class Scheduler {
 
   scheduler: Tesseract.Scheduler;
   pageWorker!: Tesseract.Worker;
-  
+
   isReady: boolean = false;
 
   constructor() {
@@ -62,13 +62,15 @@ class Scheduler {
   }
 }
 
-const scheduler = new Scheduler().initialize();
-getScheduler();
+const schedulerPromise = new Scheduler().initialize();
 
-export async function getScheduler() {
-  await scheduler;
-  console.log("is ready");
-  return scheduler;
+async function getScheduler() {
+  await schedulerPromise;
+  console.debug("scheduler is ready");
+  return schedulerPromise;
 }
 
+getScheduler();
+
 export type { Scheduler };
+export { getScheduler };

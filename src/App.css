@@ -444,7 +444,7 @@ dialog {
   height: 50px;
   border-radius: 100%;
   background-color: #eeebe5;
-  display: flex;
+  display: grid;
   place-items: center;
   place-content: center;
 
@@ -457,7 +457,8 @@ dialog {
   &:after {
     content: attr(data-value);
     margin: auto;
-    animation: 2s rotate cubic-bezier(0.67, 0.15, 0.25, 0.79) infinite reverse;
+    animation: 2s rotate cubic-bezier(0.85, 0.32, 0.20, 0.75) infinite reverse;
+    font-size: 1.2rem;
     font-weight: 700;
   }
 }
@@ -476,7 +477,7 @@ dialog {
 
 @keyframes rotate {
   0% {
-    animation-timing-function: ease-in;
+    transform: rotate(0turn);
   }
 
   100% {
