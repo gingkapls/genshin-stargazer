@@ -509,7 +509,7 @@ h1 {
   }
 
   & span:nth-child(2) {
-    line-height: 0.5lh;
+    line-height: 0.15lh;
   }
 }
 
