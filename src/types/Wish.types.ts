@@ -2,7 +2,7 @@ export interface Wish {
   id: ReturnType<typeof crypto.randomUUID>;
   itemName: string;
   wishType: string;
-  part: "" | "Part 2";
+  part: "" | "Wish 2";
   timeReceived: number;
   pageNumber: number;
 }

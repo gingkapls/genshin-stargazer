@@ -1,11 +1,11 @@
 import { parseDate } from "../../dataParser/parseData.ts";
-import characters from "../../../../data/character_rarity.json";
+import characters from "../../../../data/characters.json";
 import banners from "../../../../data/banners.json";
-import weapons from "../../../../data/weapon_rarity.json";
+import weapons from "../../../../data/weapons.json";
 import type { RefCallback } from "react";
 import type { Wish } from "../../../types/Wish.types.ts";
 import type { Banner, BannerList } from "../banners.types.ts";
-import { searchBanners } from "../utils/binarySearch.ts";
+import { searchBanners } from "../utils/searchBanners.ts";
 
 const wepMap = new Map(Object.entries(weapons));
 const charMap = new Map(Object.entries(characters));
@@ -19,10 +19,11 @@ function getBanner({ wishType, timeReceived, part }: Wish) {
   const index = searchBanners(bannerList, timeReceived);
 
   const banners = bannerList[index][1];
+  console.log(timeReceived, bannerList);
 
   switch (wishType) {
     case "Character Event Wish":
-      return banners[part === "Part 2" ? 1 : 0];
+      return banners[part === "Wish 2" ? 1 : 0];
     case "Weapon Event Wish":
       return "Epitome Invocation";
     case "Permanent Wish":
@@ -122,7 +123,11 @@ function WishTable({
   } satisfies PityCounter;
 
   return (
-    <div className={"table-container " + (isActive ? "active-tab" : "inactive-tab")}>
+    <div
+      className={
+        "table-container " + (isActive ? "active-tab" : "inactive-tab")
+      }
+    >
       <table ref={ref}>
         <caption>{wishes[0]?.wishType}</caption>
         <thead>

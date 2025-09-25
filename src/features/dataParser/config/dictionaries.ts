@@ -1,5 +1,5 @@
-import weapons from "../../../../data/weapon_rarity.json";
-import characters from "../../../../data/character_rarity.json";
+import weapons from "../../../../data/weapons.json";
+import characters from "../../../../data/characters.json";
 import { BKTree } from "../../../utils/BKTree.ts";
 
 const itemNamesDict = new BKTree(

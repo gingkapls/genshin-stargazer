@@ -9,13 +9,13 @@ function searchBanners(banners: BannerList, timeReceived: number): number {
   let right = banners.length - 1;
   let mid = -1;
 
-  while (left < right) {
+  while (left <= right) {
     mid = Math.floor((left + right) / 2);
     // Exact match is found
     if (banners[mid][0] === timeReceived) break;
 
     // Value is between predecessor and successor
-    // We return the timeReceived just lower than mid
+    // We return the index just lower than mid
     if (banners[mid][0] < timeReceived && timeReceived < banners[mid + 1][0]) break;
 
     if (banners[mid][0] < timeReceived) {

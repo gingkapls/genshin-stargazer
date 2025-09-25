@@ -1,5 +1,5 @@
-import weapons from "../../../data/weapon_rarity.json";
-import characters from "../../../data/character_rarity.json";
+import weapons from "../../../data/weapons.json";
+import characters from "../../../data/characters.json";
 import { BKTree } from "../../utils/BKTree.ts";
 import type { ScanResult } from "../scanner/utils/scan.types.ts";
 import type { Wish } from "../../types/Wish.types.ts";
@@ -110,7 +110,7 @@ function parseScanResults(data: ScanResult): Wish[] {
       itemName,
       pageNumber,
       wishType: wishTypes[i].replace("-2", ""),
-      part: wishTypes[i].includes("-2") ? "Part 2" : "",
+      part: wishTypes[i].includes("-2") ? "Wish 2" : "",
       timeReceived: timeReceived[i],
     };
   });
