@@ -1,6 +1,6 @@
 import { createScheduler, createWorker, PSM } from "tesseract.js";
 
-export class Scheduler {
+class Scheduler {
   static COLUM_PARAMS = {
     tessedit_pageseg_mode: PSM.SINGLE_COLUMN,
     tessedit_char_whitelist:
@@ -13,6 +13,15 @@ export class Scheduler {
     preserve_interword_spaces: "1",
   };
 
+  static WORKER_OPTS = {
+    // corePath: "/tesseract",
+    // workerPath: "/tesseract/worker.min.js",
+    // langPath: "/tesseract",
+    langPath: 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0'
+  } satisfies Partial<Tesseract.WorkerOptions>;
+
+  static SchedulerInstance: Scheduler;
+
   scheduler: Tesseract.Scheduler;
   pageWorker!: Tesseract.Worker;
 
@@ -21,17 +30,16 @@ export class Scheduler {
   }
 
   async initialize(callback?: () => void) {
-    const workers = await Promise.all(
-      Array(10)
+    const [pageWorker, ...workers] = await Promise.all(
+      Array(11)
         .fill(0)
-        .map(() => createWorker("eng"))
+        .map(() => createWorker("eng", 1, Scheduler.WORKER_OPTS))
     );
 
     for await (const worker of workers) {
       worker.setParameters(Scheduler.COLUM_PARAMS);
     }
 
-    const pageWorker = await createWorker("eng");
     await pageWorker.setParameters(Scheduler.PAGE_PARAMS);
 
     if (typeof callback === "function") callback();
@@ -50,3 +58,18 @@ export class Scheduler {
     await this.pageWorker.terminate();
   }
 }
+
+const scheduler = new Scheduler();
+let isReady = false;
+getScheduler();
+
+export async function getScheduler() {
+  if (isReady) return scheduler;
+
+  await scheduler.initialize();
+  isReady = true;
+  console.log("isReady");
+  return scheduler;
+}
+
+export type { Scheduler };

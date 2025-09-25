@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { useLocalStorage } from "./hooks/useLocalStorage.tsx";
 import { mergeHistories } from "./features/dataParser/historyReducer.ts";
@@ -19,6 +19,7 @@ import { Instructions } from "./components/Instructions.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { getScheduler } from "./features/scanner/utils/Scheduler.ts";
 
 function App() {
   function saveHistory(newHistory: WishHistory) {
@@ -58,6 +59,20 @@ function App() {
 
     return tablesRef.current;
   };
+
+  // Free tesseract memory on page unload
+  useEffect(() => {
+    document.addEventListener("visibilitychange", async (e: Event) => {
+      if (e.currentTarget === null) return;
+      if (e.currentTarget instanceof Document) {
+        if (e.currentTarget.visibilityState === "hidden") {
+          console.log("unloaded");
+          const scheduler = await getScheduler();
+          await scheduler.terminate();
+        }
+      }
+    });
+  }, []);
 
   return (
     <>

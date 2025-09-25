@@ -9,7 +9,7 @@ import {
 import { scanImages } from "../utils/scanImages.ts";
 import type { ScanRegions } from "../utils/scan.types.ts";
 import { processHistory } from "../../dataParser/processHistory.ts";
-import { Scheduler } from "../utils/Scheduler.ts";
+import { getScheduler } from "../utils/Scheduler.ts";
 import type { WishHistory } from "../../../types/Wish.types.ts";
 import { getScanRegion } from "../../imageProcessor/processImage.ts";
 import { Modal } from "../../../components/Modal.tsx";
@@ -155,8 +155,7 @@ function Scanner({
     setIsScanning(true);
     console.debug("Start time", new Date());
 
-    const scheduler = new Scheduler();
-    await scheduler.initialize();
+    const scheduler = await getScheduler();
     try {
       const scanResults = await scanImages(
         scanQueue,
@@ -188,7 +187,7 @@ function Scanner({
     // Cleanup
     // Reset scan state
     clearScanQueue();
-    await scheduler.terminate();
+    // await scheduler.terminate();
     setIsScanning(false);
   }, [isScanning, saveHistory, scanQueue, setScannedImages, clearScanQueue]);
 
