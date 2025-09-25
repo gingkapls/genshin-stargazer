@@ -1,6 +1,7 @@
 import {
   Fragment,
   useCallback,
+  useEffect,
   useRef,
   useState,
   type Dispatch,
@@ -46,6 +47,8 @@ function Scanner({
   const [error, setError] = useState<ImageError | null>(null);
   const errorModalRef = useRef<HTMLDialogElement | null>(null);
 
+  const [isReady, setIsReady] = useState(false);
+
   // There was an error processing the image
   if (error) {
     console.error(error.cause);
@@ -78,6 +81,14 @@ function Scanner({
   if (allImagesLoaded) {
     console.debug("Loaded all images");
   }
+
+  useEffect(() => {
+    async function waitForReady() {
+      await getScheduler();
+      setIsReady(true);
+    }
+    waitForReady();
+  }, []);
 
   const handleErrorModalClose = useCallback(() => {
     if (!error) return;
@@ -195,11 +206,23 @@ function Scanner({
     <>
       {!allImagesLoaded && <ProgressIndicator />}
 
-      {allImagesLoaded && !isScanning && !allImagesScanned && (
-        <button type="button" className="btn btn-scan" onClick={handleClick}>
-          Scan ({scanQueue.length})
-        </button>
-      )}
+      {allImagesLoaded &&
+        !isScanning &&
+        !allImagesScanned &&
+        (isReady ? (
+          <button type="button" className="btn btn-scan" onClick={handleClick}>
+            Scan ({scanQueue.length})
+          </button>
+        ) : (
+          <div>
+            <p>
+              Downloading data for the scanner.
+              <br />
+              This may take upto a few minutes.
+            </p>
+            <ProgressIndicator />
+          </div>
+        ))}
       {isScanning && <ProgressIndicator value={progressPercent.toString()} />}
 
       <section className="images">

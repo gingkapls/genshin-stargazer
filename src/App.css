@@ -440,7 +440,7 @@ dialog {
 }
 
 .progress-label {
-  width: auto;
+  width: 65px;
   height: 50px;
   border-radius: 100%;
   background-color: #eeebe5;
@@ -457,7 +457,6 @@ dialog {
   &:after {
     content: attr(data-value);
     margin: auto;
-    /* animation: 2s rotate cubic-bezier(0.79, 0.25, 0.15, 0.67) infinite reverse; */
     animation: 2s rotate cubic-bezier(0.67, 0.15, 0.25, 0.79) infinite reverse;
     font-weight: 700;
   }

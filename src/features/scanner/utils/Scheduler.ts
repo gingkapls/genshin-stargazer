@@ -17,17 +17,22 @@ class Scheduler {
     // corePath: "/tesseract",
     // workerPath: "/tesseract/worker.min.js",
     // langPath: "/tesseract",
-    langPath: 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0'
+    langPath:
+      "https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0",
   } satisfies Partial<Tesseract.WorkerOptions>;
 
   scheduler: Tesseract.Scheduler;
   pageWorker!: Tesseract.Worker;
+  
+  isReady: boolean = false;
 
   constructor() {
     this.scheduler = createScheduler();
   }
 
   async initialize(callback?: () => void) {
+    if (this.isReady) return this;
+
     const [pageWorker, ...workers] = await Promise.all(
       Array(11)
         .fill(0)
@@ -47,7 +52,7 @@ class Scheduler {
     });
 
     this.pageWorker = pageWorker;
-
+    this.isReady = true;
     return this;
   }
 
@@ -57,16 +62,12 @@ class Scheduler {
   }
 }
 
-const scheduler = new Scheduler();
-let isReady = false;
+const scheduler = new Scheduler().initialize();
 getScheduler();
 
 export async function getScheduler() {
-  if (isReady) return scheduler;
-
-  await scheduler.initialize();
-  isReady = true;
-  console.log("isReady");
+  await scheduler;
+  console.log("is ready");
   return scheduler;
 }
 

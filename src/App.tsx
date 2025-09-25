@@ -81,8 +81,9 @@ function App() {
           <div className="toolbar">
             <h1>
               <AutoAwesomeIcon />
-              <div className='heading-container'>
-                <span>Genshin</span><span>Stargazer</span>
+              <div className="heading-container">
+                <span>Genshin</span>
+                <span>Stargazer</span>
               </div>
             </h1>
             <button
