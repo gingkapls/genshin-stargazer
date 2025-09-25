@@ -166,6 +166,7 @@ function Scanner({
     setIsScanning(true);
     console.debug("Start time", new Date());
     const scheduler = await getScheduler();
+    console.log('scheduler initialized');
 
     try {
       const scanResults = await scanImages(

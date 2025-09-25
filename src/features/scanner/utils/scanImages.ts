@@ -5,24 +5,22 @@ import { ImageError } from "../../../utils/ImageError.ts";
 
 async function scanSingleRegion(region: ScanRegions, scheduler: Scheduler) {
   try {
-    return await Promise.all(
-      region.rectangles
-        .map((rectangle) =>
-          scheduler.scheduler.addJob(
-            "recognize",
-            region.image,
-            { rectangle },
-            { blocks: true, text: false }
-          )
+    return Promise.all(region.rectangles
+      .map((rectangle) =>
+        scheduler.scheduler.addJob(
+          "recognize",
+          region.image,
+          { rectangle },
+          { blocks: true, text: false }
         )
-        .concat(
-          scheduler.pageWorker.recognize(
-            region.image,
-            { rectangle: region.pageRectangle },
-            { blocks: true, text: false }
-          )
+      )
+      .concat(
+        scheduler.pageWorker.recognize(
+          region.image,
+          { rectangle: region.pageRectangle },
+          { blocks: true, text: false }
         )
-    );
+      ));
   } catch (error) {
     const srcImage = document.querySelector<HTMLImageElement>(
       "#" + region.image.id.substring(7)
@@ -46,6 +44,6 @@ export async function scanImages(
       })
     )
   );
-
+  
   return results;
 }

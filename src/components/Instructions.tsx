@@ -29,7 +29,7 @@ function Instructions() {
           If an image can not be processed, you will get an error and that batch
           will be discarded. Please open an issue on{" "}
           <a
-            href="https://github.com/gingkapls/genshin-wish-scanner"
+            href="https://github.com/gingkapls/genshin-stargazer"
             rel="noopener noreferrer"
           >
             Github
