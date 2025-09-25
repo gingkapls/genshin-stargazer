@@ -20,8 +20,6 @@ class Scheduler {
     langPath: 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0'
   } satisfies Partial<Tesseract.WorkerOptions>;
 
-  static SchedulerInstance: Scheduler;
-
   scheduler: Tesseract.Scheduler;
   pageWorker!: Tesseract.Worker;
 
@@ -61,6 +59,7 @@ class Scheduler {
 
 const scheduler = new Scheduler();
 let isReady = false;
+getScheduler();
 
 export async function getScheduler() {
   if (isReady) return scheduler;

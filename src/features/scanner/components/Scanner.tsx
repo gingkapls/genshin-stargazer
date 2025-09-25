@@ -9,7 +9,6 @@ import {
 import { scanImages } from "../utils/scanImages.ts";
 import type { ScanRegions } from "../utils/scan.types.ts";
 import { processHistory } from "../../dataParser/processHistory.ts";
-import { getScheduler } from "../utils/Scheduler.ts";
 import type { WishHistory } from "../../../types/Wish.types.ts";
 import { getScanRegion } from "../../imageProcessor/processImage.ts";
 import { Modal } from "../../../components/Modal.tsx";
@@ -21,6 +20,7 @@ import type {
 import { ImageError } from "../../../utils/ImageError.ts";
 import { ScanResultsModal } from "./ScanResultsModal.tsx";
 import { ProgressIndicator } from "../../../components/ProgressIndicator.tsx";
+import { getScheduler } from "../utils/Scheduler.ts";
 
 interface ScannerProps {
   images: Images;
@@ -154,8 +154,8 @@ function Scanner({
     // Critical Section
     setIsScanning(true);
     console.debug("Start time", new Date());
-
     const scheduler = await getScheduler();
+
     try {
       const scanResults = await scanImages(
         scanQueue,
