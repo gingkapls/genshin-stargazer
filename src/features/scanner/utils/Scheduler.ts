@@ -61,7 +61,6 @@ class Scheduler {
 
 const scheduler = new Scheduler();
 let isReady = false;
-getScheduler();
 
 export async function getScheduler() {
   if (isReady) return scheduler;

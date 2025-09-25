@@ -60,6 +60,20 @@ function App() {
     return tablesRef.current;
   };
 
+  useEffect(() => {
+    async function init() {
+      await getScheduler();
+    }
+
+    async function destroy() {
+      (await getScheduler()).terminate();
+    }
+
+    init();
+
+    return destroy;
+  }, []);
+
   // Free tesseract memory on page unload
   useEffect(() => {
     document.addEventListener("visibilitychange", async (e: Event) => {
