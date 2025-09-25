@@ -19,7 +19,6 @@ function getBanner({ wishType, timeReceived, part }: Wish) {
   const index = searchBanners(bannerList, timeReceived);
 
   const banners = bannerList[index][1];
-  console.log(timeReceived, bannerList);
 
   switch (wishType) {
     case "Character Event Wish":
