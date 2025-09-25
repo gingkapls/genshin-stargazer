@@ -24,6 +24,7 @@ function Instructions() {
           history as an excel spreadsheet that can be imported into wish
           trackers.
         </p>
+          <p>Scanning a single image takes around 5 seconds, if it looks like it's stuck try reloading and trying again.</p>
         <p>
           If an image can not be processed, you will get an error and that batch
           will be discarded. Please open an issue on{" "}
