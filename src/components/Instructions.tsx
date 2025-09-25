@@ -18,7 +18,7 @@ function Instructions() {
       >
         <p>
           ※ You can add screenshots of your Genshin Impact in-game wish history
-          to export them. They can be added to the queue one by one or multiple
+          to scan them. They can be added to the queue one by one or multiple
           at a time. The images are processed as soon as they are added and the
           scan button appears after that. The export button exports the wish
           history as an excel spreadsheet that can be imported into wish
@@ -36,7 +36,7 @@ function Instructions() {
           along with the image if that image was a valid wish history
           screenshot.
         </p>
-        <p>All the processing is done on your device, no data is uploaded.</p>
+        <p>All the processing is done on your device and stored in the browser, no data is uploaded.</p>
         <p>
           Genshin Stargazer is not affiliated with HoYoverse. Genshin Impact,
           game content and materials are trademarks and copyrights of HoYoverse.
