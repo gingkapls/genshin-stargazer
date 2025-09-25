@@ -1,14 +1,14 @@
 import { JSDOM } from "jsdom";
 
-function getCharName(row) {
-  return row.children[1].dataset.name;
+function getCharName(row: HTMLTableRowElement) {
+  return (row.children[1] as HTMLElement).dataset.name;
 }
 
-function getCharRarity(row) {
-  return row.children[2].firstChild.firstChild?.title;
+function getCharRarity(row: HTMLTableRowElement) {
+  return ((row.children[2].firstChild as HTMLElement).firstChild as HTMLElement)?.title;
 }
 
-function getPlayableCharsList(dom) {
+function getPlayableCharsList(dom: JSDOM) {
   const [playable, upcoming] = dom.window.document.querySelectorAll(
     "table.sortable tbody"
   );
@@ -18,9 +18,9 @@ function getPlayableCharsList(dom) {
   return playableArr.concat(upcomingArr);
 }
 
-function getChars(dom) {
+function getChars(dom: JSDOM) {
   const rows = getPlayableCharsList(dom);
-  const data = rows.reduce((acc, cur) => {
+  const data = rows.reduce<{ [name: string]: string }>((acc, cur) => {
     const name = getCharName(cur);
     const rarity = getCharRarity(cur);
 

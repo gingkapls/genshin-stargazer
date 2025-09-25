@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 
-function getWeaponsList(dom) {
+function getWeaponsList(dom: JSDOM) {
   const [current, upcoming] = dom.window.document.querySelectorAll(
     "table.sortable tbody"
   );
@@ -11,17 +11,18 @@ function getWeaponsList(dom) {
   return curArr.concat(upcomingArr);
 }
 
-function getWeaponName(row) {
-  return row.children[1].firstChild?.title;
+function getWeaponName(row: HTMLTableRowElement) {
+  return (row.children[1].firstChild as HTMLElement)?.title;
 }
 
-function getWeaponRarity(row) {
-  return row.children[2].firstChild?.firstChild?.title;
+function getWeaponRarity(row: HTMLTableRowElement) {
+  return ((row.children[2].firstChild as HTMLElement).firstChild as HTMLElement)
+    ?.title;
 }
 
-function getWeapons(dom) {
+function getWeapons(dom: JSDOM) {
   const rows = getWeaponsList(dom);
-  const data = rows.reduce((acc, cur) => {
+  const data = rows.reduce<{ [name: string]: string }>((acc, cur) => {
     const name = getWeaponName(cur);
     const rarity = getWeaponRarity(cur);
 
