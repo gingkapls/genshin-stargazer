@@ -60,8 +60,6 @@ function App() {
     return tablesRef.current;
   };
 
-
-
   // Free tesseract memory on page unload
   useEffect(() => {
     document.addEventListener("visibilitychange", async (e: Event) => {
