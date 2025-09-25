@@ -6,11 +6,23 @@
 }
 
 :root {
-  font-size: 13px;
+  font-size: 16px;
   min-height: 100%;
   --text-fg-color: #8a8c8e;
   --heading-fg-color: #5b5454;
   --main-bg-color: #eeebe5;
+}
+
+/* Fluid typography */
+@media screen and (min-width: 320px) {
+  html {
+    font-size: calc(16px + 6 * ((100vw - 320px) / 680));
+  }
+}
+@media screen and (min-width: 1000px) {
+  html {
+    font-size: 22px;
+  }
 }
 
 /* bree-serif-regular - latin */
@@ -30,7 +42,6 @@ body {
 }
 
 body {
-  font-size: 1.3rem;
   margin: 0;
   display: flex;
   font-family: "Bree Serif";
@@ -65,7 +76,7 @@ body {
   min-height: 95%;
   justify-content: center;
   background-color: var(--main-bg-color);
-  padding: 32px;
+  padding: clamp(12px, 6vw, 32px);
   overflow-y: scroll;
 }
 
@@ -139,7 +150,6 @@ h3 {
 
   h1 {
     grid-area: heading;
-    font-size: 4rem;
   }
 }
 
@@ -162,7 +172,7 @@ h3 {
   border-radius: 2px;
   color: var(--heading-fg-color);
   font-family: serif;
-  padding: 6px;
+  padding: 6px 8px;
   cursor: pointer;
 
   &:hover {
@@ -203,20 +213,20 @@ h3 {
   width: 100%;
   justify-content: space-between;
   background-color: #ebd9b4;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
   box-shadow: 0px 0px 0px 2px #fffaee, 0px 0px 0px 4px #f1e0bc,
     0px 0px 0px 6px #ddc794;
   border-radius: 2px;
 
   & h3 {
-    font-size: 1.5rem;
     margin: 4px 60px;
     text-align: center;
+    font-size: 1.5rem;
   }
 }
 
-@media (max-width: 898px) {
+@media (max-width: 670px) {
   .wish-type-container {
     gap: 0px;
 
@@ -231,9 +241,19 @@ h3 {
   }
 }
 
+@media (max-width: 370px) {
+  .toolbar {
+    place-content: center;
+    place-items: center;
+  }
+  
+  .btn {
+    padding: 6px;
+  }
+}
+
 option {
   text-transform: capitalize;
-  font-size: 14px;
 }
 
 select {
@@ -244,10 +264,10 @@ select {
   border: none;
   border-radius: 2px;
   font-weight: 600;
+  font-size: 1.2rem;
   text-shadow: inherit;
   font-family: inherit;
   color: var(--heading-fg-color);
-  font-size: 1.5rem;
   height: 1.5lh;
   line-height: normal;
   flex: 1;
@@ -380,7 +400,6 @@ dialog {
 
   & h4 {
     color: var(--heading-fg-color);
-    font-size: 2rem;
     margin: 0;
   }
 }
@@ -441,7 +460,6 @@ dialog {
     /* animation: 2s rotate cubic-bezier(0.79, 0.25, 0.15, 0.67) infinite reverse; */
     animation: 2s rotate cubic-bezier(0.67, 0.15, 0.25, 0.79) infinite reverse;
     font-weight: 700;
-    font-size: 1.5rem;
   }
 }
 
@@ -470,6 +488,7 @@ dialog {
 h1 {
   margin: 0;
   margin-bottom: 20px;
+  font-size: 3rem;
 
   & svg {
     float: left;
@@ -486,8 +505,8 @@ h1 {
   }
 
   & span:first-child {
-    font-size: 2rem;
     align-self: center;
+    font-size: 0.5em;
   }
 
   & span:nth-child(2) {
