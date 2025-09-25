@@ -37,6 +37,10 @@ function Instructions() {
           screenshot.
         </p>
         <p>All the processing is done on your device, no data is uploaded.</p>
+        <p>
+          Genshin Stargazer is not affiliated with HoYoverse. Genshin Impact,
+          game content and materials are trademarks and copyrights of HoYoverse.
+        </p>
       </section>
       <button
         className="btn"

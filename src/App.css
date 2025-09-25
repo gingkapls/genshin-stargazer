@@ -65,7 +65,7 @@ body {
   min-height: 95%;
   justify-content: center;
   background-color: var(--main-bg-color);
-  padding: 0 min(2.5vh, 30px);
+  padding: 32px;
   overflow-y: scroll;
 }
 
@@ -107,7 +107,6 @@ header {
   flex-direction: column;
   width: 100%;
   gap: 32px;
-  margin-top: 24px;
 
   & input[type="file"] {
     height: 0;
@@ -118,7 +117,6 @@ header {
 h1,
 h3 {
   color: var(--heading-fg-color);
-  margin: 0;
 }
 
 .toolbar {
@@ -164,7 +162,7 @@ h3 {
   border-radius: 2px;
   color: var(--heading-fg-color);
   font-family: serif;
-  padding: 6px 8px;
+  padding: 6px;
   cursor: pointer;
 
   &:hover {
@@ -191,8 +189,8 @@ h3 {
   justify-self: end;
   align-self: end;
   background-color: #ebd9b4;
-  box-shadow: 0px 0px 0px 2px #fffaee, 0px 0px 0px 4px #f1e0bc,
-    0px 0px 0px 6px #ddc794;
+  box-shadow: 0px 0px 0px 2px #fffaee, 0px 0px 0px 3px #f1e0bc,
+    0px 0px 0px 4px #ddc794;
 }
 
 .btn-export {
@@ -470,12 +468,30 @@ dialog {
 }
 
 h1 {
+  margin: 0;
+  margin-bottom: 20px;
+
   & svg {
     float: left;
     color: #e1c383;
     margin-right: 8px;
     height: 1lh !important;
     font-size: inherit !important;
+  }
+
+  & .heading-container {
+    display: flex;
+    flex-direction: column;
+    max-width: min-content;
+  }
+
+  & span:first-child {
+    font-size: 2rem;
+    align-self: center;
+  }
+
+  & span:nth-child(2) {
+    line-height: 0.5lh;
   }
 }
 

@@ -32,5 +32,5 @@ All the processing is done on your device, no data is uploaded.
 
 
 ## Copyright
-Genshin Wish Scanner is not affiliated with HoYoverse.
+Genshin Stargazer is not affiliated with HoYoverse.
 Genshin Impact, game content and materials are trademarks and copyrights of HoYoverse.

@@ -80,7 +80,10 @@ function App() {
         <header>
           <div className="toolbar">
             <h1>
-              <AutoAwesomeIcon /> Wish History Scanner
+              <AutoAwesomeIcon />
+              <div className='heading-container'>
+                <span>Genshin</span><span>Stargazer</span>
+              </div>
             </h1>
             <button
               className="btn btn-export"
